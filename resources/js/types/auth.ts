@@ -1,14 +1,13 @@
-export type User = {
+export type AuthUser = {
     id: number;
     name: string;
     email: string;
-    avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    tenant_id: number | null;
+    avatar_path: string | null;
 };
 
 export type Auth = {
-    user: User;
+    user: AuthUser | null;
+    roles: string[];
+    permissions: string[];
 };

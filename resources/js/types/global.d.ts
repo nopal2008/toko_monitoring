@@ -11,7 +11,8 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
-            sidebarOpen: boolean;
+            // Belum dibagikan oleh HandleInertiaRequests (lihat catatan gap).
+            flash?: { success?: string | null; error?: string | null };
             [key: string]: unknown;
         };
     }
