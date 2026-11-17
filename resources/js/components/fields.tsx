@@ -1,13 +1,6 @@
-import type {
-    InputHTMLAttributes,
-    ReactNode,
-    SelectHTMLAttributes,
-    TextareaHTMLAttributes,
-} from 'react';
-import { cn } from '@/lib/utils';
-
-const controlClass =
-    'block w-full rounded-md border bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-emerald-600 disabled:bg-slate-100';
+import { AlertCircle } from 'lucide-react';
+import type { ComponentProps, ReactNode } from 'react';
+import { Input, Label, Select, Textarea } from '@/components/ui/input';
 
 function Field({
     id,
@@ -26,21 +19,18 @@ function Field({
 }) {
     return (
         <div>
-            <label
-                htmlFor={id}
-                className="mb-1 block text-sm font-medium text-slate-800"
-            >
+            <Label htmlFor={id}>
                 {label}
                 {required && (
-                    <span className="text-red-700" aria-hidden="true">
+                    <span className="text-danger-fg" aria-hidden="true">
                         {' '}
                         *
                     </span>
                 )}
-            </label>
+            </Label>
             {children}
             {hint && !error && (
-                <p id={`${id}-hint`} className="mt-1 text-xs text-slate-500">
+                <p id={`${id}-hint`} className="mt-1.5 text-xs text-muted-foreground">
                     {hint}
                 </p>
             )}
@@ -48,8 +38,9 @@ function Field({
                 <p
                     id={`${id}-error`}
                     role="alert"
-                    className="mt-1 text-sm text-red-700"
+                    className="mt-1.5 flex items-center gap-1.5 text-xs text-danger-fg"
                 >
+                    <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
                     {error}
                 </p>
             )}
@@ -64,31 +55,23 @@ type BaseProps = {
     hint?: string;
 };
 
+function describedBy(id: string, error?: string, hint?: string) {
+    return error ? `${id}-error` : hint ? `${id}-hint` : undefined;
+}
+
 export function TextField({
     id,
     label,
     error,
     hint,
     ...props
-}: BaseProps & InputHTMLAttributes<HTMLInputElement>) {
+}: BaseProps & ComponentProps<'input'>) {
     return (
-        <Field
-            id={id}
-            label={label}
-            error={error}
-            hint={hint}
-            required={props.required}
-        >
-            <input
+        <Field id={id} label={label} error={error} hint={hint} required={props.required}>
+            <Input
                 id={id}
                 aria-invalid={error ? true : undefined}
-                aria-describedby={
-                    error ? `${id}-error` : hint ? `${id}-hint` : undefined
-                }
-                className={cn(
-                    controlClass,
-                    error ? 'border-red-600' : 'border-slate-300',
-                )}
+                aria-describedby={describedBy(id, error, hint)}
                 {...props}
             />
         </Field>
@@ -101,24 +84,13 @@ export function TextAreaField({
     error,
     hint,
     ...props
-}: BaseProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+}: BaseProps & ComponentProps<'textarea'>) {
     return (
-        <Field
-            id={id}
-            label={label}
-            error={error}
-            hint={hint}
-            required={props.required}
-        >
-            <textarea
+        <Field id={id} label={label} error={error} hint={hint} required={props.required}>
+            <Textarea
                 id={id}
-                rows={3}
                 aria-invalid={error ? true : undefined}
-                aria-describedby={error ? `${id}-error` : undefined}
-                className={cn(
-                    controlClass,
-                    error ? 'border-red-600' : 'border-slate-300',
-                )}
+                aria-describedby={describedBy(id, error, hint)}
                 {...props}
             />
         </Field>
@@ -132,27 +104,17 @@ export function SelectField({
     hint,
     children,
     ...props
-}: BaseProps & SelectHTMLAttributes<HTMLSelectElement>) {
+}: BaseProps & ComponentProps<'select'>) {
     return (
-        <Field
-            id={id}
-            label={label}
-            error={error}
-            hint={hint}
-            required={props.required}
-        >
-            <select
+        <Field id={id} label={label} error={error} hint={hint} required={props.required}>
+            <Select
                 id={id}
                 aria-invalid={error ? true : undefined}
-                aria-describedby={error ? `${id}-error` : undefined}
-                className={cn(
-                    controlClass,
-                    error ? 'border-red-600' : 'border-slate-300',
-                )}
+                aria-describedby={describedBy(id, error, hint)}
                 {...props}
             >
                 {children}
-            </select>
+            </Select>
         </Field>
     );
 }
@@ -162,24 +124,24 @@ export function CheckboxField({
     label,
     error,
     ...props
-}: Omit<BaseProps, 'hint'> &
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>) {
+}: Omit<BaseProps, 'hint'> & Omit<ComponentProps<'input'>, 'type'>) {
     return (
         <div>
             <label
                 htmlFor={id}
-                className="inline-flex items-center gap-2 text-sm font-medium text-slate-800"
+                className="inline-flex min-h-6 cursor-pointer items-center gap-2.5 text-sm font-medium text-foreground"
             >
                 <input
                     id={id}
                     type="checkbox"
-                    className="size-4 rounded border-slate-300 accent-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                    className="size-4 rounded border-border accent-primary focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:outline-none"
                     {...props}
                 />
                 {label}
             </label>
             {error && (
-                <p role="alert" className="mt-1 text-sm text-red-700">
+                <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs text-danger-fg">
+                    <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
                     {error}
                 </p>
             )}

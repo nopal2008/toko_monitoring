@@ -51,7 +51,7 @@ function CategoriesIndex({ categories }: { categories: Paginated<Category> }) {
                     <>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[32rem] text-sm">
-                                <thead className="bg-slate-50 text-left text-slate-600">
+                                <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
                                         <th scope="col" className="px-4 py-3 font-medium">Nama</th>
                                         <th scope="col" className="px-4 py-3 text-right font-medium">Produk</th>
@@ -59,13 +59,13 @@ function CategoriesIndex({ categories }: { categories: Paginated<Category> }) {
                                         <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-border">
                                     {categories.data.map((category) => (
-                                        <tr key={category.id}>
+                                        <tr key={category.id} className="transition-colors hover:bg-muted/40">
                                             <td className="px-4 py-3">
                                                 <Link
                                                     href={CategoryController.show.url(category.id)}
-                                                    className="font-medium text-emerald-800 hover:underline"
+                                                    className="font-medium text-brand-700 hover:underline dark:text-brand-300"
                                                 >
                                                     {category.name}
                                                 </Link>

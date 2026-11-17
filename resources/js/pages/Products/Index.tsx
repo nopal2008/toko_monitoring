@@ -58,7 +58,7 @@ function ProductsIndex({
                     <>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[52rem] text-sm">
-                                <thead className="bg-slate-50 text-left text-slate-600">
+                                <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
                                         <th scope="col" className="px-4 py-3 font-medium">Produk</th>
                                         <th scope="col" className="px-4 py-3 font-medium">Kategori</th>
@@ -68,23 +68,23 @@ function ProductsIndex({
                                         <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-border">
                                     {products.data.map((product) => (
-                                        <tr key={product.id}>
+                                        <tr key={product.id} className="transition-colors hover:bg-muted/40">
                                             <td className="px-4 py-3">
                                                 <Link
                                                     href={ProductController.show.url(product.id)}
-                                                    className="font-medium text-emerald-800 hover:underline"
+                                                    className="font-medium text-brand-700 hover:underline dark:text-brand-300"
                                                 >
                                                     {product.name}
                                                 </Link>
-                                                <p className="text-xs text-slate-500">SKU {product.sku}</p>
+                                                <p className="text-xs text-muted-foreground">SKU {product.sku}</p>
                                             </td>
                                             <td className="px-4 py-3">{product.category?.name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap">
+                                            <td className="px-4 py-3 text-right font-mono whitespace-nowrap tabular-nums">
                                                 {formatCurrency(product.base_price)}
                                             </td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap">
+                                            <td className="px-4 py-3 text-right font-mono whitespace-nowrap tabular-nums">
                                                 {formatCurrency(product.cost_price)}
                                             </td>
                                             <td className="px-4 py-3">

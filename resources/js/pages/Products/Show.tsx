@@ -62,8 +62,8 @@ function ProductsShow({ product }: { product: Product }) {
             </Card>
 
             <Card className="mt-6">
-                <div className="border-b border-slate-200 px-6 py-4">
-                    <h2 className="text-base font-semibold text-slate-900">
+                <div className="border-b border-border px-6 py-4">
+                    <h2 className="text-base font-semibold text-foreground">
                         Tersedia di cabang
                     </h2>
                 </div>
@@ -75,7 +75,7 @@ function ProductsShow({ product }: { product: Product }) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[32rem] text-sm">
-                            <thead className="bg-slate-50 text-left text-slate-600">
+                            <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                 <tr>
                                     <th scope="col" className="px-6 py-3 font-medium">Cabang</th>
                                     <th scope="col" className="px-6 py-3 text-right font-medium">Harga cabang</th>
@@ -83,11 +83,11 @@ function ProductsShow({ product }: { product: Product }) {
                                     <th scope="col" className="px-6 py-3 font-medium">Ketersediaan</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-border">
                                 {stores.map((store) => (
-                                    <tr key={store.id}>
+                                    <tr key={store.id} className="transition-colors hover:bg-muted/40">
                                         <td className="px-6 py-3">{store.name}</td>
-                                        <td className="px-6 py-3 text-right whitespace-nowrap">
+                                        <td className="px-6 py-3 text-right font-mono whitespace-nowrap tabular-nums">
                                             {store.pivot.price === null
                                                 ? 'Harga dasar'
                                                 : formatCurrency(store.pivot.price)}

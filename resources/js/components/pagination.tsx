@@ -1,19 +1,20 @@
 import { Link } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { PageLink } from '@/types/models';
-import { formatNumber } from '@/lib/format';
 
 // Label dari paginator Laravel berisi entitas HTML; jangan dirender mentah.
-function labelFor(label: string) {
+function kindOf(label: string) {
     if (/previous/i.test(label)) {
-        return 'Sebelumnya';
+        return 'previous' as const;
     }
 
     if (/next/i.test(label)) {
-        return 'Berikutnya';
+        return 'next' as const;
     }
 
-    return label;
+    return 'page' as const;
 }
 
 export function Pagination({
@@ -34,18 +35,39 @@ export function Pagination({
     return (
         <nav
             aria-label="Navigasi halaman"
-            className="flex flex-col gap-3 border-t border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 border-t border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-6"
         >
-            <p className="text-sm text-slate-600">
-                Menampilkan {formatNumber(from)}-{formatNumber(to)} dari{' '}
-                {formatNumber(total)} data
+            <p className="text-sm text-muted-foreground">
+                Menampilkan{' '}
+                <span className="font-medium text-foreground tabular-nums">
+                    {formatNumber(from)}-{formatNumber(to)}
+                </span>{' '}
+                dari{' '}
+                <span className="font-medium text-foreground tabular-nums">
+                    {formatNumber(total)}
+                </span>{' '}
+                data
             </p>
             {links.length > 3 && (
-                <ul className="flex flex-wrap gap-1">
+                <ul className="flex flex-wrap items-center gap-1">
                     {links.map((link, index) => {
-                        const text = labelFor(link.label);
+                        const kind = kindOf(link.label);
                         const base =
-                            'inline-flex min-w-9 items-center justify-center rounded-md border px-2.5 py-1.5 text-sm';
+                            'inline-flex h-9 min-w-9 items-center justify-center gap-1 rounded-lg px-2.5 text-sm font-medium transition-colors';
+                        const content =
+                            kind === 'previous' ? (
+                                <>
+                                    <ChevronLeft className="size-4" aria-hidden="true" />
+                                    <span className="sr-only sm:not-sr-only">Sebelumnya</span>
+                                </>
+                            ) : kind === 'next' ? (
+                                <>
+                                    <span className="sr-only sm:not-sr-only">Berikutnya</span>
+                                    <ChevronRight className="size-4" aria-hidden="true" />
+                                </>
+                            ) : (
+                                link.label
+                            );
 
                         return (
                             <li key={`${index}-${link.label}`}>
@@ -53,26 +75,22 @@ export function Pagination({
                                     <Link
                                         href={link.url}
                                         preserveScroll
-                                        aria-current={
-                                            link.active ? 'page' : undefined
-                                        }
+                                        aria-current={link.active ? 'page' : undefined}
                                         className={cn(
                                             base,
+                                            'focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:outline-none',
                                             link.active
-                                                ? 'border-emerald-700 bg-emerald-700 text-white'
-                                                : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50',
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'text-foreground hover:bg-muted',
                                         )}
                                     >
-                                        {text}
+                                        {content}
                                     </Link>
                                 ) : (
                                     <span
-                                        className={cn(
-                                            base,
-                                            'cursor-not-allowed border-slate-200 text-slate-400',
-                                        )}
+                                        className={cn(base, 'cursor-not-allowed text-muted-foreground/50')}
                                     >
-                                        {text}
+                                        {content}
                                     </span>
                                 )}
                             </li>

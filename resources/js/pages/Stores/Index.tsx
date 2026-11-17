@@ -43,7 +43,7 @@ function StoresIndex({ stores }: { stores: Paginated<Store> }) {
                     <>
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[44rem] text-sm">
-                                <thead className="bg-slate-50 text-left text-slate-600">
+                                <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
                                         <th scope="col" className="px-4 py-3 font-medium">Cabang</th>
                                         <th scope="col" className="px-4 py-3 font-medium">Kota</th>
@@ -53,17 +53,17 @@ function StoresIndex({ stores }: { stores: Paginated<Store> }) {
                                         <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-border">
                                     {stores.data.map((store) => (
-                                        <tr key={store.id}>
+                                        <tr key={store.id} className="transition-colors hover:bg-muted/40">
                                             <td className="px-4 py-3">
                                                 <Link
                                                     href={StoreController.show.url(store.id)}
-                                                    className="font-medium text-emerald-800 hover:underline"
+                                                    className="font-medium text-brand-700 hover:underline dark:text-brand-300"
                                                 >
                                                     {store.name}
                                                 </Link>
-                                                <p className="text-xs text-slate-500">{store.code}</p>
+                                                <p className="text-xs text-muted-foreground">{store.code}</p>
                                             </td>
                                             <td className="px-4 py-3">{store.city ?? '-'}</td>
                                             <td className="px-4 py-3">{store.phone ?? '-'}</td>
