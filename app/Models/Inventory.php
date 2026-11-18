@@ -33,6 +33,12 @@ class Inventory extends Model
         return $this->belongsTo(Store::class);
     }
 
+    /** @return BelongsTo<Warehouse, $this> */
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
     /** @return BelongsTo<Product, $this> */
     public function product(): BelongsTo
     {

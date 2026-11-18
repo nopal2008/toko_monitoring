@@ -1,4 +1,4 @@
-# Entity-Relationship Diagram (ERD)
+﻿# Entity-Relationship Diagram (ERD)
 ## Store Monitoring System — Backend Laravel 13 + Inertia + React
 
 > **Cara melihat diagram:** tempel blok Mermaid di bawah ke [mermaid.live](https://mermaid.live)
@@ -11,12 +11,13 @@
 ## 1. Konteks Arsitektur
 
 - **Laravel 13.17** (PHP 8.3), monolit **Inertia.js 3** + **React**.
-- **Autentikasi berbasis sesi** (bukan API token; Sanctum/Passport tidak terpasang).
-- **Otorisasi**: `spatie/laravel-permission ^8.5` + **Policy/Gate** Laravel[reference:0].
-- **Laravel Boost** menyediakan guideline AI agent agar kode mengikuti best practice Laravel 13[reference:1].
-- **Database**: MySQL 8 / PostgreSQL 15 (driver default Laravel 13).
+- **Autentikasi web** berbasis sesi Laravel; API menggunakan Laravel Sanctum.
+- **Otorisasi**: `spatie/laravel-permission ^8.5` dan middleware/policy Laravel.
+- **Database**: konfigurasi contoh menggunakan MySQL; sesuaikan dengan driver yang dipakai.
 - **Cache & Queue**: driver `database` (default Laravel 11+) → tabel `cache`, `jobs`, `failed_jobs` tersedia.
-- **Broadcasting**: tidak ada paket WebSocket → notifikasi dikirim lewat **polling** (Inertia partial reload).
+- **Notifikasi UI** diperbarui melalui polling; belum menggunakan WebSocket.
+
+> Diagram ini menggambarkan entitas domain aplikasi, bukan daftar lengkap tabel infrastruktur Laravel. Sebagian model/domain table belum memiliki migrasi dalam repository; cek `database/migrations/` sebelum membuat database baru. Dump SQL lokal bukan sumber skema yang aman untuk dibagikan atau dipakai sebagai database demo.
 
 ---
 
@@ -34,9 +35,13 @@ erDiagram
     TENANTS ||--o{ EMPLOYEES : "memiliki"
     TENANTS ||--o{ SETTINGS : "memiliki"
     TENANTS ||--o{ ROLES : "membatasi"
-    TENANTS ||--o{ NOTIFICATIONS : "membatasi"
     TENANTS ||--o{ SALES_TARGETS : "menentukan"
     TENANTS ||--o{ DAILY_STORE_SUMMARIES : "mengagregasi"
+    TENANTS ||--o{ AREAS : "memiliki"
+    TENANTS ||--o{ WAREHOUSES : "memiliki"
+    TENANTS ||--o{ BRANDS : "memiliki"
+    TENANTS ||--o{ UNITS : "memiliki"
+    TENANTS ||--o{ REGISTERS : "memiliki"
 
     USERS ||--o{ STORE_USER : "ditugaskan"
     USERS ||--o{ TRANSACTIONS : "sebagai kasir"
@@ -53,6 +58,8 @@ erDiagram
     PERMISSIONS ||--o{ MODEL_HAS_PERMISSIONS : "langsung_ke"
 
     %% ---------- CABANG & STAF ----------
+    AREAS ||--o{ STORES : "mengelompokkan"
+    STORES ||--o{ WAREHOUSES : "memiliki"
     STORES ||--o{ STORE_USER : "memiliki_staf"
     STORES ||--o{ INVENTORIES : "menyimpan"
     STORES ||--o{ TRANSACTIONS : "mencatat"
@@ -68,6 +75,8 @@ erDiagram
 
     %% ---------- KATALOG ----------
     CATEGORIES ||--o{ PRODUCTS : "mengelompokkan"
+    BRANDS ||--o{ PRODUCTS : "memproduksi"
+    UNITS ||--o{ PRODUCTS : "satuan"
 
     PRODUCTS ||--o{ INVENTORIES : "distok_sebagai"
     PRODUCTS ||--o{ PRODUCT_STORE : "dijual_via"
@@ -82,7 +91,10 @@ erDiagram
 
     %% ---------- LEDGER INVENTORY ----------
     INVENTORIES ||--o{ STOCK_MOVEMENTS : "dicatat_oleh"
+    WAREHOUSES ||--o{ INVENTORIES : "menyimpan"
     STOCK_TRANSFERS ||--o{ STOCK_TRANSFER_ITEMS : "berisi"
+    WAREHOUSES ||--o{ STOCK_OPNAMES : "dihitung_di"
+    STOCK_OPNAMES ||--o{ STOCK_OPNAME_ITEMS : "berisi"
 
     %% ---------- PENJUALAN ----------
     CASHIER_SHIFTS ||--o{ TRANSACTIONS : "menaungi"
@@ -109,7 +121,8 @@ erDiagram
 | `tenants` | kustom | Entitas root multi-tenant |
 | `users` | kustom (perluas default L13) | Semua login; `tenant_id` nullable untuk super-admin |
 | `password_reset_tokens` | default Laravel | Alur reset password |
-| `sessions` | default Laravel | **Autentikasi berbasis sesi** (tanpa Sanctum)[reference:2] |
+| `sessions` | default Laravel | Autentikasi sesi untuk web |
+| `personal_access_tokens` | Laravel Sanctum | Token untuk endpoint API |
 
 ### B. Otorisasi — `spatie/laravel-permission ^8.5`
 
@@ -121,19 +134,19 @@ erDiagram
 | `model_has_permissions` | default paket | User ↔ Permission langsung |
 | `role_has_permissions` | default paket | Role ↔ Permission |
 
-> **Penting:** Jangan ubah file migration vendor. Tambahkan `tenant_id` pada `roles` lewat **migration ekstensi terpisah** setelah `vendor:publish` dijalankan[reference:3].
+> Skema role tenant dikelola melalui migrasi aplikasi. Jangan mengubah file migration vendor.
 
 ### C. Master Data
 
-`stores`, `store_user`, `categories`, `products`, `product_store`
+`areas`, `stores`, `warehouses`, `store_user`, `brands`, `units`, `categories`, `products`, `product_store`
 
 ### D. Inventory
 
-`inventories`, `stock_movements`, `stock_transfers`, `stock_transfer_items`, `suppliers`, `purchases`, `purchase_items`
+`areas`, `registers`, `inventories`, `warehouses`, `stock_movements`, `stock_transfers`, `stock_transfer_items`, `stock_opnames`, `stock_opname_items`, `suppliers`, `purchases`, `purchase_items`, `stock_adjustments`, `stock_adjustment_items`, `goods_receipts`, `goods_receipt_items`, `sales_returns`, `sales_return_items`
 
 ### E. Penjualan
 
-`cashier_shifts`, `transactions`, `transaction_items`, `transaction_payments` *(opsional — hanya jika butuh pembayaran terpecah)*
+`cashier_shifts`, `transactions`, `transaction_items`, `transaction_payments`
 
 ### F. SDM
 
@@ -157,7 +170,6 @@ erDiagram
 
 | Tabel | Alasan |
 |---|---|
-| `personal_access_tokens` | Tidak ada Sanctum/Passport; autentikasi memakai sesi |
 | `activity_log` (paket) | `spatie/laravel-activitylog` tidak terpasang; audit bisa dibuat manual (lihat PRD §10) |
 | `media` / `attachments` | Tidak ada `spatie/laravel-medialibrary`; path file disimpan sebagai `string` |
-| `push_subscriptions` | Tidak ada paket broadcasting; notifikasi via polling |
+| `push_subscriptions` | Notifikasi saat ini memakai polling, bukan push notification |

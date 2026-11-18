@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 class StockTransferService
 {
     /**
-     * @param array{from_store_id: int, to_store_id: int, items: array<int, array{product_id: int, quantity: int}>, notes?: string|null} $data
+     * @param  array{from_store_id: int, to_store_id: int, items: array<int, array{product_id: int, quantity: int}>, notes?: string|null}  $data
      */
     public function create(User $user, array $data): StockTransfer
     {
@@ -121,7 +121,7 @@ class StockTransferService
     }
 
     /**
-     * @param array<int, array{stock_transfer_item_id: int, received_quantity: int}> $receivedItems
+     * @param  array<int, array{stock_transfer_item_id: int, received_quantity: int}>  $receivedItems
      */
     public function complete(StockTransfer $transfer, array $receivedItems, User $user): StockTransfer
     {

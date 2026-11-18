@@ -13,7 +13,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/user', fn (Request $request): array => [
             'data' => $request->user()->only(['id', 'name', 'email']),
-        ])->name('user');
+        ])->middleware('tenant')->name('user');
 
         Route::post('/logout', [TokenController::class, 'destroy'])
             ->middleware('throttle:write')

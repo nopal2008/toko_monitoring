@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -45,6 +46,13 @@ class HandleInertiaRequests extends Middleware
                 'roles' => $user?->getRoleNames()->values() ?? [],
                 'permissions' => $user?->getAllPermissions()->pluck('name')->values() ?? [],
             ],
+            'impersonation' => $request->session()->has('impersonator_id')
+                ? [
+                    'actor' => User::query()
+                        ->whereKey((int) $request->session()->get('impersonator_id'))
+                        ->first(['id', 'name']),
+                ]
+                : null,
         ];
     }
 }

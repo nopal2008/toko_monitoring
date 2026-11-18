@@ -26,10 +26,15 @@ class EmployeeController extends Controller
             $employeeQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 
+        if ($request->boolean('archived')) {
+            $employeeQuery->onlyTrashed();
+        }
+
         return Inertia::render('Employees/Index', [
             'employees' => $employeeQuery
                 ->paginate(min(max($request->integer('per_page', 10), 1), 100))
                 ->withQueryString(),
+            'showingArchived' => $request->boolean('archived'),
         ]);
     }
 
@@ -76,5 +81,15 @@ class EmployeeController extends Controller
         $employee->delete();
 
         return redirect()->route('employees.index')->with('success', 'Karyawan berhasil diarsipkan.');
+    }
+
+    public function restore(string $id): RedirectResponse
+    {
+        $employee = Employee::onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $employee);
+
+        $employee->restore();
+
+        return redirect()->route('employees.index')->with('success', 'Karyawan berhasil dipulihkan.');
     }
 }

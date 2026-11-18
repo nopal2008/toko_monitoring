@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 class AdjustInventoryService
 {
     /**
-     * @param array{store_id: int, product_id: int, quantity_change: int, reason: string} $data
+     * @param  array{store_id: int, product_id: int, quantity_change: int, reason: string}  $data
      */
     public function adjust(User $user, array $data): Inventory
     {

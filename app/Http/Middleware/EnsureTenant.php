@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Tenant;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Tenant;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureTenant
@@ -18,7 +18,9 @@ class EnsureTenant
     {
         $user = $request->user();
 
-        abort_unless($user !== null && $user->tenant_id !== null, 403);
+        // Middleware 'auth' already ensures user is not null,
+        // so we only check tenant_id and active status
+        abort_unless($user->tenant_id !== null && $user->is_active, 403);
         abort_unless(Tenant::query()->whereKey($user->tenant_id)->where('is_active', true)->exists(), 403);
 
         return $next($request);

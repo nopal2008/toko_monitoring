@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SettingsRequest;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;

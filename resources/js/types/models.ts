@@ -1,4 +1,4 @@
-// Tipe di bawah mengikuti migration dan controller yang ada saat ini.
+﻿// Tipe di bawah mengikuti migration dan controller yang ada saat ini.
 
 export type PageLink = {
     url: string | null;
@@ -34,6 +34,54 @@ export type Store = {
     created_at: string;
     updated_at: string;
     users_count?: number;
+    products_count?: number;
+};
+
+export type Area = {
+    id: number;
+    name: string;
+    code: string;
+    description: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    stores_count?: number;
+    warehouses_count?: number;
+};
+
+export type Warehouse = {
+    id: number;
+    tenant_id: number;
+    store_id: number | null;
+    name: string;
+    code: string;
+    type: string;
+    address: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    store?: { id: number; name: string } | null;
+};
+
+export type Brand = {
+    id: number;
+    tenant_id: number;
+    name: string;
+    slug: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    products_count?: number;
+};
+
+export type Unit = {
+    id: number;
+    tenant_id: number | null;
+    name: string;
+    symbol: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
     products_count?: number;
 };
 
@@ -73,6 +121,7 @@ export type ProductStoreLink = {
 export type Product = {
     id: number;
     category_id: number | null;
+    image_path: string | null;
     name: string;
     sku: string;
     barcode: string | null;
@@ -90,13 +139,24 @@ export type Product = {
 export type DashboardPeriod = 'day' | 'week' | 'month';
 
 export type DashboardProps = {
+    role: string;
     kpi: {
         sales_today: string;
         transactions_today: number;
         low_stock_count: number;
         active_employees: number;
+        active_stores: number;
+        late_attendance_today: number;
+        staff_days_this_month: number;
+        staff_late_days_this_month: number;
+        staff_work_minutes_today: number;
+        average_transaction: string;
     };
     chart: { date: string; sales: string; transactions: number }[];
+    attendance_chart: { date: string; present: number; late: number }[];
+    store_chart: { name: string; sales: string; transactions: number }[];
+    payment_chart: { label: string; transactions: number }[];
     period: DashboardPeriod;
     store_id: number | null;
+    stores: { id: number; name: string }[];
 };

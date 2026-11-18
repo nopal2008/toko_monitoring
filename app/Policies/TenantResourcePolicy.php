@@ -33,6 +33,11 @@ class TenantResourcePolicy
         return $this->canAccessRecord($user, $model);
     }
 
+    public function restore(User $user, Model $model): bool
+    {
+        return $this->canAccessRecord($user, $model);
+    }
+
     private function canAccessRecord(User $user, Model $model): bool
     {
         if ($user->tenant_id === null || (int) $model->getAttribute('tenant_id') !== (int) $user->tenant_id) {

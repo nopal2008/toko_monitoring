@@ -1,21 +1,28 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CashierShiftController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PosController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UnitController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -27,13 +34,29 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+Route::post('/impersonation/stop', [ImpersonationController::class, 'stop'])
+    ->middleware('auth')
+    ->name('impersonation.stop');
 
 Route::middleware(['auth', 'tenant'])->group(function (): void {
     Route::get('/dashboard', DashboardController::class)
-        ->middleware(['role:owner|admin|area_manager|store_manager', 'store.access'])
+        ->middleware(['role:owner|admin|area_manager|store_manager|cashier|staff', 'store.access'])
         ->name('dashboard');
 
     Route::middleware('role:owner|admin')->group(function (): void {
+        Route::middleware('permission:user.manage')->prefix('accounts')->name('accounts.')->group(function (): void {
+            Route::get('/', [AccountController::class, 'index'])->name('index');
+            Route::get('/create', [AccountController::class, 'create'])->name('create');
+            Route::post('/', [AccountController::class, 'store'])->middleware('throttle:write')->name('store');
+            Route::get('/{account}/edit', [AccountController::class, 'edit'])->name('edit');
+            Route::match(['put', 'patch'], '/{account}', [AccountController::class, 'update'])
+                ->middleware('throttle:write')->name('update');
+            Route::delete('/{account}', [AccountController::class, 'destroy'])
+                ->middleware('throttle:write')->name('destroy');
+            Route::post('/{account}/impersonate', [ImpersonationController::class, 'start'])
+                ->middleware('throttle:write')->name('impersonate');
+        });
+
         Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
         Route::get('/stores/create', [StoreController::class, 'create'])->name('stores.create');
         Route::post('/stores', [StoreController::class, 'store'])->middleware('throttle:write')->name('stores.store');
@@ -57,6 +80,8 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('products.update');
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])
             ->middleware('throttle:write')->name('products.destroy');
+        Route::post('/products/{id}/restore', [ProductController::class, 'restore'])
+            ->middleware('throttle:write')->name('products.restore');
     });
 
     Route::middleware('permission:product.view')->group(function (): void {
@@ -83,6 +108,74 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('suppliers.update');
         Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])
             ->middleware('throttle:write')->name('suppliers.destroy');
+    });
+
+    Route::middleware('permission:area.view')->group(function (): void {
+        Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
+        Route::get('/areas/{area}', [AreaController::class, 'show'])->name('areas.show');
+    });
+
+    Route::middleware('permission:area.manage')->group(function (): void {
+        Route::get('/areas/create', [AreaController::class, 'create'])->name('areas.create');
+        Route::post('/areas', [AreaController::class, 'store'])->middleware('throttle:write')->name('areas.store');
+        Route::get('/areas/{area}/edit', [AreaController::class, 'edit'])->name('areas.edit');
+        Route::match(['put', 'patch'], '/areas/{area}', [AreaController::class, 'update'])
+            ->middleware('throttle:write')->name('areas.update');
+        Route::delete('/areas/{area}', [AreaController::class, 'destroy'])
+            ->middleware('throttle:write')->name('areas.destroy');
+        Route::post('/areas/{id}/restore', [AreaController::class, 'restore'])
+            ->middleware('throttle:write')->name('areas.restore');
+    });
+
+    Route::middleware('permission:warehouse.view')->group(function (): void {
+        Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
+        Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
+    });
+
+    Route::middleware('permission:warehouse.manage')->group(function (): void {
+        Route::get('/warehouses/create', [WarehouseController::class, 'create'])->name('warehouses.create');
+        Route::post('/warehouses', [WarehouseController::class, 'store'])->middleware('throttle:write')->name('warehouses.store');
+        Route::get('/warehouses/{warehouse}/edit', [WarehouseController::class, 'edit'])->name('warehouses.edit');
+        Route::match(['put', 'patch'], '/warehouses/{warehouse}', [WarehouseController::class, 'update'])
+            ->middleware('throttle:write')->name('warehouses.update');
+        Route::delete('/warehouses/{warehouse}', [WarehouseController::class, 'destroy'])
+            ->middleware('throttle:write')->name('warehouses.destroy');
+        Route::post('/warehouses/{id}/restore', [WarehouseController::class, 'restore'])
+            ->middleware('throttle:write')->name('warehouses.restore');
+    });
+
+    Route::middleware('permission:brand.view')->group(function (): void {
+        Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
+        Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('brands.show');
+    });
+
+    Route::middleware('permission:brand.manage')->group(function (): void {
+        Route::get('/brands/create', [BrandController::class, 'create'])->name('brands.create');
+        Route::post('/brands', [BrandController::class, 'store'])->middleware('throttle:write')->name('brands.store');
+        Route::get('/brands/{brand}/edit', [BrandController::class, 'edit'])->name('brands.edit');
+        Route::match(['put', 'patch'], '/brands/{brand}', [BrandController::class, 'update'])
+            ->middleware('throttle:write')->name('brands.update');
+        Route::delete('/brands/{brand}', [BrandController::class, 'destroy'])
+            ->middleware('throttle:write')->name('brands.destroy');
+        Route::post('/brands/{id}/restore', [BrandController::class, 'restore'])
+            ->middleware('throttle:write')->name('brands.restore');
+    });
+
+    Route::middleware('permission:unit.view')->group(function (): void {
+        Route::get('/units', [UnitController::class, 'index'])->name('units.index');
+        Route::get('/units/{unit}', [UnitController::class, 'show'])->name('units.show');
+    });
+
+    Route::middleware('permission:unit.manage')->group(function (): void {
+        Route::get('/units/create', [UnitController::class, 'create'])->name('units.create');
+        Route::post('/units', [UnitController::class, 'store'])->middleware('throttle:write')->name('units.store');
+        Route::get('/units/{unit}/edit', [UnitController::class, 'edit'])->name('units.edit');
+        Route::match(['put', 'patch'], '/units/{unit}', [UnitController::class, 'update'])
+            ->middleware('throttle:write')->name('units.update');
+        Route::delete('/units/{unit}', [UnitController::class, 'destroy'])
+            ->middleware('throttle:write')->name('units.destroy');
+        Route::post('/units/{id}/restore', [UnitController::class, 'restore'])
+            ->middleware('throttle:write')->name('units.restore');
     });
 
     Route::middleware('permission:attendance.view')->group(function (): void {
@@ -129,6 +222,10 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
     Route::post('/cashier-shifts/{shift}/close', [CashierShiftController::class, 'close'])
         ->middleware(['permission:transaction.create', 'throttle:write'])
         ->name('cashier-shifts.close');
+
+    Route::get('/pos', [PosController::class, 'index'])
+        ->middleware(['permission:transaction.create', 'store.access'])
+        ->name('pos.index');
 
     Route::get('/transactions', [TransactionController::class, 'index'])
         ->middleware(['permission:transaction.view', 'store.access'])

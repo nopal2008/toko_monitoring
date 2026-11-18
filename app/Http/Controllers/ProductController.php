@@ -17,13 +17,21 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
+        $query = Product::query();
+
+        // Show archived products if requested
+        if ($request->boolean('archived')) {
+            $query->onlyTrashed();
+        }
+
         return Inertia::render('Products/Index', [
-            'products' => Product::query()
+            'products' => $query
                 ->with(['category:id,name'])
                 ->latest()
                 ->paginate(min(max($request->integer('per_page', 10), 1), 100))
                 ->withQueryString(),
             'categories' => Category::query()->where('is_active', true)->orderBy('name')->limit(100)->get(['id', 'name']),
+            'showingArchived' => $request->boolean('archived'),
         ]);
     }
 
@@ -98,8 +106,18 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Produk berhasil diarsipkan.');
     }
 
+    public function restore(string $id): RedirectResponse
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $this->authorize('update', $product);
+
+        $product->restore();
+
+        return redirect()->route('products.index', ['archived' => 1])->with('success', 'Produk berhasil dipulihkan.');
+    }
+
     /**
-     * @param array<int, array{store_id: int, price?: string|null, min_stock?: int|null, is_available?: bool}> $storeLinks
+     * @param  array<int, array{store_id: int, price?: string|null, min_stock?: int|null, is_available?: bool}>  $storeLinks
      */
     private function syncStoreLinks(Product $product, array $storeLinks, int $tenantId): void
     {

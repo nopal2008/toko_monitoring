@@ -4,6 +4,7 @@ import {
     Bar,
     BarChart,
     CartesianGrid,
+    Legend,
     ResponsiveContainer,
     Tooltip,
     XAxis,
@@ -12,6 +13,9 @@ import {
 import { formatCurrency, formatDateOnly, formatNumber } from '@/lib/format';
 
 export type ChartRow = { date: string; sales: number; transactions: number };
+export type AttendanceChartRow = { date: string; present: number; late: number };
+export type StoreChartRow = { name: string; sales: number; transactions: number };
+export type DistributionChartRow = { label: string; transactions: number };
 
 const compact = new Intl.NumberFormat('id-ID', { notation: 'compact' });
 
@@ -126,6 +130,97 @@ export function TransactionsChart({ data }: { data: ChartRow[] }) {
                         radius={[6, 6, 0, 0]}
                         animationDuration={600}
                         animationEasing="ease-out"
+                    />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
+
+export function AttendanceTrendChart({ data }: { data: AttendanceChartRow[] }) {
+    return (
+        <div className="h-72 w-full lg:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                        dataKey="date"
+                        tickFormatter={formatDateOnly}
+                        tick={axisTick}
+                        axisLine={false}
+                        tickLine={false}
+                        minTickGap={24}
+                    />
+                    <YAxis width={36} allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} />
+                    <Tooltip content={<ChartTooltip kind="number" />} />
+                    <Legend />
+                    <Area
+                        type="monotone"
+                        dataKey="present"
+                        name="Hadir"
+                        stroke="hsl(var(--brand-500))"
+                        fill="hsl(var(--brand-500))"
+                        fillOpacity={0.15}
+                        strokeWidth={2}
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="late"
+                        name="Terlambat"
+                        stroke="hsl(var(--warning))"
+                        fill="hsl(var(--warning))"
+                        fillOpacity={0.1}
+                        strokeWidth={2}
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
+
+export function StoreSalesChart({ data }: { data: StoreChartRow[] }) {
+    return (
+        <div className="h-72 w-full lg:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="name" tick={axisTick} axisLine={false} tickLine={false} />
+                    <YAxis
+                        width={56}
+                        tickFormatter={(value: number) => compact.format(value)}
+                        tick={axisTick}
+                        axisLine={false}
+                        tickLine={false}
+                    />
+                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                    <Bar
+                        dataKey="sales"
+                        name="Penjualan"
+                        fill="hsl(var(--brand-500))"
+                        radius={[6, 6, 0, 0]}
+                        animationDuration={600}
+                    />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
+
+export function DistributionChart({ data }: { data: DistributionChartRow[] }) {
+    return (
+        <div className="h-72 w-full lg:h-80">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="label" tick={axisTick} axisLine={false} tickLine={false} />
+                    <YAxis width={40} allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} />
+                    <Tooltip formatter={(value: number) => formatNumber(value)} />
+                    <Bar
+                        dataKey="transactions"
+                        name="Transaksi"
+                        fill="hsl(var(--brand-400))"
+                        radius={[6, 6, 0, 0]}
+                        animationDuration={600}
                     />
                 </BarChart>
             </ResponsiveContainer>

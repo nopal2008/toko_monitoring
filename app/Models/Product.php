@@ -21,7 +21,7 @@ class Product extends Model
     use BelongsToTenant, SoftDeletes;
 
     protected $fillable = [
-        'tenant_id', 'category_id', 'name', 'sku', 'barcode', 'unit', 'description',
+        'tenant_id', 'category_id', 'brand_id', 'unit_id', 'name', 'sku', 'barcode', 'unit', 'description',
         'base_price', 'cost_price', 'is_active',
     ];
 
@@ -36,6 +36,18 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    /** @return BelongsTo<Brand, $this> */
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    /** @return BelongsTo<Unit, $this> */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     /** @return BelongsToMany<Store, $this, Pivot, 'pivot'> */
     public function stores(): BelongsToMany
     {
@@ -48,5 +60,11 @@ class Product extends Model
     public function inventories(): HasMany
     {
         return $this->hasMany(Inventory::class);
+    }
+
+    /** @return HasMany<StockMovement, $this> */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
     }
 }

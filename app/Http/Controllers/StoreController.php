@@ -15,12 +15,18 @@ class StoreController extends Controller
     {
         $this->authorize('viewAny', Store::class);
 
+        $query = Store::query()->withCount('users');
+
+        if ($request->boolean('archived')) {
+            $query->onlyTrashed();
+        }
+
         return Inertia::render('Stores/Index', [
-            'stores' => Store::query()
-                ->withCount('users')
+            'stores' => $query
                 ->latest()
                 ->paginate(min(max($request->integer('per_page', 10), 1), 100))
                 ->withQueryString(),
+            'showingArchived' => $request->boolean('archived'),
         ]);
     }
 
@@ -67,5 +73,15 @@ class StoreController extends Controller
         $store->delete();
 
         return redirect()->route('stores.index')->with('success', 'Cabang berhasil diarsipkan.');
+    }
+
+    public function restore(string $id): RedirectResponse
+    {
+        $store = Store::onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $store);
+
+        $store->restore();
+
+        return redirect()->route('stores.index')->with('success', 'Cabang berhasil dipulihkan.');
     }
 }

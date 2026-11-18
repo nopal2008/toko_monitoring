@@ -15,12 +15,18 @@ class CategoryController extends Controller
     {
         $this->authorize('viewAny', Category::class);
 
+        $query = Category::query()->withCount('products');
+
+        if ($request->boolean('archived')) {
+            $query->onlyTrashed();
+        }
+
         return Inertia::render('Categories/Index', [
-            'categories' => Category::query()
-                ->withCount('products')
+            'categories' => $query
                 ->latest()
                 ->paginate(min(max($request->integer('per_page', 10), 1), 100))
                 ->withQueryString(),
+            'showingArchived' => $request->boolean('archived'),
         ]);
     }
 
@@ -67,5 +73,15 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil diarsipkan.');
+    }
+
+    public function restore(string $id): RedirectResponse
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $category);
+
+        $category->restore();
+
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dipulihkan.');
     }
 }

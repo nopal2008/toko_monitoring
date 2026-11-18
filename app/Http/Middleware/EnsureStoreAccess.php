@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureStoreAccess
@@ -18,8 +18,7 @@ class EnsureStoreAccess
     {
         $user = $request->user();
 
-        abort_unless($user !== null, 403);
-
+        // Middleware 'auth' already ensures user is not null
         $storeIds = collect([
             $request->route('store'),
             $request->input('store_id'),
@@ -30,8 +29,12 @@ class EnsureStoreAccess
             return $value instanceof Model ? (int) $value->getKey() : (int) $value;
         })->unique();
 
-        foreach ($storeIds as $storeId) {
-            abort_unless($user->canAccessStore($storeId), 403);
+        // Only check store access if store IDs are present
+        // Owner/admin can access all pages without specific store
+        if ($storeIds->isNotEmpty()) {
+            foreach ($storeIds as $storeId) {
+                abort_unless($user->canAccessStore($storeId), 403);
+            }
         }
 
         return $next($request);

@@ -1,0 +1,301 @@
+:root {
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    color: #17211d;
+    background: #f3f6f4;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.login-page {
+    display: grid;
+    min-height: 100vh;
+    padding: 24px;
+    place-items: center;
+}
+
+.panel {
+    border: 1px solid #dfe7e2;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 26px rgb(25 53 38 / 5%);
+    padding: 24px;
+}
+
+.login-panel {
+    display: grid;
+    gap: 16px;
+    width: min(100%, 430px);
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    color: #16834e;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+h1 {
+    margin-bottom: 4px;
+    font-size: 1.75rem;
+}
+
+h2 {
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+}
+
+.muted {
+    color: #64736a;
+    font-size: 0.9rem;
+}
+
+label {
+    display: grid;
+    gap: 7px;
+    color: #35443b;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+input,
+textarea {
+    width: 100%;
+    border: 1px solid #cfdad3;
+    border-radius: 8px;
+    background: #fff;
+    padding: 10px 12px;
+    color: #17211d;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #16834e;
+    outline: 3px solid rgb(22 131 78 / 14%);
+}
+
+.button {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 9px 13px;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.primary {
+    background: #16834e;
+    color: #fff;
+}
+
+.primary:hover {
+    background: #116b3f;
+}
+
+.secondary {
+    border-color: #d7e1da;
+    background: #fff;
+    color: #35443b;
+}
+
+.secondary:hover {
+    background: #f4f7f5;
+}
+
+.danger {
+    border-color: #f1d0cc;
+    background: #fff7f6;
+    color: #a52e24;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.error-message {
+    border: 1px solid #f1c8c3;
+    border-radius: 8px;
+    background: #fff3f1;
+    padding: 11px 13px;
+    color: #9c2c22;
+    font-size: 0.9rem;
+}
+
+.app-shell {
+    width: min(1440px, 100%);
+    margin: 0 auto;
+    padding: 28px;
+}
+
+.topbar,
+.account,
+.list-heading,
+.form-actions,
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar,
+.list-heading {
+    justify-content: space-between;
+}
+
+.topbar {
+    margin-bottom: 24px;
+}
+
+.account {
+    color: #53635a;
+    font-size: 0.9rem;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+    align-items: start;
+    gap: 20px;
+}
+
+.supplier-form {
+    display: grid;
+    gap: 15px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label input {
+    width: auto;
+}
+
+.form-actions {
+    flex-wrap: wrap;
+}
+
+.supplier-list {
+    min-width: 0;
+}
+
+.list-heading {
+    margin-bottom: 18px;
+}
+
+.list-heading p {
+    margin-bottom: 0;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    text-align: left;
+}
+
+th,
+td {
+    border-bottom: 1px solid #e8eeea;
+    padding: 12px 10px;
+    vertical-align: middle;
+}
+
+th {
+    background: #f7f9f8;
+    color: #53635a;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+td small {
+    display: block;
+    margin-top: 4px;
+    color: #758179;
+}
+
+.badge {
+    display: inline-flex;
+    border-radius: 999px;
+    background: #f1f3f2;
+    padding: 4px 9px;
+    color: #657168;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge.active {
+    background: #e5f5ec;
+    color: #147344;
+}
+
+.row-actions {
+    justify-content: flex-end;
+}
+
+.empty-state {
+    border: 1px dashed #cfdad3;
+    border-radius: 10px;
+    padding: 30px;
+    color: #64736a;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .app-shell {
+        padding: 18px;
+    }
+
+    .topbar,
+    .account,
+    .list-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .row-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

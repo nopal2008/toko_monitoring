@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import ProductController from '@/actions/App/Http/Controllers/ProductController';
 import { DeleteAction } from '@/components/delete-action';
@@ -14,17 +14,34 @@ import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { formatCurrency } from '@/lib/format';
 import type { CategoryOption, Paginated, Product } from '@/types/models';
+import { Archive, ArchiveRestore } from 'lucide-react';
 
-// `categories` dikirim controller tetapi daftar produk belum punya parameter
-// filter di backend, jadi tidak dipakai di sini.
 function ProductsIndex({
     products,
+    showingArchived = false,
 }: {
     products: Paginated<Product>;
     categories: CategoryOption[];
+    showingArchived?: boolean;
 }) {
     const { can } = useAuth();
     const canManage = can('product.manage');
+
+    const handleRestore = (productId: number) => {
+        if (confirm('Pulihkan produk ini dari arsip?')) {
+            router.post(ProductController.restore.url(productId), {}, {
+                preserveScroll: true,
+            });
+        }
+    };
+
+    const toggleArchiveView = () => {
+        router.get(
+            ProductController.index.url(),
+            showingArchived ? {} : { archived: '1' },
+            { preserveState: true, preserveScroll: true }
+        );
+    };
 
     const createLink = canManage ? (
         <Link
@@ -41,18 +58,48 @@ function ProductsIndex({
             <PageHeader
                 title="Produk"
                 description="Katalog produk untuk semua cabang."
-                actions={createLink}
+                actions={
+                    <div className="flex gap-2">
+                        {canManage && (
+                            <button
+                                onClick={toggleArchiveView}
+                                className={buttonClass('secondary')}
+                            >
+                                {showingArchived ? (
+                                    <>
+                                        <ArchiveRestore className="h-4 w-4" />
+                                        <span>Lihat Aktif</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Archive className="h-4 w-4" />
+                                        <span>Lihat Arsip</span>
+                                    </>
+                                )}
+                            </button>
+                        )}
+                        {createLink}
+                    </div>
+                }
             />
             <Card>
+                {showingArchived && (
+                    <div className="border-b border-border bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                        <Archive className="inline-block h-4 w-4 mr-2" />
+                        Menampilkan produk yang diarsipkan
+                    </div>
+                )}
                 {products.data.length === 0 ? (
                     <EmptyState
-                        title="Belum ada produk"
+                        title={showingArchived ? 'Belum ada produk diarsipkan' : 'Belum ada produk'}
                         description={
-                            canManage
+                            showingArchived
+                                ? 'Produk yang diarsipkan akan muncul di sini.'
+                                : canManage
                                 ? 'Tambahkan produk pertama ke katalog.'
                                 : 'Produk akan tampil di sini setelah dibuat oleh pengelola.'
                         }
-                        action={createLink}
+                        action={!showingArchived ? createLink : undefined}
                     />
                 ) : (
                     <>
@@ -72,13 +119,24 @@ function ProductsIndex({
                                     {products.data.map((product) => (
                                         <tr key={product.id} className="transition-colors hover:bg-muted/40">
                                             <td className="px-4 py-3">
-                                                <Link
-                                                    href={ProductController.show.url(product.id)}
-                                                    className="font-medium text-brand-700 hover:underline dark:text-brand-300"
-                                                >
-                                                    {product.name}
-                                                </Link>
-                                                <p className="text-xs text-muted-foreground">SKU {product.sku}</p>
+                                                {showingArchived ? (
+                                                    <div>
+                                                        <div className="font-medium text-muted-foreground">
+                                                            {product.name}
+                                                        </div>
+                                                        <p className="text-xs text-muted-foreground">SKU {product.sku}</p>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <Link
+                                                            href={ProductController.show.url(product.id)}
+                                                            className="font-medium text-brand-700 hover:underline dark:text-brand-300"
+                                                        >
+                                                            {product.name}
+                                                        </Link>
+                                                        <p className="text-xs text-muted-foreground">SKU {product.sku}</p>
+                                                    </>
+                                                )}
                                             </td>
                                             <td className="px-4 py-3">{product.category?.name ?? '-'}</td>
                                             <td className="px-4 py-3 text-right font-mono whitespace-nowrap tabular-nums">
@@ -88,11 +146,25 @@ function ProductsIndex({
                                                 {formatCurrency(product.cost_price)}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <StatusBadge active={product.is_active} />
+                                                {showingArchived ? (
+                                                    <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                                                        Diarsipkan
+                                                    </span>
+                                                ) : (
+                                                    <StatusBadge active={product.is_active} />
+                                                )}
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    {canManage && (
+                                                    {canManage && showingArchived ? (
+                                                        <button
+                                                            onClick={() => handleRestore(product.id)}
+                                                            className={buttonClass('secondary')}
+                                                        >
+                                                            <ArchiveRestore className="h-4 w-4" />
+                                                            Pulihkan
+                                                        </button>
+                                                    ) : canManage ? (
                                                         <>
                                                             <Link
                                                                 href={ProductController.edit.url(product.id)}
@@ -105,7 +177,7 @@ function ProductsIndex({
                                                                 itemName={product.name}
                                                             />
                                                         </>
-                                                    )}
+                                                    ) : null}
                                                 </div>
                                             </td>
                                         </tr>

@@ -16,6 +16,7 @@ class RolePermissionSeeder extends Seeder
             'transaction.view', 'transaction.create', 'transaction.cancel',
             'expense.create', 'expense.approve', 'attendance.view', 'attendance.manage',
             'report.view', 'report.export', 'setting.manage', 'user.manage',
+            'area.view', 'area.manage', 'warehouse.view', 'warehouse.manage', 'brand.view', 'brand.manage', 'unit.view', 'unit.manage',
         ];
 
         foreach ($permissions as $permission) {
@@ -26,17 +27,23 @@ class RolePermissionSeeder extends Seeder
             'owner' => $permissions,
             'admin' => $permissions,
             'area_manager' => [
-                'store.view', 'product.view', 'inventory.view', 'inventory.transfer',
+                'store.view', 'product.view', 'product.manage', 'inventory.view', 'inventory.transfer',
                 'transaction.view', 'transaction.cancel', 'expense.create', 'expense.approve',
                 'attendance.view', 'attendance.manage', 'report.view', 'report.export',
+                'area.view', 'area.manage', 'warehouse.view', 'warehouse.manage', 'brand.view', 'brand.manage', 'unit.view', 'unit.manage',
             ],
             'store_manager' => [
                 'store.view', 'product.view', 'inventory.view', 'inventory.adjust', 'inventory.transfer',
-                'transaction.view', 'transaction.create', 'transaction.cancel', 'expense.create',
-                'attendance.view', 'attendance.manage', 'report.view',
+                'transaction.view', 'transaction.create', 'transaction.cancel', 'expense.create', 'attendance.view',
+                'report.view', 'warehouse.view', 'warehouse.manage', 'brand.view', 'brand.manage', 'unit.view', 'unit.manage',
             ],
             'cashier' => ['transaction.view', 'transaction.create'],
-            'staff' => [],
+            'staff' => [
+                'product.view',
+                'inventory.view',
+                'transaction.view',
+                'attendance.view',
+            ],
         ];
 
         foreach ($roles as $name => $rolePermissions) {

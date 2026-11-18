@@ -1,9 +1,9 @@
 <?php
 
+use App\Jobs\AggregateDailySummaryJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
-use App\Jobs\AggregateDailySummaryJob;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

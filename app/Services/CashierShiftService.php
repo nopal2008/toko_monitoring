@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 class CashierShiftService
 {
     /**
-     * @param array{store_id: int, opening_cash: string|int, notes?: string|null} $data
+     * @param  array{store_id: int, opening_cash: string|int, notes?: string|null}  $data
      */
     public function open(User $user, array $data): CashierShift
     {
@@ -44,7 +44,7 @@ class CashierShiftService
     }
 
     /**
-     * @param array{closing_cash: string|int, notes?: string|null} $data
+     * @param  array{closing_cash: string|int, notes?: string|null}  $data
      */
     public function close(CashierShift $shift, User $user, array $data): CashierShift
     {

@@ -15,11 +15,17 @@ class SupplierController extends Controller
     {
         $this->authorize('viewAny', Supplier::class);
 
+        $query = Supplier::query()->latest();
+
+        if ($request->boolean('archived')) {
+            $query->onlyTrashed();
+        }
+
         return Inertia::render('Suppliers/Index', [
-            'suppliers' => Supplier::query()
-                ->latest()
+            'suppliers' => $query
                 ->paginate(min(max($request->integer('per_page', 10), 1), 100))
                 ->withQueryString(),
+            'showingArchived' => $request->boolean('archived'),
         ]);
     }
 
@@ -66,5 +72,15 @@ class SupplierController extends Controller
         $supplier->delete();
 
         return redirect()->route('suppliers.index')->with('success', 'Pemasok berhasil diarsipkan.');
+    }
+
+    public function restore(string $id): RedirectResponse
+    {
+        $supplier = Supplier::onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $supplier);
+
+        $supplier->restore();
+
+        return redirect()->route('suppliers.index')->with('success', 'Pemasok berhasil dipulihkan.');
     }
 }

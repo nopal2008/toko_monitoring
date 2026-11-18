@@ -21,7 +21,7 @@ class Store extends Model
     use BelongsToTenant, SoftDeletes;
 
     protected $fillable = [
-        'tenant_id', 'name', 'code', 'address', 'city', 'phone', 'latitude', 'longitude',
+        'tenant_id', 'area_id', 'name', 'code', 'address', 'city', 'phone', 'latitude', 'longitude',
         'radius_meter', 'opening_time', 'closing_time', 'is_active',
     ];
 
@@ -34,6 +34,18 @@ class Store extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    /** @return BelongsTo<Area, $this> */
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    /** @return HasMany<Warehouse, $this> */
+    public function warehouses(): HasMany
+    {
+        return $this->hasMany(Warehouse::class);
     }
 
     /** @return BelongsToMany<User, $this, Pivot, 'pivot'> */
@@ -80,5 +92,11 @@ class Store extends Model
     public function expenses(): HasMany
     {
         return $this->hasMany(Expense::class);
+    }
+
+    /** @return HasMany<CashierShift, $this> */
+    public function cashShifts(): HasMany
+    {
+        return $this->hasMany(CashierShift::class);
     }
 }

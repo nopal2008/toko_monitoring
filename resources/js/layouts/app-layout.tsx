@@ -1,26 +1,37 @@
-import { Link, router, usePage } from '@inertiajs/react';
+﻿import { Link, router, usePage } from '@inertiajs/react';
 import { MotionConfig, motion } from 'framer-motion';
 import {
+    Box,
     Building2,
     ChevronRight,
     ChevronsUpDown,
     LayoutDashboard,
     LogOut,
+    MapPin,
     Menu,
     Package,
     PanelLeftClose,
     PanelLeftOpen,
+    Receipt,
+    ShoppingCart,
+    Tag,
     Tags,
     Truck,
+    Users,
+    Warehouse,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Fragment, useState } from 'react';
 import { destroy as logout } from '@/actions/App/Http/Controllers/Auth/AuthenticatedSessionController';
+import AreaController from '@/actions/App/Http/Controllers/AreaController';
+import BrandController from '@/actions/App/Http/Controllers/BrandController';
 import CategoryController from '@/actions/App/Http/Controllers/CategoryController';
 import ProductController from '@/actions/App/Http/Controllers/ProductController';
 import StoreController from '@/actions/App/Http/Controllers/StoreController';
 import SupplierController from '@/actions/App/Http/Controllers/SupplierController';
+import UnitController from '@/actions/App/Http/Controllers/UnitController';
+import WarehouseController from '@/actions/App/Http/Controllers/WarehouseController';
 import { BrandLogo } from '@/components/brand-logo';
 import { FlashToaster } from '@/components/flash-toaster';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -43,6 +54,10 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import { index as accountsIndex } from '@/routes/accounts';
+import { stop as stopImpersonation } from '@/routes/impersonation';
+import { index as posIndex } from '@/routes/pos';
+import { index as transactionsIndex } from '@/routes/transactions';
 
 type NavItem = {
     label: string;
@@ -61,8 +76,14 @@ const SEGMENT_LABELS: Record<string, string> = {
     products: 'Produk',
     categories: 'Kategori',
     suppliers: 'Supplier',
+    pos: 'Kasir (POS)',
+    transactions: 'Transaksi',
+    areas: 'Area',
+    brands: 'Merek',
     create: 'Tambah',
     edit: 'Ubah',
+    units: 'Satuan',
+    warehouses: 'Gudang',
 };
 
 function breadcrumbsFor(pathname: string) {
@@ -272,7 +293,7 @@ function SidebarContent({
 }
 
 export default function AppLayout({ children }: { children: ReactNode }) {
-    const { name } = usePage().props;
+    const { name, impersonation, auth } = usePage().props;
     const { url } = usePage();
     const { can, hasAnyRole } = useAuth();
     const [collapsed, setCollapsed] = useState(() => {
@@ -299,6 +320,25 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     match: '/dashboard',
                     icon: LayoutDashboard,
                     visible: hasAnyRole('owner', 'admin', 'area_manager', 'store_manager'),
+                },
+            ],
+        },
+        {
+            label: 'Transaksi',
+            items: [
+                {
+                    label: 'Kasir (POS)',
+                    href: posIndex.url(),
+                    match: '/pos',
+                    icon: ShoppingCart,
+                    visible: can('transaction.create'),
+                },
+                {
+                    label: 'Riwayat Transaksi',
+                    href: transactionsIndex.url(),
+                    match: '/transactions',
+                    icon: Receipt,
+                    visible: can('transaction.view'),
                 },
             ],
         },
@@ -333,6 +373,41 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     icon: Truck,
                     visible: isOwnerOrAdmin && can('product.manage'),
                 },
+                {
+                    label: 'Area',
+                    href: AreaController.index.url(),
+                    match: '/areas',
+                    icon: MapPin,
+                    visible: isOwnerOrAdmin,
+                },
+                {
+                    label: 'Gudang',
+                    href: WarehouseController.index.url(),
+                    match: '/warehouses',
+                    icon: Warehouse,
+                    visible: can('warehouse.view'),
+                },
+                {
+                    label: 'Merek',
+                    href: BrandController.index.url(),
+                    match: '/brands',
+                    icon: Tag,
+                    visible: can('brand.view'),
+                },
+                {
+                    label: 'Satuan',
+                    href: UnitController.index.url(),
+                    match: '/units',
+                    icon: Box,
+                    visible: can('unit.view'),
+                },
+                {
+                    label: 'Akun pengguna',
+                    href: accountsIndex.url(),
+                    match: '/accounts',
+                    icon: Users,
+                    visible: isOwnerOrAdmin && can('user.manage'),
+                },
             ],
         },
     ]
@@ -350,7 +425,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         try {
             localStorage.setItem('sidebar-collapsed', next ? '1' : '0');
         } catch {
-            // Preferensi sidebar hanya berlaku untuk sesi ini.
         }
     }
 
@@ -456,6 +530,28 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
                         <ThemeToggle />
                     </header>
+
+                    {impersonation && (
+                        <div
+                            role="status"
+                            className="sticky top-16 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-warning/40 bg-warning/10 px-4 py-3 text-sm text-foreground md:px-6"
+                        >
+                            <span>
+                                Anda masuk sebagai <strong>{auth.user?.name}</strong>
+                                {impersonation.actor
+                                    ? ` atas nama ${impersonation.actor.name}`
+                                    : ' melalui sesi impersonasi'}.
+                            </span>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => router.post(stopImpersonation.url())}
+                            >
+                                Kembali ke akun owner
+                            </Button>
+                        </div>
+                    )}
 
                     <motion.main
                         id="main"

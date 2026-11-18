@@ -1,13 +1,15 @@
-# PRODUCT REQUIREMENTS DOCUMENT (PRD)
-## Store Monitoring System — Backend Only
+﻿# PRODUCT REQUIREMENTS DOCUMENT (PRD)
+## Store Monitoring System
 
 | Field | Nilai |
 |---|---|
-| Versi | 2.0 (backend-only, Inertia monolith) |
+| Versi | 2.1 |
 | Tanggal | 12 November 2026 |
 | Product Owner | Product Team |
 | Tim Teknis | Backend (PHP 8.3 / Laravel 13.17), Frontend (React + Inertia 3) |
-| Status | **Disetujui untuk Pengembangan** |
+| Status | Dalam pengembangan |
+
+> Dokumen ini memuat kebutuhan produk dan rancangan target. Tidak semua tabel atau alur yang direncanakan sudah tersedia di aplikasi. Status implementasi harus diverifikasi terhadap route, model, dan migrasi di repository.
 
 ---
 
@@ -32,8 +34,9 @@ Pemilik bisnis retail multi-cabang sulit memantau operasional harian secara real
 |---|---|---|
 | **Pengiriman frontend** | Inertia.js 3 + React (TypeScript) | Tidak perlu maintain API terpisah; controller mengembalikan `Inertia::render()` |
 | **Routing** | Route web Laravel (`routes/web.php`) | Wayfinder menghasilkan helper TypeScript bertipe |
-| **Autentikasi** | **Sesi Laravel** (Breeze-style) | Tidak ada Sanctum; sesi adalah pilihan tepat[reference:4] |
-| **Otorisasi** | `spatie/laravel-permission ^8.5` + **Policy** | RBAC + pemeriksaan per-record[reference:5] |
+| **Autentikasi web** | Sesi Laravel | Digunakan untuk UI Inertia |
+| **Autentikasi API** | Laravel Sanctum | Endpoint API tersedia di `/api/v1` |
+| **Otorisasi** | `spatie/laravel-permission ^8.5` + middleware/policy | RBAC dan pembatasan akses |
 | **Multi-tenancy** | **Global scope** pada `tenant_id` | Trait `BelongsToTenant` diterapkan ke semua model bisnis |
 | **Real-time** | **Polling** (Inertia partial reload) | Tidak ada paket broadcasting |
 | **Antrean** | Driver `database` (default) | `jobs`, `failed_jobs`, `job_batches` dipakai |
@@ -43,8 +46,9 @@ Pemilik bisnis retail multi-cabang sulit memantau operasional harian secara real
 
 ### 2.2 Lingkungan & Perkakas
 
-- **Runtime**: PHP 8.3, Laravel 13.17 (rilis 17 Maret 2026, mendukung PHP 8.3–8.5)[reference:6].
-- **Laravel Boost ^2.2**: menyediakan **AI guideline & skill** agar kode yang dihasilkan AI agent sesuai best practice Laravel 13[reference:7].
+- **Runtime**: PHP 8.3, Laravel `^13.17`.
+- **Frontend**: React 19, TypeScript, Inertia.js 3, dan Vite Plus.
+- **Laravel Boost ^2.2**: dependency pengembangan untuk guideline proyek.
 - **Analisis statis**: `larastan/larastan ^3.9` (level 6 minimum).
 - **Testing**: `pestphp/pest ^4.7` + `pest-plugin-laravel ^4.1` — feature-first.
 - **Code style**: `laravel/pint ^1.27`.
@@ -101,15 +105,15 @@ Browser merender ulang komponen halaman
 | `/reports/*` | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `/settings` | ✅ | ✅ | ❌ | ❌ | ❌ |
 
-> **Aturan penting:** Frontend hanya boleh menyembunyikan menu berdasarkan `auth.permissions` yang di-share dari `HandleInertiaRequests`. **Otorisasi sebenarnya selalu ditegakkan di backend** melalui middleware `role:` / `permission:` dan Policy[reference:8].
+> **Aturan penting:** Frontend hanya membantu menyembunyikan menu. Otorisasi harus tetap ditegakkan di backend melalui middleware dan policy.
 
 ---
 
 ## 4. Ruang Lingkup
 
-### 4.1 In Scope (MVP Backend)
+### 4.1 Ruang lingkup aplikasi
 
-1. **Autentikasi multi-tenant** via sesi + `spatie/laravel-permission`.
+1. **Autentikasi multi-tenant** via sesi web dan Sanctum untuk API, dengan `spatie/laravel-permission`.
 2. **Manajemen cabang** + penugasan user ke cabang (`store_user`).
 3. **Master produk & kategori** dengan harga per cabang (`product_store`).
 4. **Inventory**: stok per cabang, penyesuaian, transfer antar cabang dengan approval.
@@ -122,14 +126,14 @@ Browser merender ulang komponen halaman
 11. **Laporan**: penjualan, inventory, absensi, pengeluaran — dapat diekspor.
 12. **Audit log** (opsional, tabel kustom).
 
-### 4.2 Out of Scope (Fase 2+)
+### 4.2 Belum tersedia atau perlu dikembangkan
 
-- REST/GraphQL API publik (butuh Sanctum — tidak terpasang).
+- API publik/eksternal di luar endpoint `/api/v1` yang sudah tersedia.
 - Push WebSocket real-time (butuh Reverb/Pusher).
 - Aplikasi mobile native (web responsif / PWA saja).
 - Payroll, akuntansi double-entry.
 - Integrasi hardware POS (printer thermal, cash drawer).
-- UI Purchase Order *(tabel `purchases`/`purchase_items` disiapkan untuk masa depan)*.
+- Alur pengadaan/pembelian lengkap.
 
 ---
 
@@ -139,8 +143,8 @@ Browser merender ulang komponen halaman
 
 | Requirement | Detail |
 |---|---|
-| Login | Email + password, rate-limited (5/menit per email+IP)[reference:9] |
-| Sesi | Driver sesi Laravel; tabel `sessions`; regenerasi ID saat login[reference:10] |
+| Login | Email + password, dilindungi rate limiter aplikasi |
+| Sesi | Driver sesi Laravel; tabel `sessions`; ID sesi diperbarui saat login |
 | Logout | Invalidasi sesi; redirect ke `/login` |
 | Middleware | `auth`, `tenant`, `EnsureStoreAccess`, `role:` / `permission:` |
 | Isolasi tenant | Global scope pada semua model bisnis memfilter `auth()->user()->tenant_id` |
@@ -161,14 +165,18 @@ Browser merender ulang komponen halaman
 
 ### 5.3 Master Data (P0)
 
-- CRUD `stores`, `categories`, `products`.
+- CRUD `areas`, `warehouses`, `brands`, `units` (master operasional lintas cabang).
+- CRUD `stores` (cabang) + `store_user` (penugasan).
+- CRUD `categories`, `products`.
 - SKU unik per `tenant_id`.
 - Barcode opsional, dapat dicari.
-- Soft-delete pada `stores`, `categories`, `products`.
+- Soft-delete pada `stores`, `categories`, `products`, `areas`, `warehouses`, `brands`, `units`.
 
 ### 5.4 Inventory (P0)
 
-- Stok **per (store, product)** di `inventories`.
+- Stok dicatat melalui `inventories` berdasarkan toko/produk dan dapat dikaitkan dengan gudang.
+- Halaman inventory, penyesuaian, dan aksi transfer tersedia melalui route web.
+- Tabel stock opname, retur, permintaan stok, penyesuaian, dan penerimaan barang tersedia pada sebagian migrasi; route/model/service untuk seluruh alur tersebut belum tersedia.
 - Setiap mutasi menulis **baris immutable** ke `stock_movements` dengan `quantity_before` / `quantity_after`.
 - Penyesuaian wajib `reason` + permission `inventory.adjust`.
 - State machine transfer: `pending → approved → in_transit → completed` (atau `cancelled`).
@@ -298,7 +306,7 @@ pending ──approve──> approved ──ship──> in_transit ──complet
 | **Polling** | `/notifications/poll` < 50 ms p95, cache 15 detik |
 | **Ketersediaan** | 99,5% per bulan |
 | **Skala** | 100 tenant, 500 cabang, 1 juta transaksi/bulan |
-| **Keamanan** | OWASP Top 10; password `argon2id`; CSRF via `VerifyCsrfToken`; rate limit login & endpoint tulis[reference:14] |
+| **Keamanan** | Praktik OWASP; password di-hash; perlindungan CSRF dan rate limit pada login/endpoint tulis |
 | **Isolasi tenant** | Global scope + Policy; diuji di CI |
 | **Audit** | Tabel `activity_log` kustom opsional (§10) |
 | **Backup** | Harian, RPO 24 jam / RTO 4 jam |
@@ -308,9 +316,9 @@ pending ──approve──> approved ──ship──> in_transit ──complet
 
 ---
 
-## 8. Route Backend (Inertia Web Routes — Bukan API)
+## 8. Route Web dan API
 
-Semua route di `routes/web.php` di bawah middleware `auth` + `tenant`. **Wayfinder** menghasilkan helper TypeScript seperti `route('transactions.store')`.
+Route UI didefinisikan di `routes/web.php` dan dilindungi middleware sesuai kebutuhan. API v1 didefinisikan terpisah di `routes/api.php`; cek file route untuk daftar endpoint terbaru.
 
 ```
 GET    /login                    Tampilkan halaman login
@@ -360,7 +368,7 @@ GET    /settings
 PUT    /settings
 ```
 
-> **Catatan:** Endpoint polling adalah **satu-satunya route yang mengembalikan JSON**. Sisanya mengembalikan respons Inertia.
+> **Catatan:** Web routes menyajikan halaman Inertia dan sejumlah aksi; API v1 menyediakan endpoint JSON terpisah.
 
 ---
 
@@ -368,28 +376,28 @@ PUT    /settings
 
 ### 9.1 Autentikasi & Sesi
 
-- Gunakan **session authentication** Laravel; jangan membuat autentikasi kustom[reference:15].
-- Regenerasi session ID saat login dan perubahan privilege[reference:16].
-- Set `SESSION_HTTP_ONLY=true`, `SESSION_SECURE_COOKIE=true`, `SESSION_SAME_SITE=lax` (atau `strict` untuk alur sensitif)[reference:17].
-- Password di-hash dengan `Hash::make` (argon2id/bcrypt); validasi `Password::min(12)`[reference:18].
-- Rate limit login: 5 percobaan/menit per email+IP; endpoint tulis juga di-throttle[reference:19].
+- Gunakan autentikasi sesi Laravel untuk aplikasi web; gunakan Sanctum untuk endpoint API.
+- Regenerasi session ID saat login dan perubahan privilege.
+- Konfigurasikan cookie sesi aman sesuai environment deployment.
+- Hash password dengan mekanisme Laravel dan kebijakan password yang sesuai.
+- Terapkan rate limit pada login dan endpoint tulis.
 
 ### 9.2 Otorisasi
 
 - **Jangan pernah percaya `tenant_id` atau `store_id` dari request** — selalu validasi kepemilikan.
-- Gunakan **Policy** untuk otorisasi per-record (`$this->authorize('update', $model)`)[reference:20].
-- Middleware `role:` / `permission:` untuk proteksi tingkat route[reference:21].
+- Gunakan **Policy** untuk otorisasi per-record.
+- Middleware `role:` / `permission:` untuk proteksi tingkat route.
 - Frontend hanya menyembunyikan UI; **keputusan akhir selalu di backend**.
 
 ### 9.3 Validasi & Mass Assignment
 
-- Semua input lewat **FormRequest**; jangan `$request->validate()` di controller[reference:22].
-- Gunakan `$fillable` atau `$guarded`; hindari `Model::unguard()`[reference:23].
-- Gunakan **Eloquent/Query Builder** dengan parameter binding; hindari raw SQL tanpa binding[reference:24].
+- Validasi input dengan Form Request atau validasi Laravel yang sesuai.
+- Gunakan `$fillable` atau `$guarded`; hindari `Model::unguard()`.
+- Gunakan **Eloquent/Query Builder** dengan parameter binding; hindari raw SQL tanpa binding.
 
 ### 9.4 CSRF & Header
 
-- Biarkan `VerifyCsrfToken` aktif; sertakan token di form Inertia (otomatis via Axios/Inertia)[reference:25].
+- Pertahankan perlindungan CSRF Laravel untuk request web yang mengubah data.
 - Terapkan security header (X-Content-Type-Options, X-Frame-Options, Referrer-Policy).
 
 ### 9.5 Isolasi Tenant
@@ -431,6 +439,7 @@ Isi melalui trait `LogsActivity` pada model (`created`, `updated`, `deleted` →
 | `laravel/framework` | Inti |
 | `laravel/wayfinder` | Generasi route TypeScript |
 | `spatie/laravel-permission` | RBAC |
+| `laravel/sanctum` | Autentikasi token API |
 | `laravel/boost` | Guideline AI agent |
 
 ### Rekomendasi Tambahan (di luar MVP kecuali dipasang)

@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 class ExpenseService
 {
     /**
-     * @param array{store_id: int, expense_category_id: int, title: string, amount: string|int, expense_date: string, payment_method: string, notes?: string|null} $data
+     * @param  array{store_id: int, expense_category_id: int, title: string, amount: string|int, expense_date: string, payment_method: string, notes?: string|null}  $data
      */
     public function create(User $user, array $data, ?string $attachmentPath = null): Expense
     {
