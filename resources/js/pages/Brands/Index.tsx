@@ -14,61 +14,61 @@ import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { formatNumber } from '@/lib/format';
 import type { Brand, Paginated } from '@/types/models';
-import { Archive, ArchiveRestore } from 'lucide-react';
 
 function BrandsIndex({
     brands,
-    showingArchived = false,
+    showingArchived,
 }: {
     brands: Paginated<Brand>;
-    showingArchived?: boolean;
+    showingArchived: boolean;
 }) {
     const { can } = useAuth();
     const canManage = can('brand.manage');
 
-    const handleRestore = (brandId: number) => {
-        if (confirm('Pulihkan merek ini dari arsip?')) {
-            router.post(BrandController.restore.url(brandId), {}, {
-                preserveScroll: true,
-            });
-        }
-    };
+    const createLink = canManage ? (
+        <Link
+            href={BrandController.create.url()}
+            className={buttonClass('primary')}
+        >
+            Tambah merek
+        </Link>
+    ) : undefined;
 
     const toggleArchiveView = () => {
         router.get(
             BrandController.index.url(),
-            showingArchived ? {} : { archived: '1' },
-            { preserveState: true, preserveScroll: true }
+            { archived: showingArchived ? '0' : '1' },
+            { preserveState: true, preserveScroll: true },
         );
     };
 
-    const createLink = canManage ? (
-        <Link href={BrandController.create.url()} className={buttonClass('primary')}>
-            Tambah merek
-        </Link>
-    ) : undefined;
+    const restoreBrand = (id: number, name: string) => {
+        if (
+            confirm(
+                `Apakah Anda yakin ingin memulihkan merek "${name}" dari arsip?`,
+            )
+        ) {
+            router.post(BrandController.restore.url(id));
+        }
+    };
 
     return (
         <>
             <Head title="Merek" />
             <PageHeader
                 title="Merek"
-                description="Kategori merek produk."
+                description="Kelola merek produk untuk memudahkan identifikasi."
                 actions={
                     <div className="flex gap-2">
                         {canManage && (
-                            <button onClick={toggleArchiveView} className={buttonClass('secondary')}>
-                                {showingArchived ? (
-                                    <>
-                                        <ArchiveRestore className="h-4 w-4" />
-                                        <span>Lihat Aktif</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Archive className="h-4 w-4" />
-                                        <span>Lihat Arsip</span>
-                                    </>
-                                )}
+                            <button
+                                type="button"
+                                onClick={toggleArchiveView}
+                                className={buttonClass('secondary')}
+                            >
+                                {showingArchived
+                                    ? 'Lihat Aktif'
+                                    : 'Lihat Arsip'}
                             </button>
                         )}
                         {createLink}
@@ -76,71 +76,130 @@ function BrandsIndex({
                 }
             />
             <Card>
-                {showingArchived && (
-                    <div className="border-b border-border bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                        <Archive className="inline-block h-4 w-4 mr-2" />
-                        Menampilkan merek yang diarsipkan
-                    </div>
-                )}
                 {brands.data.length === 0 ? (
                     <EmptyState
-                        title={showingArchived ? 'Belum ada merek diarsipkan' : 'Belum ada merek'}
+                        title={
+                            showingArchived
+                                ? 'Belum ada merek diarsipkan'
+                                : 'Belum ada merek'
+                        }
                         description={
                             showingArchived
-                                ? 'Merek yang diarsipkan akan muncul di sini.'
+                                ? 'Merek yang diarsipkan akan tampil di sini.'
                                 : canManage
-                                  ? 'Tambahkan merek produk.'
+                                  ? 'Tambahkan merek untuk memudahkan identifikasi produk.'
                                   : 'Merek akan tampil di sini setelah dibuat oleh pengelola.'
                         }
-                        action={!showingArchived ? createLink : undefined}
+                        action={showingArchived ? undefined : createLink}
                     />
                 ) : (
                     <>
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[36rem] text-sm">
+                            <table className="w-full min-w-[32rem] text-sm">
                                 <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
-                                        <th scope="col" className="px-4 py-3 font-medium">Merek</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Slug</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Produk</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Status</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Nama
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Produk
+                                        </th>
+                                        {!showingArchived && (
+                                            <th
+                                                scope="col"
+                                                className="px-4 py-3 font-medium"
+                                            >
+                                                Status
+                                            </th>
+                                        )}
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Aksi
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {brands.data.map((brand) => (
-                                        <tr key={brand.id} className="transition-colors hover:bg-muted/40">
-                                            <td className="px-4 py-3">
-                                                <Link href={BrandController.show.url(brand.id)} className="font-medium text-brand-700 hover:underline dark:text-brand-300">
-                                                    {brand.name}
-                                                </Link>
-                                            </td>
-                                            <td className="px-4 py-3">{brand.slug}</td>
-                                            <td className="px-4 py-3 text-right">{formatNumber(brand.products_count ?? 0)}</td>
+                                        <tr
+                                            key={brand.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3">
                                                 {showingArchived ? (
-                                                    <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                                                        Diarsipkan
+                                                    <span className="font-medium text-muted-foreground">
+                                                        {brand.name}
                                                     </span>
                                                 ) : (
-                                                    <StatusBadge active={brand.is_active} />
+                                                    <Link
+                                                        href={BrandController.show.url(
+                                                            brand.id,
+                                                        )}
+                                                        className="font-medium text-brand-700 hover:underline dark:text-brand-300"
+                                                    >
+                                                        {brand.name}
+                                                    </Link>
                                                 )}
                                             </td>
+                                            <td className="px-4 py-3 text-right">
+                                                {formatNumber(
+                                                    brand.products_count ?? 0,
+                                                )}
+                                            </td>
+                                            {!showingArchived && (
+                                                <td className="px-4 py-3">
+                                                    <StatusBadge
+                                                        active={brand.is_active}
+                                                    />
+                                                </td>
+                                            )}
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    {canManage && showingArchived ? (
-                                                        <button onClick={() => handleRestore(brand.id)} className={buttonClass('secondary')}>
-                                                            <ArchiveRestore className="h-4 w-4" />
-                                                            Pulihkan
-                                                        </button>
-                                                    ) : canManage ? (
-                                                        <>
-                                                            <Link href={BrandController.edit.url(brand.id)} className={buttonClass('secondary')}>
-                                                                Ubah
-                                                            </Link>
-                                                            <DeleteAction url={BrandController.destroy.url(brand.id)} itemName={brand.name} />
-                                                        </>
-                                                    ) : null}
+                                                    {canManage &&
+                                                        (showingArchived ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    restoreBrand(
+                                                                        brand.id,
+                                                                        brand.name,
+                                                                    )
+                                                                }
+                                                                className={buttonClass(
+                                                                    'primary',
+                                                                )}
+                                                            >
+                                                                Pulihkan
+                                                            </button>
+                                                        ) : (
+                                                            <>
+                                                                <Link
+                                                                    href={BrandController.edit.url(
+                                                                        brand.id,
+                                                                    )}
+                                                                    className={buttonClass(
+                                                                        'secondary',
+                                                                    )}
+                                                                >
+                                                                    Ubah
+                                                                </Link>
+                                                                <DeleteAction
+                                                                    url={BrandController.destroy.url(
+                                                                        brand.id,
+                                                                    )}
+                                                                    itemName={
+                                                                        brand.name
+                                                                    }
+                                                                />
+                                                            </>
+                                                        ))}
                                                 </div>
                                             </td>
                                         </tr>

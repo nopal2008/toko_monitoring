@@ -16,7 +16,6 @@ import {
     DistributionChart,
     SalesTrendChart,
     StoreSalesChart,
-    TransactionsChart,
 } from '@/components/charts/dashboard-charts';
 import type {
     AttendanceChartRow,
@@ -27,7 +26,12 @@ import type {
 import { EmptyState } from '@/components/empty-state';
 import { PageHeader } from '@/components/page-header';
 import { StatCard } from '@/components/stat-card';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/layouts/app-layout';
 import { formatCurrency, formatDateOnly, formatNumber } from '@/lib/format';
@@ -50,7 +54,17 @@ const roleLabels: Record<string, string> = {
     staff: 'Staf',
 };
 
-function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_chart, period, store_id, stores }: DashboardProps) {
+function Dashboard({
+    role,
+    kpi,
+    chart,
+    attendance_chart,
+    store_chart,
+    payment_chart,
+    period,
+    store_id,
+    stores,
+}: DashboardProps) {
     const { errors } = usePage().props;
     const errorMessages = Object.values(errors ?? {});
     const [loading, setLoading] = useState(false);
@@ -60,7 +74,10 @@ function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_ch
     const isAreaManager = role === 'area_manager';
     const hasSecondaryChart = !isStaff;
 
-    function visitDashboard(nextPeriod: DashboardPeriod, nextStoreId: number | null) {
+    function visitDashboard(
+        nextPeriod: DashboardPeriod,
+        nextStoreId: number | null,
+    ) {
         router.get(
             dashboard.url(),
             {
@@ -105,28 +122,112 @@ function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_ch
 
     const cards = isStaff
         ? [
-              { icon: CalendarCheck, label: 'Hari hadir bulan ini', value: kpi.staff_days_this_month, format: formatNumber },
-              { icon: AlertTriangle, tone: 'warning' as const, label: 'Hari terlambat bulan ini', value: kpi.staff_late_days_this_month, format: formatNumber },
-              { icon: Clock3, tone: 'info' as const, label: 'Menit kerja hari ini', value: kpi.staff_work_minutes_today, format: formatNumber },
+              {
+                  icon: CalendarCheck,
+                  label: 'Hari hadir bulan ini',
+                  value: kpi.staff_days_this_month,
+                  format: formatNumber,
+              },
+              {
+                  icon: AlertTriangle,
+                  tone: 'warning' as const,
+                  label: 'Hari terlambat bulan ini',
+                  value: kpi.staff_late_days_this_month,
+                  format: formatNumber,
+              },
+              {
+                  icon: Clock3,
+                  tone: 'info' as const,
+                  label: 'Menit kerja hari ini',
+                  value: kpi.staff_work_minutes_today,
+                  format: formatNumber,
+              },
           ]
         : isCashier
           ? [
-                { icon: Banknote, label: 'Penjualan saya hari ini', value: Number(kpi.sales_today), format: formatCurrency },
-                { icon: Receipt, tone: 'info' as const, label: 'Transaksi saya hari ini', value: kpi.transactions_today, format: formatNumber },
-                { icon: Banknote, tone: 'success' as const, label: 'Rata-rata transaksi', value: Number(kpi.average_transaction), format: formatCurrency },
+                {
+                    icon: Banknote,
+                    label: 'Penjualan saya hari ini',
+                    value: Number(kpi.sales_today),
+                    format: formatCurrency,
+                },
+                {
+                    icon: Receipt,
+                    tone: 'info' as const,
+                    label: 'Transaksi saya hari ini',
+                    value: kpi.transactions_today,
+                    format: formatNumber,
+                },
+                {
+                    icon: Banknote,
+                    tone: 'success' as const,
+                    label: 'Rata-rata transaksi',
+                    value: Number(kpi.average_transaction),
+                    format: formatCurrency,
+                },
             ]
           : isOwner
             ? [
-                  { icon: Banknote, label: 'Penjualan hari ini', value: Number(kpi.sales_today), format: formatCurrency },
-                  { icon: Receipt, tone: 'info' as const, label: 'Transaksi hari ini', value: kpi.transactions_today, format: formatNumber },
-                  { icon: Store, tone: 'success' as const, label: 'Cabang dalam cakupan', value: kpi.active_stores, format: formatNumber },
-                  { icon: AlertTriangle, tone: 'warning' as const, label: 'Stok di bawah minimum', value: kpi.low_stock_count, format: formatNumber },
+                  {
+                      icon: Banknote,
+                      label: 'Penjualan hari ini',
+                      value: Number(kpi.sales_today),
+                      format: formatCurrency,
+                  },
+                  {
+                      icon: Receipt,
+                      tone: 'info' as const,
+                      label: 'Transaksi hari ini',
+                      value: kpi.transactions_today,
+                      format: formatNumber,
+                  },
+                  {
+                      icon: Store,
+                      tone: 'success' as const,
+                      label: 'Cabang dalam cakupan',
+                      value: kpi.active_stores,
+                      format: formatNumber,
+                  },
+                  {
+                      icon: AlertTriangle,
+                      tone: 'warning' as const,
+                      label: 'Stok di bawah minimum',
+                      value: kpi.low_stock_count,
+                      format: formatNumber,
+                  },
               ]
             : [
-                  { icon: Banknote, label: 'Penjualan hari ini', value: Number(kpi.sales_today), format: formatCurrency },
-                  { icon: Receipt, tone: 'info' as const, label: 'Transaksi hari ini', value: kpi.transactions_today, format: formatNumber },
-                  { icon: Users, tone: 'success' as const, label: 'Karyawan aktif', value: kpi.active_employees, format: formatNumber },
-                  { icon: AlertTriangle, tone: 'warning' as const, label: isAreaManager ? 'Karyawan terlambat hari ini' : 'Stok di bawah minimum', value: isAreaManager ? kpi.late_attendance_today : kpi.low_stock_count, format: formatNumber },
+                  {
+                      icon: Banknote,
+                      label: 'Penjualan hari ini',
+                      value: Number(kpi.sales_today),
+                      format: formatCurrency,
+                  },
+                  {
+                      icon: Receipt,
+                      tone: 'info' as const,
+                      label: 'Transaksi hari ini',
+                      value: kpi.transactions_today,
+                      format: formatNumber,
+                  },
+                  {
+                      icon: Users,
+                      tone: 'success' as const,
+                      label: 'Karyawan aktif',
+                      value: kpi.active_employees,
+                      format: formatNumber,
+                  },
+                  {
+                      icon: AlertTriangle,
+                      tone: 'warning' as const,
+                      label: isAreaManager
+                          ? 'Karyawan terlambat hari ini'
+                          : 'Stok di bawah minimum',
+                      value: isAreaManager
+                          ? kpi.late_attendance_today
+                          : kpi.low_stock_count,
+                      format: formatNumber,
+                  },
               ];
 
     const roleLabel = roleLabels[role] ?? 'Pengguna';
@@ -144,13 +245,17 @@ function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_ch
                                 <span className="sr-only">Pilih cabang</span>
                                 <select
                                     value={store_id ?? ''}
-                                    onChange={(event) => changeStore(event.target.value)}
+                                    onChange={(event) =>
+                                        changeStore(event.target.value)
+                                    }
                                     disabled={loading}
                                     className="h-10 rounded-lg border border-border bg-background px-3 text-sm"
                                 >
                                     <option value="">Semua cabang saya</option>
                                     {stores.map((store) => (
-                                        <option key={store.id} value={store.id}>{store.name}</option>
+                                        <option key={store.id} value={store.id}>
+                                            {store.name}
+                                        </option>
                                     ))}
                                 </select>
                             </label>
@@ -177,10 +282,15 @@ function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_ch
                                         <motion.span
                                             layoutId="period-pill"
                                             className="absolute inset-0 rounded-md bg-card shadow-soft"
-                                            transition={{ duration: 0.2, ease: 'easeOut' }}
+                                            transition={{
+                                                duration: 0.2,
+                                                ease: 'easeOut',
+                                            }}
                                         />
                                     )}
-                                    <span className="relative">{item.label}</span>
+                                    <span className="relative">
+                                        {item.label}
+                                    </span>
                                 </button>
                             ))}
                         </div>
@@ -215,14 +325,32 @@ function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_ch
                 ))}
             </section>
 
-            <div className={cn('mt-6 grid gap-4 lg:gap-6', hasSecondaryChart ? 'lg:grid-cols-3' : 'lg:grid-cols-1')}>
-                <Card className={hasSecondaryChart ? 'lg:col-span-2' : undefined}>
+            <div
+                className={cn(
+                    'mt-6 grid gap-4 lg:gap-6',
+                    hasSecondaryChart ? 'lg:grid-cols-3' : 'lg:grid-cols-1',
+                )}
+            >
+                <Card
+                    className={hasSecondaryChart ? 'lg:col-span-2' : undefined}
+                >
                     <CardHeader>
                         <div>
-                            <CardTitle>{isStaff ? 'Kehadiran harian' : 'Tren penjualan'}</CardTitle>
+                            <CardTitle>
+                                {isStaff
+                                    ? 'Kehadiran harian'
+                                    : 'Tren penjualan'}
+                            </CardTitle>
                             <CardDescription>
-                                {isStaff ? 'Ringkasan kehadiran dan keterlambatan.' : (
-                                    <>Total periode: <span className="font-mono tabular-nums">{formatCurrency(periodTotal)}</span></>
+                                {isStaff ? (
+                                    'Ringkasan kehadiran dan keterlambatan.'
+                                ) : (
+                                    <>
+                                        Total periode:{' '}
+                                        <span className="font-mono tabular-nums">
+                                            {formatCurrency(periodTotal)}
+                                        </span>
+                                    </>
                                 )}
                             </CardDescription>
                         </div>
@@ -232,7 +360,10 @@ function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_ch
                             <Skeleton className="h-72 w-full lg:h-80" />
                         ) : isStaff ? (
                             attendanceRows.length === 0 ? (
-                                <EmptyState title="Belum ada data kehadiran" description="Grafik akan tampil setelah data absensi tercatat." />
+                                <EmptyState
+                                    title="Belum ada data kehadiran"
+                                    description="Grafik akan tampil setelah data absensi tercatat."
+                                />
                             ) : (
                                 <AttendanceTrendChart data={attendanceRows} />
                             )
@@ -247,92 +378,158 @@ function Dashboard({ role, kpi, chart, attendance_chart, store_chart, payment_ch
                     </div>
                 </Card>
 
-                {hasSecondaryChart && <Card>
-                    <CardHeader>
-                        <div>
-                            <CardTitle>
-                                {isOwner || isAreaManager
-                                    ? 'Penjualan per cabang'
-                                    : isCashier
-                                      ? 'Transaksi per pembayaran'
-                                      : 'Kehadiran per hari'}
-                            </CardTitle>
-                            <CardDescription>
-                                {isOwner || isAreaManager ? 'Perbandingan pada periode terpilih.' : isCashier ? 'Distribusi metode pembayaran.' : 'Jumlah hadir dan terlambat.'}
-                            </CardDescription>
+                {hasSecondaryChart && (
+                    <Card>
+                        <CardHeader>
+                            <div>
+                                <CardTitle>
+                                    {isOwner || isAreaManager
+                                        ? 'Penjualan per cabang'
+                                        : isCashier
+                                          ? 'Transaksi per pembayaran'
+                                          : 'Kehadiran per hari'}
+                                </CardTitle>
+                                <CardDescription>
+                                    {isOwner || isAreaManager
+                                        ? 'Perbandingan pada periode terpilih.'
+                                        : isCashier
+                                          ? 'Distribusi metode pembayaran.'
+                                          : 'Jumlah hadir dan terlambat.'}
+                                </CardDescription>
+                            </div>
+                        </CardHeader>
+                        <div className="p-5 lg:p-6">
+                            {loading ? (
+                                <Skeleton className="h-72 w-full lg:h-80" />
+                            ) : isOwner || isAreaManager ? (
+                                storeRows.length === 0 ? (
+                                    <EmptyState title="Belum ada data cabang" />
+                                ) : (
+                                    <StoreSalesChart data={storeRows} />
+                                )
+                            ) : isCashier ? (
+                                paymentRows.length === 0 ? (
+                                    <EmptyState title="Belum ada transaksi" />
+                                ) : (
+                                    <DistributionChart data={paymentRows} />
+                                )
+                            ) : attendanceRows.length === 0 ? (
+                                <EmptyState title="Belum ada data kehadiran" />
+                            ) : (
+                                <AttendanceTrendChart data={attendanceRows} />
+                            )}
                         </div>
-                    </CardHeader>
-                    <div className="p-5 lg:p-6">
-                        {loading ? (
-                            <Skeleton className="h-72 w-full lg:h-80" />
-                        ) : isOwner || isAreaManager ? (
-                            storeRows.length === 0 ? (
-                                <EmptyState title="Belum ada data cabang" />
-                            ) : (
-                                <StoreSalesChart data={storeRows} />
-                            )
-                        ) : isCashier ? (
-                            paymentRows.length === 0 ? (
-                                <EmptyState title="Belum ada transaksi" />
-                            ) : (
-                                <DistributionChart data={paymentRows} />
-                            )
-                        ) : attendanceRows.length === 0 ? (
-                            <EmptyState title="Belum ada data kehadiran" />
-                        ) : (
-                            <AttendanceTrendChart data={attendanceRows} />
-                        )}
-                    </div>
-                </Card>}
+                    </Card>
+                )}
             </div>
 
-            {(isStaff ? attendanceRows.length > 0 : rows.length > 0) && !loading && (
-                <Card className="mt-6">
-                    <details className="group">
-                        <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-foreground focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:outline-none lg:px-6">
-                            Lihat data dalam bentuk tabel
-                        </summary>
-                        <div className="overflow-x-auto border-t border-border">
-                            <table className="w-full min-w-[28rem] text-sm">
-                                <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
-                                    <tr>
-                                        <th scope="col" className="h-11 px-5 font-medium lg:px-6">Tanggal</th>
-                                        {isStaff ? (
-                                            <>
-                                                <th scope="col" className="h-11 px-5 text-right font-medium">Hadir</th>
-                                                <th scope="col" className="h-11 px-5 text-right font-medium lg:px-6">Terlambat</th>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <th scope="col" className="h-11 px-5 text-right font-medium">Penjualan</th>
-                                                <th scope="col" className="h-11 px-5 text-right font-medium lg:px-6">Transaksi</th>
-                                            </>
-                                        )}
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
-                                    {(isStaff ? attendanceRows : rows).map((row) => (
-                                        <tr key={row.date} className="h-12 transition-colors hover:bg-muted/40">
-                                            <td className="px-5 whitespace-nowrap lg:px-6">{formatDateOnly(row.date)}</td>
+            {(isStaff ? attendanceRows.length > 0 : rows.length > 0) &&
+                !loading && (
+                    <Card className="mt-6">
+                        <details className="group">
+                            <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-foreground focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:outline-none lg:px-6">
+                                Lihat data dalam bentuk tabel
+                            </summary>
+                            <div className="overflow-x-auto border-t border-border">
+                                <table className="w-full min-w-[28rem] text-sm">
+                                    <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
+                                        <tr>
+                                            <th
+                                                scope="col"
+                                                className="h-11 px-5 font-medium lg:px-6"
+                                            >
+                                                Tanggal
+                                            </th>
                                             {isStaff ? (
                                                 <>
-                                                    <td className="px-5 text-right font-mono tabular-nums">{(row as AttendanceChartRow).present}</td>
-                                                    <td className="px-5 text-right font-mono tabular-nums lg:px-6">{(row as AttendanceChartRow).late}</td>
+                                                    <th
+                                                        scope="col"
+                                                        className="h-11 px-5 text-right font-medium"
+                                                    >
+                                                        Hadir
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="h-11 px-5 text-right font-medium lg:px-6"
+                                                    >
+                                                        Terlambat
+                                                    </th>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <td className="px-5 text-right font-mono whitespace-nowrap tabular-nums">{formatCurrency((row as ChartRow).sales)}</td>
-                                                    <td className="px-5 text-right font-mono tabular-nums lg:px-6">{formatNumber((row as ChartRow).transactions)}</td>
+                                                    <th
+                                                        scope="col"
+                                                        className="h-11 px-5 text-right font-medium"
+                                                    >
+                                                        Penjualan
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        className="h-11 px-5 text-right font-medium lg:px-6"
+                                                    >
+                                                        Transaksi
+                                                    </th>
                                                 </>
                                             )}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </details>
-                </Card>
-            )}
+                                    </thead>
+                                    <tbody className="divide-y divide-border">
+                                        {(isStaff ? attendanceRows : rows).map(
+                                            (row) => (
+                                                <tr
+                                                    key={row.date}
+                                                    className="h-12 transition-colors hover:bg-muted/40"
+                                                >
+                                                    <td className="px-5 whitespace-nowrap lg:px-6">
+                                                        {formatDateOnly(
+                                                            row.date,
+                                                        )}
+                                                    </td>
+                                                    {isStaff ? (
+                                                        <>
+                                                            <td className="px-5 text-right font-mono tabular-nums">
+                                                                {
+                                                                    (
+                                                                        row as AttendanceChartRow
+                                                                    ).present
+                                                                }
+                                                            </td>
+                                                            <td className="px-5 text-right font-mono tabular-nums lg:px-6">
+                                                                {
+                                                                    (
+                                                                        row as AttendanceChartRow
+                                                                    ).late
+                                                                }
+                                                            </td>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <td className="px-5 text-right font-mono whitespace-nowrap tabular-nums">
+                                                                {formatCurrency(
+                                                                    (
+                                                                        row as ChartRow
+                                                                    ).sales,
+                                                                )}
+                                                            </td>
+                                                            <td className="px-5 text-right font-mono tabular-nums lg:px-6">
+                                                                {formatNumber(
+                                                                    (
+                                                                        row as ChartRow
+                                                                    )
+                                                                        .transactions,
+                                                                )}
+                                                            </td>
+                                                        </>
+                                                    )}
+                                                </tr>
+                                            ),
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+                    </Card>
+                )}
         </>
     );
 }

@@ -57,13 +57,23 @@ export function Pagination({
                         const content =
                             kind === 'previous' ? (
                                 <>
-                                    <ChevronLeft className="size-4" aria-hidden="true" />
-                                    <span className="sr-only sm:not-sr-only">Sebelumnya</span>
+                                    <ChevronLeft
+                                        className="size-4"
+                                        aria-hidden="true"
+                                    />
+                                    <span className="sr-only sm:not-sr-only">
+                                        Sebelumnya
+                                    </span>
                                 </>
                             ) : kind === 'next' ? (
                                 <>
-                                    <span className="sr-only sm:not-sr-only">Berikutnya</span>
-                                    <ChevronRight className="size-4" aria-hidden="true" />
+                                    <span className="sr-only sm:not-sr-only">
+                                        Berikutnya
+                                    </span>
+                                    <ChevronRight
+                                        className="size-4"
+                                        aria-hidden="true"
+                                    />
                                 </>
                             ) : (
                                 link.label
@@ -75,7 +85,9 @@ export function Pagination({
                                     <Link
                                         href={link.url}
                                         preserveScroll
-                                        aria-current={link.active ? 'page' : undefined}
+                                        aria-current={
+                                            link.active ? 'page' : undefined
+                                        }
                                         className={cn(
                                             base,
                                             'focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:outline-none',
@@ -88,7 +100,10 @@ export function Pagination({
                                     </Link>
                                 ) : (
                                     <span
-                                        className={cn(base, 'cursor-not-allowed text-muted-foreground/50')}
+                                        className={cn(
+                                            base,
+                                            'cursor-not-allowed text-muted-foreground/50',
+                                        )}
                                     >
                                         {content}
                                     </span>

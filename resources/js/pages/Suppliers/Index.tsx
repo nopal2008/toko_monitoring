@@ -44,18 +44,43 @@ function SuppliersIndex({ suppliers }: { suppliers: Paginated<Supplier> }) {
                             <table className="w-full min-w-[40rem] text-sm">
                                 <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
-                                        <th scope="col" className="px-4 py-3 font-medium">Nama</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Kontak</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Status</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Nama
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Kontak
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Status
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Aksi
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {suppliers.data.map((supplier) => (
-                                        <tr key={supplier.id} className="transition-colors hover:bg-muted/40">
+                                        <tr
+                                            key={supplier.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3">
                                                 <Link
-                                                    href={SupplierController.show.url(supplier.id)}
+                                                    href={SupplierController.show.url(
+                                                        supplier.id,
+                                                    )}
                                                     className="font-medium text-brand-700 hover:underline dark:text-brand-300"
                                                 >
                                                     {supplier.name}
@@ -63,21 +88,31 @@ function SuppliersIndex({ suppliers }: { suppliers: Paginated<Supplier> }) {
                                             </td>
                                             <td className="px-4 py-3">
                                                 <p>{supplier.phone ?? '-'}</p>
-                                                <p className="text-xs text-muted-foreground">{supplier.email ?? '-'}</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {supplier.email ?? '-'}
+                                                </p>
                                             </td>
                                             <td className="px-4 py-3">
-                                                <StatusBadge active={supplier.is_active} />
+                                                <StatusBadge
+                                                    active={supplier.is_active}
+                                                />
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
                                                     <Link
-                                                        href={SupplierController.edit.url(supplier.id)}
-                                                        className={buttonClass('secondary')}
+                                                        href={SupplierController.edit.url(
+                                                            supplier.id,
+                                                        )}
+                                                        className={buttonClass(
+                                                            'secondary',
+                                                        )}
                                                     >
                                                         Ubah
                                                     </Link>
                                                     <DeleteAction
-                                                        url={SupplierController.destroy.url(supplier.id)}
+                                                        url={SupplierController.destroy.url(
+                                                            supplier.id,
+                                                        )}
                                                         itemName={supplier.name}
                                                     />
                                                 </div>

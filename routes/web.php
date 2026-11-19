@@ -15,8 +15,11 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\StockTransferController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SupplierController;
@@ -66,6 +69,8 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('stores.update');
         Route::delete('/stores/{store}', [StoreController::class, 'destroy'])
             ->middleware('throttle:write')->name('stores.destroy');
+        Route::post('/stores/{id}/restore', [StoreController::class, 'restore'])
+            ->middleware('throttle:write')->name('stores.restore');
     });
 
     Route::middleware('permission:product.view')->group(function (): void {
@@ -96,6 +101,8 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('categories.update');
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])
             ->middleware('throttle:write')->name('categories.destroy');
+        Route::post('/categories/{id}/restore', [CategoryController::class, 'restore'])
+            ->middleware('throttle:write')->name('categories.restore');
     });
 
     Route::middleware(['role:owner|admin', 'permission:product.manage'])->group(function (): void {
@@ -108,6 +115,8 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('suppliers.update');
         Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])
             ->middleware('throttle:write')->name('suppliers.destroy');
+        Route::post('/suppliers/{id}/restore', [SupplierController::class, 'restore'])
+            ->middleware('throttle:write')->name('suppliers.restore');
     });
 
     Route::middleware('permission:area.view')->group(function (): void {
@@ -192,7 +201,48 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('employees.update');
         Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])
             ->middleware('throttle:write')->name('employees.destroy');
+        Route::post('/employees/{id}/restore', [EmployeeController::class, 'restore'])
+            ->middleware('throttle:write')->name('employees.restore');
     });
+
+    Route::middleware(['role:owner|admin|area_manager', 'permission:product.manage'])->group(function (): void {
+        Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
+        Route::get('/promotions/create', [PromotionController::class, 'create'])->name('promotions.create');
+        Route::post('/promotions', [PromotionController::class, 'store'])
+            ->middleware('throttle:write')->name('promotions.store');
+        Route::get('/promotions/{promotion}/edit', [PromotionController::class, 'edit'])->name('promotions.edit');
+        Route::match(['put', 'patch'], '/promotions/{promotion}', [PromotionController::class, 'update'])
+            ->middleware('throttle:write')->name('promotions.update');
+        Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])
+            ->middleware('throttle:write')->name('promotions.destroy');
+    });
+
+    Route::middleware(['permission:purchase.view'])->group(function (): void {
+        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
+    });
+
+    Route::middleware(['permission:purchase.manage'])->group(function (): void {
+        Route::post('/purchases', [PurchaseController::class, 'store'])->middleware('throttle:write')->name('purchases.store');
+        Route::post('/purchases/{purchase}/receive', [PurchaseController::class, 'receive'])->middleware('throttle:write')->name('purchases.receive');
+        Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy'])->middleware('throttle:write')->name('purchases.destroy');
+    });
+    Route::get('/stock-opnames', [StockOpnameController::class, 'index'])
+        ->middleware('permission:inventory.adjust')
+        ->name('stock-opnames.index');
+    Route::get('/stock-opnames/create', [StockOpnameController::class, 'create'])
+        ->middleware('permission:inventory.adjust')
+        ->name('stock-opnames.create');
+    Route::post('/stock-opnames', [StockOpnameController::class, 'store'])
+        ->middleware(['permission:inventory.adjust', 'throttle:write'])
+        ->name('stock-opnames.store');
+    Route::get('/stock-opnames/{stockOpname}', [StockOpnameController::class, 'show'])
+        ->middleware('permission:inventory.adjust')
+        ->name('stock-opnames.show');
+    Route::post('/stock-opnames/{stockOpname}/post', [StockOpnameController::class, 'post'])
+        ->middleware(['permission:inventory.adjust', 'throttle:write'])
+        ->name('stock-opnames.post');
 
     Route::get('/inventories', [InventoryController::class, 'index'])
         ->middleware(['permission:inventory.view', 'store.access'])
@@ -226,6 +276,18 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
     Route::get('/pos', [PosController::class, 'index'])
         ->middleware(['permission:transaction.create', 'store.access'])
         ->name('pos.index');
+    Route::get('/pos/search', [PosController::class, 'search'])
+        ->middleware(['permission:transaction.create', 'throttle:notifications-poll'])
+        ->name('pos.search');
+    Route::post('/pos/quote', [PosController::class, 'quote'])
+        ->middleware(['permission:transaction.create', 'throttle:notifications-poll'])
+        ->name('pos.quote');
+    Route::post('/pos/holds', [PosController::class, 'storeHold'])
+        ->middleware(['permission:transaction.create', 'store.access', 'throttle:write'])
+        ->name('pos.holds.store');
+    Route::delete('/pos/holds/{hold}', [PosController::class, 'destroyHold'])
+        ->middleware(['permission:transaction.create', 'throttle:write'])
+        ->name('pos.holds.destroy');
 
     Route::get('/transactions', [TransactionController::class, 'index'])
         ->middleware(['permission:transaction.view', 'store.access'])
@@ -236,6 +298,9 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])
         ->middleware('permission:transaction.view')
         ->name('transactions.show');
+    Route::get('/transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])
+        ->middleware('permission:transaction.view')
+        ->name('transactions.receipt');
     Route::post('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])
         ->middleware(['permission:transaction.cancel', 'throttle:write'])
         ->name('transactions.cancel');

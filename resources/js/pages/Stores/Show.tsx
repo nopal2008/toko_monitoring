@@ -22,10 +22,16 @@ function StoresShow({ store }: { store: Store }) {
                 description={`Kode ${store.code}`}
                 actions={
                     <>
-                        <Link href={StoreController.index.url()} className={buttonClass('secondary')}>
+                        <Link
+                            href={StoreController.index.url()}
+                            className={buttonClass('secondary')}
+                        >
                             Kembali
                         </Link>
-                        <Link href={StoreController.edit.url(store.id)} className={buttonClass('primary')}>
+                        <Link
+                            href={StoreController.edit.url(store.id)}
+                            className={buttonClass('primary')}
+                        >
                             Ubah
                         </Link>
                         <DeleteAction
@@ -39,7 +45,10 @@ function StoresShow({ store }: { store: Store }) {
             <Card className="p-6">
                 <DescriptionList
                     items={[
-                        { label: 'Status', value: <StatusBadge active={store.is_active} /> },
+                        {
+                            label: 'Status',
+                            value: <StatusBadge active={store.is_active} />,
+                        },
                         { label: 'Kota', value: store.city },
                         { label: 'Telepon', value: store.phone },
                         { label: 'Alamat', value: store.address },
@@ -50,7 +59,10 @@ function StoresShow({ store }: { store: Store }) {
                                     ? `${trimTime(store.opening_time)} - ${trimTime(store.closing_time)}`
                                     : null,
                         },
-                        { label: 'Radius presensi', value: `${formatNumber(store.radius_meter)} meter` },
+                        {
+                            label: 'Radius presensi',
+                            value: `${formatNumber(store.radius_meter)} meter`,
+                        },
                         {
                             label: 'Koordinat',
                             value:
@@ -58,10 +70,22 @@ function StoresShow({ store }: { store: Store }) {
                                     ? `${store.latitude}, ${store.longitude}`
                                     : null,
                         },
-                        { label: 'Jumlah pengguna', value: formatNumber(store.users_count ?? 0) },
-                        { label: 'Jumlah produk', value: formatNumber(store.products_count ?? 0) },
-                        { label: 'Dibuat', value: formatDateTime(store.created_at) },
-                        { label: 'Diperbarui', value: formatDateTime(store.updated_at) },
+                        {
+                            label: 'Jumlah pengguna',
+                            value: formatNumber(store.users_count ?? 0),
+                        },
+                        {
+                            label: 'Jumlah produk',
+                            value: formatNumber(store.products_count ?? 0),
+                        },
+                        {
+                            label: 'Dibuat',
+                            value: formatDateTime(store.created_at),
+                        },
+                        {
+                            label: 'Diperbarui',
+                            value: formatDateTime(store.updated_at),
+                        },
                     ]}
                 />
             </Card>

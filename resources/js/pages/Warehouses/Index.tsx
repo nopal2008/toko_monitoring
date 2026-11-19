@@ -12,63 +12,62 @@ import {
 } from '@/components/ui';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
-import { formatNumber } from '@/lib/format';
 import type { Paginated, Warehouse } from '@/types/models';
-import { Archive, ArchiveRestore } from 'lucide-react';
 
 function WarehousesIndex({
     warehouses,
-    showingArchived = false,
+    showingArchived,
 }: {
     warehouses: Paginated<Warehouse>;
-    showingArchived?: boolean;
+    showingArchived: boolean;
 }) {
     const { can } = useAuth();
     const canManage = can('warehouse.manage');
 
-    const handleRestore = (warehouseId: number) => {
-        if (confirm('Pulihkan gudang ini dari arsip?')) {
-            router.post(WarehouseController.restore.url(warehouseId), {}, {
-                preserveScroll: true,
-            });
-        }
-    };
+    const createLink = canManage ? (
+        <Link
+            href={WarehouseController.create.url()}
+            className={buttonClass('primary')}
+        >
+            Tambah gudang
+        </Link>
+    ) : undefined;
 
     const toggleArchiveView = () => {
         router.get(
             WarehouseController.index.url(),
-            showingArchived ? {} : { archived: '1' },
-            { preserveState: true, preserveScroll: true }
+            { archived: showingArchived ? '0' : '1' },
+            { preserveState: true, preserveScroll: true },
         );
     };
 
-    const createLink = canManage ? (
-        <Link href={WarehouseController.create.url()} className={buttonClass('primary')}>
-            Tambah gudang
-        </Link>
-    ) : undefined;
+    const restoreWarehouse = (id: number, name: string) => {
+        if (
+            confirm(
+                `Apakah Anda yakin ingin memulihkan gudang "${name}" dari arsip?`,
+            )
+        ) {
+            router.post(WarehouseController.restore.url(id));
+        }
+    };
 
     return (
         <>
             <Head title="Gudang" />
             <PageHeader
                 title="Gudang"
-                description="Lokasi penyimpanan persediaan barang."
+                description="Kelola gudang pusat dan gudang cabang untuk penyimpanan produk."
                 actions={
                     <div className="flex gap-2">
                         {canManage && (
-                            <button onClick={toggleArchiveView} className={buttonClass('secondary')}>
-                                {showingArchived ? (
-                                    <>
-                                        <ArchiveRestore className="h-4 w-4" />
-                                        <span>Lihat Aktif</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Archive className="h-4 w-4" />
-                                        <span>Lihat Arsip</span>
-                                    </>
-                                )}
+                            <button
+                                type="button"
+                                onClick={toggleArchiveView}
+                                className={buttonClass('secondary')}
+                            >
+                                {showingArchived
+                                    ? 'Lihat Aktif'
+                                    : 'Lihat Arsip'}
                             </button>
                         )}
                         {createLink}
@@ -76,73 +75,162 @@ function WarehousesIndex({
                 }
             />
             <Card>
-                {showingArchived && (
-                    <div className="border-b border-border bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                        <Archive className="inline-block h-4 w-4 mr-2" />
-                        Menampilkan gudang yang diarsipkan
-                    </div>
-                )}
                 {warehouses.data.length === 0 ? (
                     <EmptyState
-                        title={showingArchived ? 'Belum ada gudang diarsipkan' : 'Belum ada gudang'}
+                        title={
+                            showingArchived
+                                ? 'Belum ada gudang diarsipkan'
+                                : 'Belum ada gudang'
+                        }
                         description={
                             showingArchived
-                                ? 'Gudang yang diarsipkan akan muncul di sini.'
+                                ? 'Gudang yang diarsipkan akan tampil di sini.'
                                 : canManage
-                                  ? 'Tambahkan gudang pusat atau gudang cabang.'
+                                  ? 'Tambahkan gudang untuk mengelola penyimpanan produk.'
                                   : 'Gudang akan tampil di sini setelah dibuat oleh pengelola.'
                         }
-                        action={!showingArchived ? createLink : undefined}
+                        action={showingArchived ? undefined : createLink}
                     />
                 ) : (
                     <>
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[44rem] text-sm">
+                            <table className="w-full min-w-[32rem] text-sm">
                                 <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
-                                        <th scope="col" className="px-4 py-3 font-medium">Gudang</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Kode</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Tipe</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Cabang</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Status</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Nama
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Kode
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Tipe
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Cabang
+                                        </th>
+                                        {!showingArchived && (
+                                            <th
+                                                scope="col"
+                                                className="px-4 py-3 font-medium"
+                                            >
+                                                Status
+                                            </th>
+                                        )}
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Aksi
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {warehouses.data.map((warehouse) => (
-                                        <tr key={warehouse.id} className="transition-colors hover:bg-muted/40">
-                                            <td className="px-4 py-3">
-                                                <Link href={WarehouseController.show.url(warehouse.id)} className="font-medium text-brand-700 hover:underline dark:text-brand-300">
-                                                    {warehouse.name}
-                                                </Link>
-                                            </td>
-                                            <td className="px-4 py-3">{warehouse.code}</td>
-                                            <td className="px-4 py-3 capitalize">{warehouse.type}</td>
-                                            <td className="px-4 py-3">{warehouse.store ? warehouse.store.name : '-'}</td>
+                                        <tr
+                                            key={warehouse.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3">
                                                 {showingArchived ? (
-                                                    <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                                                        Diarsipkan
+                                                    <span className="font-medium text-muted-foreground">
+                                                        {warehouse.name}
                                                     </span>
                                                 ) : (
-                                                    <StatusBadge active={warehouse.is_active} />
+                                                    <Link
+                                                        href={WarehouseController.show.url(
+                                                            warehouse.id,
+                                                        )}
+                                                        className="font-medium text-brand-700 hover:underline dark:text-brand-300"
+                                                    >
+                                                        {warehouse.name}
+                                                    </Link>
                                                 )}
                                             </td>
                                             <td className="px-4 py-3">
+                                                <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
+                                                    {warehouse.code}
+                                                </code>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <span
+                                                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                                        warehouse.type ===
+                                                        'central'
+                                                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                                                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                                    }`}
+                                                >
+                                                    {warehouse.type ===
+                                                    'central'
+                                                        ? 'Pusat'
+                                                        : 'Cabang'}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {warehouse.store?.name ?? '-'}
+                                            </td>
+                                            {!showingArchived && (
+                                                <td className="px-4 py-3">
+                                                    <StatusBadge
+                                                        active={
+                                                            warehouse.is_active
+                                                        }
+                                                    />
+                                                </td>
+                                            )}
+                                            <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    {canManage && showingArchived ? (
-                                                        <button onClick={() => handleRestore(warehouse.id)} className={buttonClass('secondary')}>
-                                                            <ArchiveRestore className="h-4 w-4" />
-                                                            Pulihkan
-                                                        </button>
-                                                    ) : canManage ? (
-                                                        <>
-                                                            <Link href={WarehouseController.edit.url(warehouse.id)} className={buttonClass('secondary')}>
-                                                                Ubah
-                                                            </Link>
-                                                            <DeleteAction url={WarehouseController.destroy.url(warehouse.id)} itemName={warehouse.name} />
-                                                        </>
-                                                    ) : null}
+                                                    {canManage &&
+                                                        (showingArchived ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    restoreWarehouse(
+                                                                        warehouse.id,
+                                                                        warehouse.name,
+                                                                    )
+                                                                }
+                                                                className={buttonClass(
+                                                                    'primary',
+                                                                )}
+                                                            >
+                                                                Pulihkan
+                                                            </button>
+                                                        ) : (
+                                                            <>
+                                                                <Link
+                                                                    href={WarehouseController.edit.url(
+                                                                        warehouse.id,
+                                                                    )}
+                                                                    className={buttonClass(
+                                                                        'secondary',
+                                                                    )}
+                                                                >
+                                                                    Ubah
+                                                                </Link>
+                                                                <DeleteAction
+                                                                    url={WarehouseController.destroy.url(
+                                                                        warehouse.id,
+                                                                    )}
+                                                                    itemName={
+                                                                        warehouse.name
+                                                                    }
+                                                                />
+                                                            </>
+                                                        ))}
                                                 </div>
                                             </td>
                                         </tr>

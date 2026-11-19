@@ -52,7 +52,7 @@ class Product extends Model
     public function stores(): BelongsToMany
     {
         return $this->belongsToMany(Store::class, 'product_store')
-            ->withPivot(['tenant_id', 'price', 'min_stock', 'is_available'])
+            ->withPivot(['tenant_id', 'price', 'wholesale_price', 'wholesale_min_qty', 'min_stock', 'is_available'])
             ->withTimestamps();
     }
 

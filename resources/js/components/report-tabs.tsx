@@ -1,5 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { BarChart3, CalendarCheck, CreditCard, Download, Warehouse } from 'lucide-react';
+import {
+    BarChart3,
+    CalendarCheck,
+    CreditCard,
+    Download,
+    Warehouse,
+} from 'lucide-react';
 import { buttonClass } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import {
@@ -20,10 +26,30 @@ export function ReportTabs({
     filters?: Record<string, string | number | boolean | null | undefined>;
 }) {
     const tabs = [
-        { id: 'sales' as const, label: 'Penjualan', href: reportsSales.url(), icon: BarChart3 },
-        { id: 'inventory' as const, label: 'Inventori', href: reportsInventory.url(), icon: Warehouse },
-        { id: 'attendance' as const, label: 'Absensi', href: reportsAttendance.url(), icon: CalendarCheck },
-        { id: 'expenses' as const, label: 'Pengeluaran', href: reportsExpenses.url(), icon: CreditCard },
+        {
+            id: 'sales' as const,
+            label: 'Penjualan',
+            href: reportsSales.url(),
+            icon: BarChart3,
+        },
+        {
+            id: 'inventory' as const,
+            label: 'Inventori',
+            href: reportsInventory.url(),
+            icon: Warehouse,
+        },
+        {
+            id: 'attendance' as const,
+            label: 'Absensi',
+            href: reportsAttendance.url(),
+            icon: CalendarCheck,
+        },
+        {
+            id: 'expenses' as const,
+            label: 'Pengeluaran',
+            href: reportsExpenses.url(),
+            icon: CreditCard,
+        },
     ];
 
     // Build URL download CSV untuk ekspor

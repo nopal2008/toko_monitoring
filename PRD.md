@@ -1,13 +1,14 @@
 ﻿# PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
 ## Store Monitoring System
 
-| Field | Nilai |
-|---|---|
-| Versi | 2.1 |
-| Tanggal | 12 November 2026 |
-| Product Owner | Product Team |
-| Tim Teknis | Backend (PHP 8.3 / Laravel 13.17), Frontend (React + Inertia 3) |
-| Status | Dalam pengembangan |
+| Field         | Nilai                                                           |
+| ------------- | --------------------------------------------------------------- |
+| Versi         | 2.1                                                             |
+| Tanggal       | 12 November 2026                                                |
+| Product Owner | Product Team                                                    |
+| Tim Teknis    | Backend (PHP 8.3 / Laravel 13.17), Frontend (React + Inertia 3) |
+| Status        | Dalam pengembangan                                              |
 
 > Dokumen ini memuat kebutuhan produk dan rancangan target. Tidak semua tabel atau alur yang direncanakan sudah tersedia di aplikasi. Status implementasi harus diverifikasi terhadap route, model, dan migrasi di repository.
 
@@ -30,19 +31,19 @@ Pemilik bisnis retail multi-cabang sulit memantau operasional harian secara real
 
 ### 2.1 Keputusan Inti: **Monolit Inertia 3, bukan API Terpisah**
 
-| Aspek | Keputusan | Alasan |
-|---|---|---|
-| **Pengiriman frontend** | Inertia.js 3 + React (TypeScript) | Tidak perlu maintain API terpisah; controller mengembalikan `Inertia::render()` |
-| **Routing** | Route web Laravel (`routes/web.php`) | Wayfinder menghasilkan helper TypeScript bertipe |
-| **Autentikasi web** | Sesi Laravel | Digunakan untuk UI Inertia |
-| **Autentikasi API** | Laravel Sanctum | Endpoint API tersedia di `/api/v1` |
-| **Otorisasi** | `spatie/laravel-permission ^8.5` + middleware/policy | RBAC dan pembatasan akses |
-| **Multi-tenancy** | **Global scope** pada `tenant_id` | Trait `BelongsToTenant` diterapkan ke semua model bisnis |
-| **Real-time** | **Polling** (Inertia partial reload) | Tidak ada paket broadcasting |
-| **Antrean** | Driver `database` (default) | `jobs`, `failed_jobs`, `job_batches` dipakai |
-| **Cache** | Driver `database` (default) | Query dashboard di-cache TTL 60 detik |
-| **Upload file** | `Storage::disk()` + kolom `string` path | Tidak ada `laravel-medialibrary` |
-| **Audit** | Tabel kustom opsional (lihat §10) | Tidak ada `spatie/laravel-activitylog` |
+| Aspek                   | Keputusan                                            | Alasan                                                                          |
+| ----------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| **Pengiriman frontend** | Inertia.js 3 + React (TypeScript)                    | Tidak perlu maintain API terpisah; controller mengembalikan `Inertia::render()` |
+| **Routing**             | Route web Laravel (`routes/web.php`)                 | Wayfinder menghasilkan helper TypeScript bertipe                                |
+| **Autentikasi web**     | Sesi Laravel                                         | Digunakan untuk UI Inertia                                                      |
+| **Autentikasi API**     | Laravel Sanctum                                      | Endpoint API tersedia di `/api/v1`                                              |
+| **Otorisasi**           | `spatie/laravel-permission ^8.5` + middleware/policy | RBAC dan pembatasan akses                                                       |
+| **Multi-tenancy**       | **Global scope** pada `tenant_id`                    | Trait `BelongsToTenant` diterapkan ke semua model bisnis                        |
+| **Real-time**           | **Polling** (Inertia partial reload)                 | Tidak ada paket broadcasting                                                    |
+| **Antrean**             | Driver `database` (default)                          | `jobs`, `failed_jobs`, `job_batches` dipakai                                    |
+| **Cache**               | Driver `database` (default)                          | Query dashboard di-cache TTL 60 detik                                           |
+| **Upload file**         | `Storage::disk()` + kolom `string` path              | Tidak ada `laravel-medialibrary`                                                |
+| **Audit**               | Tabel kustom opsional (lihat §10)                    | Tidak ada `spatie/laravel-activitylog`                                          |
 
 ### 2.2 Lingkungan & Perkakas
 
@@ -76,34 +77,34 @@ Browser merender ulang komponen halaman
 
 ## 3. Persona & Pembagian Akses Halaman
 
-| Peran | Kebutuhan Utama | Cakupan Data | Halaman yang Boleh Diakses |
-|---|---|---|---|
-| **Owner** | Konsolidasi semua cabang, profitabilitas, anomali | Semua cabang tenant | Dashboard semua cabang, laporan konsolidasi, pengaturan |
-| **Admin** | Kelola master data, user, konfigurasi | Semua cabang tenant | Master data, user, pengaturan, dashboard |
-| **Area Manager** | Monitoring & approval cabang yang ditugaskan | Cabang yang di-assign | Dashboard cabang terassign, approval transfer/pengeluaran |
-| **Store Manager** | Operasional harian satu cabang | Satu cabang | Dashboard cabang, inventory, transaksi, absensi, pengeluaran |
-| **Kasir / Staff** | Input transaksi cepat, absensi mandiri | Satu cabang, aksi terbatas | POS, absensi pribadi, riwayat transaksi sendiri |
-| **Super-Admin Platform** | Kelola tenant | `users.tenant_id = NULL` | Panel tenant (di luar cakupan MVP) |
+| Peran                    | Kebutuhan Utama                                   | Cakupan Data               | Halaman yang Boleh Diakses                                   |
+| ------------------------ | ------------------------------------------------- | -------------------------- | ------------------------------------------------------------ |
+| **Owner**                | Konsolidasi semua cabang, profitabilitas, anomali | Semua cabang tenant        | Dashboard semua cabang, laporan konsolidasi, pengaturan      |
+| **Admin**                | Kelola master data, user, konfigurasi             | Semua cabang tenant        | Master data, user, pengaturan, dashboard                     |
+| **Area Manager**         | Monitoring & approval cabang yang ditugaskan      | Cabang yang di-assign      | Dashboard cabang terassign, approval transfer/pengeluaran    |
+| **Store Manager**        | Operasional harian satu cabang                    | Satu cabang                | Dashboard cabang, inventory, transaksi, absensi, pengeluaran |
+| **Kasir / Staff**        | Input transaksi cepat, absensi mandiri            | Satu cabang, aksi terbatas | POS, absensi pribadi, riwayat transaksi sendiri              |
+| **Super-Admin Platform** | Kelola tenant                                     | `users.tenant_id = NULL`   | Panel tenant (di luar cakupan MVP)                           |
 
 ### 3.1 Pembagian Akses Halaman (Route-Level)
 
-| Route | Owner | Admin | Area Manager | Store Manager | Kasir/Staff |
-|---|---|---|---|---|---|
-| `/dashboard` (semua cabang) | ✅ | ✅ | ❌ | ❌ | ❌ |
-| `/dashboard?store=` (cabang terassign) | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/stores` (CRUD) | ✅ | ✅ | ❌ | ❌ | ❌ |
-| `/products` | ✅ | ✅ | view | view | ❌ |
-| `/inventories` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/inventories/transfer` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/transactions` (POS) | ✅ | ✅ | view | ✅ | ✅ |
-| `/transactions/{id}/cancel` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/employees` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/attendances` (semua) | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/attendances/check-in` (self) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `/expenses` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/expenses/{id}/approve` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `/reports/*` | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `/settings` | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Route                                  | Owner | Admin | Area Manager | Store Manager | Kasir/Staff |
+| -------------------------------------- | ----- | ----- | ------------ | ------------- | ----------- |
+| `/dashboard` (semua cabang)            | ✅    | ✅    | ❌           | ❌            | ❌          |
+| `/dashboard?store=` (cabang terassign) | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/stores` (CRUD)                       | ✅    | ✅    | ❌           | ❌            | ❌          |
+| `/products`                            | ✅    | ✅    | view         | view          | ❌          |
+| `/inventories`                         | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/inventories/transfer`                | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/transactions` (POS)                  | ✅    | ✅    | view         | ✅            | ✅          |
+| `/transactions/{id}/cancel`            | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/employees`                           | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/attendances` (semua)                 | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/attendances/check-in` (self)         | ✅    | ✅    | ✅           | ✅            | ✅          |
+| `/expenses`                            | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/expenses/{id}/approve`               | ✅    | ✅    | ✅           | ❌            | ❌          |
+| `/reports/*`                           | ✅    | ✅    | ✅           | ✅            | ❌          |
+| `/settings`                            | ✅    | ✅    | ❌           | ❌            | ❌          |
 
 > **Aturan penting:** Frontend hanya membantu menyembunyikan menu. Otorisasi harus tetap ditegakkan di backend melalui middleware dan policy.
 
@@ -141,14 +142,14 @@ Browser merender ulang komponen halaman
 
 ### 5.1 Autentikasi & Multi-Tenancy (P0)
 
-| Requirement | Detail |
-|---|---|
-| Login | Email + password, dilindungi rate limiter aplikasi |
-| Sesi | Driver sesi Laravel; tabel `sessions`; ID sesi diperbarui saat login |
-| Logout | Invalidasi sesi; redirect ke `/login` |
-| Middleware | `auth`, `tenant`, `EnsureStoreAccess`, `role:` / `permission:` |
-| Isolasi tenant | Global scope pada semua model bisnis memfilter `auth()->user()->tenant_id` |
-| Proteksi lintas tenant | User tenant A tidak bisa mengakses resource tenant B → 403 |
+| Requirement            | Detail                                                                     |
+| ---------------------- | -------------------------------------------------------------------------- |
+| Login                  | Email + password, dilindungi rate limiter aplikasi                         |
+| Sesi                   | Driver sesi Laravel; tabel `sessions`; ID sesi diperbarui saat login       |
+| Logout                 | Invalidasi sesi; redirect ke `/login`                                      |
+| Middleware             | `auth`, `tenant`, `EnsureStoreAccess`, `role:` / `permission:`             |
+| Isolasi tenant         | Global scope pada semua model bisnis memfilter `auth()->user()->tenant_id` |
+| Proteksi lintas tenant | User tenant A tidak bisa mengakses resource tenant B → 403                 |
 
 ### 5.2 Otorisasi (P0)
 
@@ -180,8 +181,8 @@ Browser merender ulang komponen halaman
 - Setiap mutasi menulis **baris immutable** ke `stock_movements` dengan `quantity_before` / `quantity_after`.
 - Penyesuaian wajib `reason` + permission `inventory.adjust`.
 - State machine transfer: `pending → approved → in_transit → completed` (atau `cancelled`).
-  - Stok keluar dari **asal** saat `in_transit`.
-  - Stok masuk ke **tujuan** saat `completed` memakai `received_quantity`.
+    - Stok keluar dari **asal** saat `in_transit`.
+    - Stok masuk ke **tujuan** saat `completed` memakai `received_quantity`.
 - Approval dibatasi untuk `owner | admin | area_manager`.
 
 ### 5.5 Penjualan (P0)
@@ -203,10 +204,10 @@ Browser merender ulang komponen halaman
 - CRUD karyawan; `user_id` opsional untuk akun login.
 - Jadwal kerja per hari (untuk hitung `late_minutes`).
 - Check-in/out:
-  - Tolak duplikat `(employee_id, date)` → 422.
-  - Validasi Haversine terhadap `stores.latitude/longitude` + `radius_meter` (jika dikonfigurasi).
-  - `late_minutes = max(0, check_in_at − scheduled_start)`.
-  - Status otomatis `late` jika `late_minutes > 0`.
+    - Tolak duplikat `(employee_id, date)` → 422.
+    - Validasi Haversine terhadap `stores.latitude/longitude` + `radius_meter` (jika dikonfigurasi).
+    - `late_minutes = max(0, check_in_at − scheduled_start)`.
+    - Status otomatis `late` jika `late_minutes > 0`.
 
 ### 5.8 Pengeluaran (P0)
 
@@ -297,22 +298,22 @@ pending ──approve──> approved ──ship──> in_transit ──complet
 
 ## 7. Kebutuhan Non-Fungsional (Fokus Backend)
 
-| Aspek | Target |
-|---|---|
-| **Kinerja query** | Eager loading wajib (`with()`); larang N+1; `Model::preventLazyLoading(!app()->isProduction())` |
-| **Pagination** | Semua daftar memakai pagination; dataset besar pakai `cursorPaginate()` |
-| **Index database** | FK index, composite index `(tenant_id, store_id, created_at)`, index unik `(tenant_id, invoice_number)` |
-| **Waktu respons** | TTFB Inertia < 400 ms p95; render dashboard < 2 detik |
-| **Polling** | `/notifications/poll` < 50 ms p95, cache 15 detik |
-| **Ketersediaan** | 99,5% per bulan |
-| **Skala** | 100 tenant, 500 cabang, 1 juta transaksi/bulan |
-| **Keamanan** | Praktik OWASP; password di-hash; perlindungan CSRF dan rate limit pada login/endpoint tulis |
-| **Isolasi tenant** | Global scope + Policy; diuji di CI |
-| **Audit** | Tabel `activity_log` kustom opsional (§10) |
-| **Backup** | Harian, RPO 24 jam / RTO 4 jam |
-| **Observability** | Log terstruktur (`laravel/pail` lokal), Sentry (produksi), monitoring antrean |
-| **Type safety** | Wayfinder route helper, Larastan level 6+, Pest feature test |
-| **Dukungan browser** | Chrome/Edge/Safari 2 versi terakhir; responsif ≥ 360 px |
+| Aspek                | Target                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Kinerja query**    | Eager loading wajib (`with()`); larang N+1; `Model::preventLazyLoading(!app()->isProduction())`         |
+| **Pagination**       | Semua daftar memakai pagination; dataset besar pakai `cursorPaginate()`                                 |
+| **Index database**   | FK index, composite index `(tenant_id, store_id, created_at)`, index unik `(tenant_id, invoice_number)` |
+| **Waktu respons**    | TTFB Inertia < 400 ms p95; render dashboard < 2 detik                                                   |
+| **Polling**          | `/notifications/poll` < 50 ms p95, cache 15 detik                                                       |
+| **Ketersediaan**     | 99,5% per bulan                                                                                         |
+| **Skala**            | 100 tenant, 500 cabang, 1 juta transaksi/bulan                                                          |
+| **Keamanan**         | Praktik OWASP; password di-hash; perlindungan CSRF dan rate limit pada login/endpoint tulis             |
+| **Isolasi tenant**   | Global scope + Policy; diuji di CI                                                                      |
+| **Audit**            | Tabel `activity_log` kustom opsional (§10)                                                              |
+| **Backup**           | Harian, RPO 24 jam / RTO 4 jam                                                                          |
+| **Observability**    | Log terstruktur (`laravel/pail` lokal), Sentry (produksi), monitoring antrean                           |
+| **Type safety**      | Wayfinder route helper, Larastan level 6+, Pest feature test                                            |
+| **Dukungan browser** | Chrome/Edge/Safari 2 versi terakhir; responsif ≥ 360 px                                                 |
 
 ---
 
@@ -433,22 +434,24 @@ Isi melalui trait `LogsActivity` pada model (`created`, `updated`, `deleted` →
 ## 11. Peta Paket (Terpasang vs. Perlu Ditambah Nanti)
 
 ### Terpasang (dari `composer.json`)
-| Paket | Peran |
-|---|---|
-| `inertiajs/inertia-laravel` | Adaptor Inertia |
-| `laravel/framework` | Inti |
-| `laravel/wayfinder` | Generasi route TypeScript |
-| `spatie/laravel-permission` | RBAC |
-| `laravel/sanctum` | Autentikasi token API |
-| `laravel/boost` | Guideline AI agent |
+
+| Paket                       | Peran                     |
+| --------------------------- | ------------------------- |
+| `inertiajs/inertia-laravel` | Adaptor Inertia           |
+| `laravel/framework`         | Inti                      |
+| `laravel/wayfinder`         | Generasi route TypeScript |
+| `spatie/laravel-permission` | RBAC                      |
+| `laravel/sanctum`           | Autentikasi token API     |
+| `laravel/boost`             | Guideline AI agent        |
 
 ### Rekomendasi Tambahan (di luar MVP kecuali dipasang)
-| Kebutuhan | Paket |
-|---|---|
-| Audit log (jika wajib) | `spatie/laravel-activitylog` |
-| Ekspor XLSX | `maatwebsite/excel` |
-| Ekspor PDF | `barryvdh/laravel-dompdf` |
-| Media handling | `spatie/laravel-medialibrary` |
+
+| Kebutuhan               | Paket                          |
+| ----------------------- | ------------------------------ |
+| Audit log (jika wajib)  | `spatie/laravel-activitylog`   |
+| Ekspor XLSX             | `maatwebsite/excel`            |
+| Ekspor PDF              | `barryvdh/laravel-dompdf`      |
+| Media handling          | `spatie/laravel-medialibrary`  |
 | Push real-time (fase 2) | `laravel/reverb` + Echo client |
 
 Jika paket tidak terpasang, implementasikan fallback minimal (CSV, tabel audit manual, polling).
@@ -457,56 +460,56 @@ Jika paket tidak terpasang, implementasikan fallback minimal (CSV, tabel audit m
 
 ## 12. Kriteria Penerimaan (Sampel)
 
-| ID | Skenario | Ekspektasi |
-|---|---|---|
-| AC-01 | Login password salah | 422, tetap di `/login`, error tampil via prop `errors` Inertia |
-| AC-02 | User tenant A akses toko tenant B | 403 (Policy), tidak ada kebocoran data |
-| AC-03 | Transaksi POS stok kurang | 422, **tidak ada** baris `transactions`/`transaction_items` yang tersimpan |
-| AC-04 | Stok melewati ambang minimum | Baris `notifications` muncul ≤ 30 detik, tidak duplikat dalam 24 jam |
-| AC-05 | Check-in ganda di hari sama | 422; baris `attendances` lama tidak berubah |
-| AC-06 | Transfer `approved → in_transit` | `inventories.quantity` asal berkurang; baris `stock_movements` tertulis |
-| AC-07 | Ganti filter dashboard | **Partial reload** Inertia — hanya prop `chart` yang diambil ulang |
-| AC-08 | Polling `/notifications/poll` setelah alert baru | Unread count bertambah dalam 30 detik |
-| AC-09 | Batalkan transaksi selesai | Stok pulih; baris `stock_movements.type='return'` masuk |
-| AC-10 | Tutup shift kasir dengan selisih | `cash_difference` terhitung; tampil di riwayat shift |
+| ID    | Skenario                                         | Ekspektasi                                                                 |
+| ----- | ------------------------------------------------ | -------------------------------------------------------------------------- |
+| AC-01 | Login password salah                             | 422, tetap di `/login`, error tampil via prop `errors` Inertia             |
+| AC-02 | User tenant A akses toko tenant B                | 403 (Policy), tidak ada kebocoran data                                     |
+| AC-03 | Transaksi POS stok kurang                        | 422, **tidak ada** baris `transactions`/`transaction_items` yang tersimpan |
+| AC-04 | Stok melewati ambang minimum                     | Baris `notifications` muncul ≤ 30 detik, tidak duplikat dalam 24 jam       |
+| AC-05 | Check-in ganda di hari sama                      | 422; baris `attendances` lama tidak berubah                                |
+| AC-06 | Transfer `approved → in_transit`                 | `inventories.quantity` asal berkurang; baris `stock_movements` tertulis    |
+| AC-07 | Ganti filter dashboard                           | **Partial reload** Inertia — hanya prop `chart` yang diambil ulang         |
+| AC-08 | Polling `/notifications/poll` setelah alert baru | Unread count bertambah dalam 30 detik                                      |
+| AC-09 | Batalkan transaksi selesai                       | Stok pulih; baris `stock_movements.type='return'` masuk                    |
+| AC-10 | Tutup shift kasir dengan selisih                 | `cash_difference` terhitung; tampil di riwayat shift                       |
 
 ---
 
 ## 13. Risiko & Mitigasi
 
-| Risiko | Dampak | Mitigasi |
-|---|---|---|
-| Race condition stok saat transaksi bersamaan | Oversell | `SELECT ... FOR UPDATE` dalam `DB::transaction` + Pest concurrency test |
-| Kebocoran data antar tenant | Kritis | `BelongsToTenant` di base model + CI test yang gagal jika model bisnis tanpa trait |
-| Polling membebani DB | Lonjakan beban | Cache respons poll 15 detik; kembalikan hanya `unread_count` + 5 terbaru |
-| Dashboard lambat pada data besar | UX buruk | Pra-agregasi `daily_store_summaries` + cache 60 detik |
-| Tidak ada push real-time | Ekspektasi UX | Batasan terdokumentasi; polling cukup untuk MVP; Reverb dijadwalkan fase 2 |
-| Session storage sebagai bottleneck | Scaling | Driver sesi `database` (default); pindah ke Redis saat scaling horizontal |
+| Risiko                                       | Dampak         | Mitigasi                                                                           |
+| -------------------------------------------- | -------------- | ---------------------------------------------------------------------------------- |
+| Race condition stok saat transaksi bersamaan | Oversell       | `SELECT ... FOR UPDATE` dalam `DB::transaction` + Pest concurrency test            |
+| Kebocoran data antar tenant                  | Kritis         | `BelongsToTenant` di base model + CI test yang gagal jika model bisnis tanpa trait |
+| Polling membebani DB                         | Lonjakan beban | Cache respons poll 15 detik; kembalikan hanya `unread_count` + 5 terbaru           |
+| Dashboard lambat pada data besar             | UX buruk       | Pra-agregasi `daily_store_summaries` + cache 60 detik                              |
+| Tidak ada push real-time                     | Ekspektasi UX  | Batasan terdokumentasi; polling cukup untuk MVP; Reverb dijadwalkan fase 2         |
+| Session storage sebagai bottleneck           | Scaling        | Driver sesi `database` (default); pindah ke Redis saat scaling horizontal          |
 
 ---
 
 ## 14. Roadmap
 
-| Fase | Durasi | Deliverable |
-|---|---|---|
-| **Fase 1** | 3 minggu | Auth + tenant + RBAC; master data; cabang & user |
-| **Fase 2** | 4 minggu | Inventory (stok, movement, transfer); POS; shift kasir |
-| **Fase 3** | 3 minggu | Dashboard (KPI, grafik, cache); notifikasi low-stock; polling bell |
-| **Fase 4** | 3 minggu | Absensi + pengeluaran + laporan; audit log; hardening; UAT |
-| **Fase 5** (pasca-MVP) | 2 minggu | Reverb real-time; PWA mobile; UI pengadaan |
+| Fase                   | Durasi   | Deliverable                                                        |
+| ---------------------- | -------- | ------------------------------------------------------------------ |
+| **Fase 1**             | 3 minggu | Auth + tenant + RBAC; master data; cabang & user                   |
+| **Fase 2**             | 4 minggu | Inventory (stok, movement, transfer); POS; shift kasir             |
+| **Fase 3**             | 3 minggu | Dashboard (KPI, grafik, cache); notifikasi low-stock; polling bell |
+| **Fase 4**             | 3 minggu | Absensi + pengeluaran + laporan; audit log; hardening; UAT         |
+| **Fase 5** (pasca-MVP) | 2 minggu | Reverb real-time; PWA mobile; UI pengadaan                         |
 
 ---
 
 ## 15. Glosarium
 
-| Istilah | Definisi |
-|---|---|
-| Tenant | Satu entitas bisnis (perusahaan) pengguna sistem |
-| Cabang (Store) | Unit operasional di bawah tenant |
-| Ledger | Tabel `stock_movements` immutable — sumber kebenaran histori stok |
-| Snapshot | Nilai field yang dibekukan (nama, harga, HPP) disalin ke `transaction_items` |
-| Shift | Jendela buka/tutup kasir untuk rekonsiliasi kas |
-| Min Stock | Ambang batas bawah stok per produk per cabang |
-| Partial Reload | Fitur Inertia untuk menyegarkan prop tertentu tanpa kunjungan halaman penuh |
-| Wayfinder | Paket yang menghasilkan helper route TypeScript bertipe dari route Laravel |
-| Boost | Paket guideline AI agent agar kode sesuai best practice Laravel 13 |
+| Istilah        | Definisi                                                                     |
+| -------------- | ---------------------------------------------------------------------------- |
+| Tenant         | Satu entitas bisnis (perusahaan) pengguna sistem                             |
+| Cabang (Store) | Unit operasional di bawah tenant                                             |
+| Ledger         | Tabel `stock_movements` immutable — sumber kebenaran histori stok            |
+| Snapshot       | Nilai field yang dibekukan (nama, harga, HPP) disalin ke `transaction_items` |
+| Shift          | Jendela buka/tutup kasir untuk rekonsiliasi kas                              |
+| Min Stock      | Ambang batas bawah stok per produk per cabang                                |
+| Partial Reload | Fitur Inertia untuk menyegarkan prop tertentu tanpa kunjungan halaman penuh  |
+| Wayfinder      | Paket yang menghasilkan helper route TypeScript bertipe dari route Laravel   |
+| Boost          | Paket guideline AI agent agar kode sesuai best practice Laravel 13           |

@@ -17,7 +17,12 @@ import { BrandLogo } from '@/components/brand-logo';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button, buttonClass } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Dialog, DialogDescription, DialogTitle, SheetContent } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogDescription,
+    DialogTitle,
+    SheetContent,
+} from '@/components/ui/dialog';
 import { dashboard, login } from '@/routes';
 
 const features: { icon: LucideIcon; title: string; text: string }[] = [
@@ -103,7 +108,10 @@ function DashboardIllustration() {
                 <div className="space-y-4 p-4 sm:p-6">
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                         {[0, 1, 2, 3].map((item) => (
-                            <div key={item} className="rounded-xl border border-border p-3">
+                            <div
+                                key={item}
+                                className="rounded-xl border border-border p-3"
+                            >
                                 <div className="size-6 rounded-full bg-brand-100 dark:bg-brand-900/60" />
                                 <div className="mt-3 h-2 w-12 rounded bg-muted" />
                                 <div className="mt-2 h-4 w-16 rounded bg-foreground/15" />
@@ -112,11 +120,30 @@ function DashboardIllustration() {
                     </div>
                     <div className="rounded-xl border border-border p-4">
                         <div className="h-2 w-24 rounded bg-muted" />
-                        <svg viewBox="0 0 400 120" className="mt-4 h-28 w-full" fill="none" preserveAspectRatio="none">
+                        <svg
+                            viewBox="0 0 400 120"
+                            className="mt-4 h-28 w-full"
+                            fill="none"
+                            preserveAspectRatio="none"
+                        >
                             <defs>
-                                <linearGradient id="illustration-fill" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="hsl(var(--brand-500))" stopOpacity="0.3" />
-                                    <stop offset="100%" stopColor="hsl(var(--brand-500))" stopOpacity="0" />
+                                <linearGradient
+                                    id="illustration-fill"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+                                    <stop
+                                        offset="0%"
+                                        stopColor="hsl(var(--brand-500))"
+                                        stopOpacity="0.3"
+                                    />
+                                    <stop
+                                        offset="100%"
+                                        stopColor="hsl(var(--brand-500))"
+                                        stopOpacity="0"
+                                    />
                                 </linearGradient>
                             </defs>
                             <path
@@ -153,7 +180,10 @@ export default function Welcome() {
                     <Link href="/" aria-label={`${name} - beranda`}>
                         <BrandLogo name={name} />
                     </Link>
-                    <nav aria-label="Menu utama" className="hidden gap-8 md:flex">
+                    <nav
+                        aria-label="Menu utama"
+                        className="hidden gap-8 md:flex"
+                    >
                         {navLinks.map((link) => (
                             <a
                                 key={link.href}
@@ -166,7 +196,13 @@ export default function Welcome() {
                     </nav>
                     <div className="flex items-center gap-2">
                         <ThemeToggle />
-                        <Link href={entry} className={buttonClass('primary', 'hidden h-9 px-3 md:inline-flex')}>
+                        <Link
+                            href={entry}
+                            className={buttonClass(
+                                'primary',
+                                'hidden h-9 px-3 md:inline-flex',
+                            )}
+                        >
                             {entryLabel}
                         </Link>
                         <Button
@@ -185,8 +221,13 @@ export default function Welcome() {
             <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
                 <SheetContent className="p-6">
                     <DialogTitle className="sr-only">Menu</DialogTitle>
-                    <DialogDescription className="sr-only">Navigasi halaman utama</DialogDescription>
-                    <nav aria-label="Menu seluler" className="mt-10 flex flex-col gap-1">
+                    <DialogDescription className="sr-only">
+                        Navigasi halaman utama
+                    </DialogDescription>
+                    <nav
+                        aria-label="Menu seluler"
+                        className="mt-10 flex flex-col gap-1"
+                    >
                         {navLinks.map((link) => (
                             <a
                                 key={link.href}
@@ -197,7 +238,10 @@ export default function Welcome() {
                                 {link.label}
                             </a>
                         ))}
-                        <Link href={entry} className={buttonClass('primary', 'mt-4 h-11')}>
+                        <Link
+                            href={entry}
+                            className={buttonClass('primary', 'mt-4 h-11')}
+                        >
                             {entryLabel}
                         </Link>
                     </nav>
@@ -206,8 +250,14 @@ export default function Welcome() {
 
             <main>
                 <section className="relative overflow-hidden">
-                    <div className="bg-grid absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" aria-hidden="true" />
-                    <div className="absolute top-0 left-1/2 -z-0 size-[40rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-300/30 blur-3xl dark:bg-brand-900/40" aria-hidden="true" />
+                    <div
+                        className="absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)] opacity-40"
+                        aria-hidden="true"
+                    />
+                    <div
+                        className="absolute top-0 left-1/2 -z-0 size-[40rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-300/30 blur-3xl dark:bg-brand-900/40"
+                        aria-hidden="true"
+                    />
 
                     <div className="relative mx-auto max-w-6xl px-4 pt-16 pb-20 md:px-6 md:pt-24">
                         <div className="mx-auto max-w-4xl text-center">
@@ -217,14 +267,21 @@ export default function Welcome() {
                                 transition={{ duration: 0.4, ease: 'easeOut' }}
                             >
                                 <span className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                                    <Building2 className="size-3.5" aria-hidden="true" />
+                                    <Building2
+                                        className="size-3.5"
+                                        aria-hidden="true"
+                                    />
                                     Store Monitoring untuk bisnis multi-cabang
                                 </span>
                             </motion.div>
                             <motion.h1
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: 0.08, ease: 'easeOut' }}
+                                transition={{
+                                    duration: 0.4,
+                                    delay: 0.08,
+                                    ease: 'easeOut',
+                                }}
                                 className="mt-6 text-5xl leading-[1.05] font-semibold tracking-tight text-foreground md:text-6xl lg:text-7xl"
                             >
                                 Pantau seluruh cabang bisnis Anda dari{' '}
@@ -235,22 +292,43 @@ export default function Welcome() {
                             <motion.p
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: 0.16, ease: 'easeOut' }}
+                                transition={{
+                                    duration: 0.4,
+                                    delay: 0.16,
+                                    ease: 'easeOut',
+                                }}
                                 className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground"
                             >
-                                Penjualan, stok, absensi, dan pengeluaran — tanpa spreadsheet, tanpa drama.
+                                Penjualan, stok, absensi, dan pengeluaran —
+                                tanpa spreadsheet, tanpa drama.
                             </motion.p>
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: 0.24, ease: 'easeOut' }}
+                                transition={{
+                                    duration: 0.4,
+                                    delay: 0.24,
+                                    ease: 'easeOut',
+                                }}
                                 className="mt-9 flex flex-wrap items-center justify-center gap-3"
                             >
-                                <Link href={entry} className={buttonClass('primary', 'h-12 px-6 text-base')}>
+                                <Link
+                                    href={entry}
+                                    className={buttonClass(
+                                        'primary',
+                                        'h-12 px-6 text-base',
+                                    )}
+                                >
                                     {entryLabel}
                                     <ArrowRight aria-hidden="true" />
                                 </Link>
-                                <a href="#fitur" className={buttonClass('secondary', 'h-12 px-6 text-base')}>
+                                <a
+                                    href="#fitur"
+                                    className={buttonClass(
+                                        'secondary',
+                                        'h-12 px-6 text-base',
+                                    )}
+                                >
                                     Lihat fitur
                                 </a>
                             </motion.div>
@@ -259,7 +337,11 @@ export default function Welcome() {
                         <motion.div
                             initial={{ opacity: 0, y: 32 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.32, ease: 'easeOut' }}
+                            transition={{
+                                duration: 0.5,
+                                delay: 0.32,
+                                ease: 'easeOut',
+                            }}
                             className="relative mx-auto mt-16 max-w-4xl"
                         >
                             <DashboardIllustration />
@@ -277,13 +359,17 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                <section id="fitur" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 md:px-6">
+                <section
+                    id="fitur"
+                    className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 md:px-6"
+                >
                     <div className="mx-auto max-w-2xl text-center">
                         <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
                             Semua yang dibutuhkan operasional toko
                         </h2>
                         <p className="mt-3 text-muted-foreground">
-                            Dari kasir sampai laporan, tersedia dalam satu sistem yang rapi.
+                            Dari kasir sampai laporan, tersedia dalam satu
+                            sistem yang rapi.
                         </p>
                     </div>
                     <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -293,24 +379,42 @@ export default function Welcome() {
                                 initial={{ opacity: 0, y: 16 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: '-40px' }}
-                                transition={{ duration: 0.3, delay: index * 0.05, ease: 'easeOut' }}
+                                transition={{
+                                    duration: 0.3,
+                                    delay: index * 0.05,
+                                    ease: 'easeOut',
+                                }}
                             >
                                 <Card interactive className="h-full p-6">
                                     <div className="flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300">
-                                        <feature.icon className="size-5" aria-hidden="true" />
+                                        <feature.icon
+                                            className="size-5"
+                                            aria-hidden="true"
+                                        />
                                     </div>
-                                    <h3 className="mt-4 text-base font-semibold text-foreground">{feature.title}</h3>
-                                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{feature.text}</p>
+                                    <h3 className="mt-4 text-base font-semibold text-foreground">
+                                        {feature.title}
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                                        {feature.text}
+                                    </p>
                                 </Card>
                             </motion.div>
                         ))}
                     </div>
                 </section>
 
-                <section id="cara-kerja" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-20 md:px-6">
+                <section
+                    id="cara-kerja"
+                    className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-20 md:px-6"
+                >
                     <div className="mx-auto max-w-2xl text-center">
-                        <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">Cara kerja</h2>
-                        <p className="mt-3 text-muted-foreground">Tiga langkah untuk mulai memantau.</p>
+                        <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+                            Cara kerja
+                        </h2>
+                        <p className="mt-3 text-muted-foreground">
+                            Tiga langkah untuk mulai memantau.
+                        </p>
                     </div>
                     <ol className="relative mt-12 grid gap-10 md:grid-cols-3 md:gap-6">
                         <div
@@ -318,7 +422,10 @@ export default function Welcome() {
                             aria-hidden="true"
                         />
                         {steps.map((step, index) => (
-                            <li key={step.title} className="relative text-center">
+                            <li
+                                key={step.title}
+                                className="relative text-center"
+                            >
                                 <span
                                     className="pointer-events-none absolute -top-4 left-1/2 -translate-x-1/2 font-mono text-6xl font-semibold text-brand-500/20 select-none"
                                     aria-hidden="true"
@@ -326,9 +433,14 @@ export default function Welcome() {
                                     {index + 1}
                                 </span>
                                 <div className="relative mx-auto flex size-16 items-center justify-center rounded-2xl border border-border bg-card text-brand-700 shadow-soft dark:text-brand-300">
-                                    <step.icon className="size-6" aria-hidden="true" />
+                                    <step.icon
+                                        className="size-6"
+                                        aria-hidden="true"
+                                    />
                                 </div>
-                                <h3 className="mt-5 text-base font-semibold text-foreground">{step.title}</h3>
+                                <h3 className="mt-5 text-base font-semibold text-foreground">
+                                    {step.title}
+                                </h3>
                                 <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
                                     {step.text}
                                 </p>
@@ -339,7 +451,10 @@ export default function Welcome() {
 
                 <section className="mx-auto max-w-6xl px-4 pb-20 md:px-6">
                     <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-brand-600 to-brand-800 px-6 py-16 text-center text-white md:py-20">
-                        <div className="bg-grid absolute inset-0 opacity-20" aria-hidden="true" />
+                        <div
+                            className="absolute inset-0 bg-grid opacity-20"
+                            aria-hidden="true"
+                        />
                         <div className="relative">
                             <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
                                 Siap memantau semua cabang Anda?
@@ -352,7 +467,10 @@ export default function Welcome() {
                                 className="mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-white px-6 text-base font-medium text-brand-800 transition-all duration-150 hover:bg-white/90 focus-visible:ring-4 focus-visible:ring-white/40 focus-visible:outline-none active:scale-[0.98]"
                             >
                                 {entryLabel}
-                                <ArrowRight className="size-4" aria-hidden="true" />
+                                <ArrowRight
+                                    className="size-4"
+                                    aria-hidden="true"
+                                />
                             </Link>
                         </div>
                     </div>
@@ -364,16 +482,27 @@ export default function Welcome() {
                     <div>
                         <BrandLogo name={name} />
                         <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-                            Sistem pemantauan operasional untuk bisnis retail multi-cabang.
+                            Sistem pemantauan operasional untuk bisnis retail
+                            multi-cabang.
                         </p>
                     </div>
-                    <nav aria-label="Tautan footer" className="flex gap-6 text-sm text-muted-foreground">
+                    <nav
+                        aria-label="Tautan footer"
+                        className="flex gap-6 text-sm text-muted-foreground"
+                    >
                         {navLinks.map((link) => (
-                            <a key={link.href} href={link.href} className="transition-colors hover:text-foreground">
+                            <a
+                                key={link.href}
+                                href={link.href}
+                                className="transition-colors hover:text-foreground"
+                            >
                                 {link.label}
                             </a>
                         ))}
-                        <Link href={entry} className="transition-colors hover:text-foreground">
+                        <Link
+                            href={entry}
+                            className="transition-colors hover:text-foreground"
+                        >
                             {entryLabel}
                         </Link>
                     </nav>

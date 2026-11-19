@@ -34,7 +34,7 @@ function EmployeesForm({ employee }: Props) {
     const stores = auth?.stores ?? [];
 
     const form = useForm<EmployeeFormData>({
-        store_id: employee?.store_id ?? (stores[0]?.id ?? ''),
+        store_id: employee?.store_id ?? stores[0]?.id ?? '',
         employee_code: employee?.employee_code ?? '',
         name: employee?.name ?? '',
         phone: employee?.phone ?? '',
@@ -85,7 +85,10 @@ function EmployeesForm({ employee }: Props) {
                         required
                         value={form.data.store_id}
                         onChange={(e) =>
-                            form.setData('store_id', Number(e.target.value) || '')
+                            form.setData(
+                                'store_id',
+                                Number(e.target.value) || '',
+                            )
                         }
                         error={form.errors.store_id}
                     >
@@ -104,7 +107,9 @@ function EmployeesForm({ employee }: Props) {
                             required
                             placeholder="Contoh: EMP-001"
                             value={form.data.employee_code}
-                            onChange={(e) => form.setData('employee_code', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('employee_code', e.target.value)
+                            }
                             error={form.errors.employee_code}
                         />
 
@@ -114,7 +119,9 @@ function EmployeesForm({ employee }: Props) {
                             required
                             placeholder="Nama karyawan"
                             value={form.data.name}
-                            onChange={(e) => form.setData('name', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('name', e.target.value)
+                            }
                             error={form.errors.name}
                         />
                     </div>
@@ -125,7 +132,9 @@ function EmployeesForm({ employee }: Props) {
                             label="Jabatan / Posisi"
                             placeholder="Contoh: Kasir, Staf Gudang, Supervisor"
                             value={form.data.position}
-                            onChange={(e) => form.setData('position', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('position', e.target.value)
+                            }
                             error={form.errors.position}
                         />
 
@@ -135,7 +144,9 @@ function EmployeesForm({ employee }: Props) {
                             type="tel"
                             placeholder="081234567890"
                             value={form.data.phone}
-                            onChange={(e) => form.setData('phone', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('phone', e.target.value)
+                            }
                             error={form.errors.phone}
                         />
                     </div>
@@ -156,7 +167,9 @@ function EmployeesForm({ employee }: Props) {
                             label="Tanggal Bergabung"
                             type="date"
                             value={form.data.join_date}
-                            onChange={(e) => form.setData('join_date', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('join_date', e.target.value)
+                            }
                             error={form.errors.join_date}
                         />
 
@@ -165,7 +178,9 @@ function EmployeesForm({ employee }: Props) {
                             label="Tanggal Berhenti"
                             type="date"
                             value={form.data.resign_date}
-                            onChange={(e) => form.setData('resign_date', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('resign_date', e.target.value)
+                            }
                             error={form.errors.resign_date}
                         />
                     </div>
@@ -174,7 +189,9 @@ function EmployeesForm({ employee }: Props) {
                         id="is_active"
                         label="Karyawan Aktif"
                         checked={form.data.is_active}
-                        onChange={(e) => form.setData('is_active', e.target.checked)}
+                        onChange={(e) =>
+                            form.setData('is_active', e.target.checked)
+                        }
                     />
 
                     <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
@@ -192,8 +209,8 @@ function EmployeesForm({ employee }: Props) {
                             {form.processing
                                 ? 'Menyimpan...'
                                 : isEdit
-                                ? 'Simpan Perubahan'
-                                : 'Tambah Karyawan'}
+                                  ? 'Simpan Perubahan'
+                                  : 'Tambah Karyawan'}
                         </button>
                     </div>
                 </form>

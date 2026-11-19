@@ -30,7 +30,10 @@ function Field({
             </Label>
             {children}
             {hint && !error && (
-                <p id={`${id}-hint`} className="mt-1.5 text-xs text-muted-foreground">
+                <p
+                    id={`${id}-hint`}
+                    className="mt-1.5 text-xs text-muted-foreground"
+                >
                     {hint}
                 </p>
             )}
@@ -40,7 +43,10 @@ function Field({
                     role="alert"
                     className="mt-1.5 flex items-center gap-1.5 text-xs text-danger-fg"
                 >
-                    <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
+                    <AlertCircle
+                        className="size-3.5 shrink-0"
+                        aria-hidden="true"
+                    />
                     {error}
                 </p>
             )}
@@ -67,7 +73,13 @@ export function TextField({
     ...props
 }: BaseProps & ComponentProps<'input'>) {
     return (
-        <Field id={id} label={label} error={error} hint={hint} required={props.required}>
+        <Field
+            id={id}
+            label={label}
+            error={error}
+            hint={hint}
+            required={props.required}
+        >
             <Input
                 id={id}
                 aria-invalid={error ? true : undefined}
@@ -86,7 +98,13 @@ export function TextAreaField({
     ...props
 }: BaseProps & ComponentProps<'textarea'>) {
     return (
-        <Field id={id} label={label} error={error} hint={hint} required={props.required}>
+        <Field
+            id={id}
+            label={label}
+            error={error}
+            hint={hint}
+            required={props.required}
+        >
             <Textarea
                 id={id}
                 aria-invalid={error ? true : undefined}
@@ -106,7 +124,13 @@ export function SelectField({
     ...props
 }: BaseProps & ComponentProps<'select'>) {
     return (
-        <Field id={id} label={label} error={error} hint={hint} required={props.required}>
+        <Field
+            id={id}
+            label={label}
+            error={error}
+            hint={hint}
+            required={props.required}
+        >
             <Select
                 id={id}
                 aria-invalid={error ? true : undefined}
@@ -140,8 +164,14 @@ export function CheckboxField({
                 {label}
             </label>
             {error && (
-                <p role="alert" className="mt-1.5 flex items-center gap-1.5 text-xs text-danger-fg">
-                    <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
+                <p
+                    role="alert"
+                    className="mt-1.5 flex items-center gap-1.5 text-xs text-danger-fg"
+                >
+                    <AlertCircle
+                        className="size-3.5 shrink-0"
+                        aria-hidden="true"
+                    />
                     {error}
                 </p>
             )}

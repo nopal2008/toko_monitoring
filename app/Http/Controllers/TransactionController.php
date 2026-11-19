@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CancelTransactionRequest;
 use App\Http\Requests\CreateTransactionRequest;
+use App\Models\Setting;
 use App\Models\Transaction;
 use App\Services\CancelTransactionService;
 use App\Services\CreateTransactionService;
@@ -46,6 +47,11 @@ class TransactionController extends Controller
         $this->authorize('create', Transaction::class);
         $transaction = $service->create($request->user(), $request->transactionData());
 
+        if ($request->boolean('print_receipt')) {
+            return redirect()->route('transactions.receipt', $transaction)
+                ->with('success', 'Transaksi berhasil disimpan.');
+        }
+
         return redirect()->route('transactions.show', $transaction)->with('success', 'Transaksi berhasil disimpan.');
     }
 
@@ -54,8 +60,46 @@ class TransactionController extends Controller
         $this->authorize('view', $transaction);
 
         return Inertia::render('Transactions/Show', [
-            'transaction' => $transaction->load(['items.product:id,name,sku', 'store:id,name', 'cashier:id,name']),
+            'transaction' => $transaction->load([
+                'items.product:id,name,sku',
+                'payments',
+                'store:id,name,address,phone',
+                'cashier:id,name',
+            ]),
         ]);
+    }
+
+    public function receipt(Request $request, Transaction $transaction): Response
+    {
+        $this->authorize('view', $transaction);
+
+        return Inertia::render('Transactions/Receipt', [
+            'transaction' => $transaction->load([
+                'items.product:id,name,sku',
+                'payments',
+                'store:id,name,code,address,city,phone',
+                'cashier:id,name',
+            ]),
+            'settings' => [
+                'footer' => $this->settingValue($transaction->tenant_id, 'receipt', 'footer_note'),
+                'tax_percentage' => $this->settingValue($transaction->tenant_id, 'receipt', 'tax_percentage'),
+            ],
+        ]);
+    }
+
+    private function settingValue(int $tenantId, string $group, string $key): ?string
+    {
+        $value = Setting::query()
+            ->where('tenant_id', $tenantId)
+            ->where('setting_group', $group)
+            ->where('setting_key', $key)
+            ->value('value');
+
+        if (is_array($value)) {
+            $value = $value['value'] ?? $value[0] ?? null;
+        }
+
+        return is_scalar($value) ? (string) $value : null;
     }
 
     public function cancel(

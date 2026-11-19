@@ -47,7 +47,7 @@ class Area extends Model
             ->withTimestamps();
     }
 
-    public function warehouses(): HasMany
+    public function warehouses(): HasManyThrough
     {
         return $this->hasManyThrough(Warehouse::class, Store::class);
     }

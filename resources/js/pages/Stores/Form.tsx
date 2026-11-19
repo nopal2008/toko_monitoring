@@ -54,34 +54,104 @@ function StoresForm({ store }: { store?: Store }) {
             <form onSubmit={submit} noValidate>
                 <Card className="space-y-5 p-6">
                     <div className="grid gap-5 sm:grid-cols-2">
-                        <TextField id="name" label="Nama cabang" required maxLength={255} {...text('name')} />
-                        <TextField id="code" label="Kode" required maxLength={50} {...text('code')} />
-                        <TextField id="city" label="Kota" maxLength={100} {...text('city')} />
-                        <TextField id="phone" label="Telepon" type="tel" maxLength={20} {...text('phone')} />
+                        <TextField
+                            id="name"
+                            label="Nama cabang"
+                            required
+                            maxLength={255}
+                            {...text('name')}
+                        />
+                        <TextField
+                            id="code"
+                            label="Kode"
+                            required
+                            maxLength={50}
+                            {...text('code')}
+                        />
+                        <TextField
+                            id="city"
+                            label="Kota"
+                            maxLength={100}
+                            {...text('city')}
+                        />
+                        <TextField
+                            id="phone"
+                            label="Telepon"
+                            type="tel"
+                            maxLength={20}
+                            {...text('phone')}
+                        />
                     </div>
-                    <TextAreaField id="address" label="Alamat" maxLength={5000} {...text('address')} />
+                    <TextAreaField
+                        id="address"
+                        label="Alamat"
+                        maxLength={5000}
+                        {...text('address')}
+                    />
                     <div className="grid gap-5 sm:grid-cols-3">
-                        <TextField id="latitude" label="Latitude" type="number" step="any" min={-90} max={90} {...text('latitude')} />
-                        <TextField id="longitude" label="Longitude" type="number" step="any" min={-180} max={180} {...text('longitude')} />
-                        <TextField id="radius_meter" label="Radius (meter)" type="number" min={1} max={100000} {...text('radius_meter')} />
+                        <TextField
+                            id="latitude"
+                            label="Latitude"
+                            type="number"
+                            step="any"
+                            min={-90}
+                            max={90}
+                            {...text('latitude')}
+                        />
+                        <TextField
+                            id="longitude"
+                            label="Longitude"
+                            type="number"
+                            step="any"
+                            min={-180}
+                            max={180}
+                            {...text('longitude')}
+                        />
+                        <TextField
+                            id="radius_meter"
+                            label="Radius (meter)"
+                            type="number"
+                            min={1}
+                            max={100000}
+                            {...text('radius_meter')}
+                        />
                     </div>
                     <div className="grid gap-5 sm:grid-cols-2">
-                        <TextField id="opening_time" label="Jam buka" type="time" {...text('opening_time')} />
-                        <TextField id="closing_time" label="Jam tutup" type="time" {...text('closing_time')} />
+                        <TextField
+                            id="opening_time"
+                            label="Jam buka"
+                            type="time"
+                            {...text('opening_time')}
+                        />
+                        <TextField
+                            id="closing_time"
+                            label="Jam tutup"
+                            type="time"
+                            {...text('closing_time')}
+                        />
                     </div>
                     <CheckboxField
                         id="is_active"
                         label="Cabang aktif"
                         checked={form.data.is_active}
-                        onChange={(e) => form.setData('is_active', e.target.checked)}
+                        onChange={(e) =>
+                            form.setData('is_active', e.target.checked)
+                        }
                         error={form.errors.is_active}
                     />
                 </Card>
                 <div className="mt-4 flex justify-end gap-2">
-                    <Link href={StoreController.index.url()} className={buttonClass('secondary')}>
+                    <Link
+                        href={StoreController.index.url()}
+                        className={buttonClass('secondary')}
+                    >
                         Batal
                     </Link>
-                    <button type="submit" disabled={form.processing} className={buttonClass('primary')}>
+                    <button
+                        type="submit"
+                        disabled={form.processing}
+                        className={buttonClass('primary')}
+                    >
                         {form.processing ? 'Menyimpan...' : 'Simpan'}
                     </button>
                 </div>

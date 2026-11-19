@@ -52,7 +52,9 @@ function SuppliersForm({ supplier }: { supplier?: Supplier }) {
                             type="tel"
                             maxLength={20}
                             value={form.data.phone}
-                            onChange={(e) => form.setData('phone', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('phone', e.target.value)
+                            }
                             error={form.errors.phone}
                         />
                         <TextField
@@ -61,7 +63,9 @@ function SuppliersForm({ supplier }: { supplier?: Supplier }) {
                             type="email"
                             maxLength={255}
                             value={form.data.email}
-                            onChange={(e) => form.setData('email', e.target.value)}
+                            onChange={(e) =>
+                                form.setData('email', e.target.value)
+                            }
                             error={form.errors.email}
                         />
                     </div>
@@ -70,22 +74,33 @@ function SuppliersForm({ supplier }: { supplier?: Supplier }) {
                         label="Alamat"
                         maxLength={5000}
                         value={form.data.address}
-                        onChange={(e) => form.setData('address', e.target.value)}
+                        onChange={(e) =>
+                            form.setData('address', e.target.value)
+                        }
                         error={form.errors.address}
                     />
                     <CheckboxField
                         id="is_active"
                         label="Supplier aktif"
                         checked={form.data.is_active}
-                        onChange={(e) => form.setData('is_active', e.target.checked)}
+                        onChange={(e) =>
+                            form.setData('is_active', e.target.checked)
+                        }
                         error={form.errors.is_active}
                     />
                 </Card>
                 <div className="mt-4 flex justify-end gap-2">
-                    <Link href={SupplierController.index.url()} className={buttonClass('secondary')}>
+                    <Link
+                        href={SupplierController.index.url()}
+                        className={buttonClass('secondary')}
+                    >
                         Batal
                     </Link>
-                    <button type="submit" disabled={form.processing} className={buttonClass('primary')}>
+                    <button
+                        type="submit"
+                        disabled={form.processing}
+                        className={buttonClass('primary')}
+                    >
                         {form.processing ? 'Menyimpan...' : 'Simpan'}
                     </button>
                 </div>

@@ -23,13 +23,13 @@ Password: password
 
 Seeder juga membuat akun untuk tiap role berikut. Semua akun demo memakai password `password`:
 
-| Role | Email |
-|---|---|
-| `owner` | `owner@demo.test` |
-| `area_manager` | `area.manager@demo.test` |
+| Role            | Email                     |
+| --------------- | ------------------------- |
+| `owner`         | `owner@demo.test`         |
+| `area_manager`  | `area.manager@demo.test`  |
 | `store_manager` | `store.manager@demo.test` |
-| `cashier` | `cashier@demo.test` |
-| `staff` | `staff@demo.test` |
+| `cashier`       | `cashier@demo.test`       |
+| `staff`         | `staff@demo.test`         |
 
 Endpoint supplier hanya menerima role `owner` atau `admin`, permission `product.manage`, tenant aktif, dan token ability `suppliers:manage`. Seeder saat ini menyediakan role `owner`; role `admin` sudah tidak dibuat oleh seeder.
 
@@ -47,9 +47,9 @@ Di Postman pilih **Body → raw → JSON**:
 
 ```json
 {
-  "email": "owner@demo.test",
-  "password": "password",
-  "device_name": "Postman"
+    "email": "owner@demo.test",
+    "password": "password",
+    "device_name": "Postman"
 }
 ```
 
@@ -57,16 +57,16 @@ Di Postman pilih **Body → raw → JSON**:
 
 ```json
 {
-  "data": {
-    "token": "<TOKEN_DARI_RESPONSE>",
-    "token_type": "Bearer",
-    "expires_at": "2026-11-16T08:00:00.000000Z",
-    "user": {
-      "id": 1,
-      "name": "Demo Owner",
-      "email": "owner@demo.test"
+    "data": {
+        "token": "<TOKEN_DARI_RESPONSE>",
+        "token_type": "Bearer",
+        "expires_at": "2026-11-16T08:00:00.000000Z",
+        "user": {
+            "id": 1,
+            "name": "Demo Owner",
+            "email": "owner@demo.test"
+        }
     }
-  }
 }
 ```
 
@@ -86,11 +86,11 @@ Tidak perlu body. Contoh response `200 OK`:
 
 ```json
 {
-  "data": {
-    "id": 1,
-    "name": "Demo Owner",
-    "email": "owner@demo.test"
-  }
+    "data": {
+        "id": 1,
+        "name": "Demo Owner",
+        "email": "owner@demo.test"
+    }
 }
 ```
 
@@ -124,16 +124,16 @@ Contoh response `200 OK`:
 
 ```json
 {
-  "data": {
-    "id": 1,
-    "name": "PT Contoh Pemasok",
-    "phone": "081234567890",
-    "email": "kontak@contoh.test",
-    "address": "Jl. Contoh No. 1",
-    "is_active": true,
-    "created_at": "2026-11-16T06:00:00.000000Z",
-    "updated_at": "2026-11-16T06:00:00.000000Z"
-  }
+    "data": {
+        "id": 1,
+        "name": "PT Contoh Pemasok",
+        "phone": "081234567890",
+        "email": "kontak@contoh.test",
+        "address": "Jl. Contoh No. 1",
+        "is_active": true,
+        "created_at": "2026-11-16T06:00:00.000000Z",
+        "updated_at": "2026-11-16T06:00:00.000000Z"
+    }
 }
 ```
 
@@ -143,11 +143,11 @@ Pilih **Body → raw → JSON**:
 
 ```json
 {
-  "name": "PT Pemasok Baru",
-  "phone": "081234567890",
-  "email": "sales@pemasok.test",
-  "address": "Jl. Pemasok No. 10",
-  "is_active": true
+    "name": "PT Pemasok Baru",
+    "phone": "081234567890",
+    "email": "sales@pemasok.test",
+    "address": "Jl. Pemasok No. 10",
+    "is_active": true
 }
 ```
 
@@ -165,11 +165,11 @@ Body JSON memakai field yang sama dengan tambah supplier. `name` tetap wajib, te
 
 ```json
 {
-  "name": "PT Pemasok Diperbarui",
-  "phone": "081111111111",
-  "email": "baru@pemasok.test",
-  "address": "Alamat baru",
-  "is_active": true
+    "name": "PT Pemasok Diperbarui",
+    "phone": "081111111111",
+    "email": "baru@pemasok.test",
+    "address": "Alamat baru",
+    "is_active": true
 }
 ```
 
@@ -194,13 +194,13 @@ Tidak perlu body. Penghapusan menggunakan soft delete dan berhasil mengembalikan
 
 ## Ringkasan route
 
-| Method | Path | Keterangan |
-|---|---|---|
-| `POST` | `/api/v1/login` | Membuat token |
-| `GET` | `/api/v1/user` | Melihat pengguna dari token |
-| `POST` | `/api/v1/logout` | Mencabut token saat ini |
-| `GET` | `/api/v1/suppliers` | Daftar supplier |
-| `GET` | `/api/v1/suppliers/{id}` | Detail supplier |
-| `POST` | `/api/v1/suppliers` | Membuat supplier |
-| `PUT`, `PATCH` | `/api/v1/suppliers/{id}` | Memperbarui supplier |
-| `DELETE` | `/api/v1/suppliers/{id}` | Soft delete supplier |
+| Method         | Path                     | Keterangan                  |
+| -------------- | ------------------------ | --------------------------- |
+| `POST`         | `/api/v1/login`          | Membuat token               |
+| `GET`          | `/api/v1/user`           | Melihat pengguna dari token |
+| `POST`         | `/api/v1/logout`         | Mencabut token saat ini     |
+| `GET`          | `/api/v1/suppliers`      | Daftar supplier             |
+| `GET`          | `/api/v1/suppliers/{id}` | Detail supplier             |
+| `POST`         | `/api/v1/suppliers`      | Membuat supplier            |
+| `PUT`, `PATCH` | `/api/v1/suppliers/{id}` | Memperbarui supplier        |
+| `DELETE`       | `/api/v1/suppliers/{id}` | Soft delete supplier        |

@@ -7,7 +7,10 @@ import { Pagination } from '@/components/pagination';
 import AppLayout from '@/layouts/app-layout';
 import { formatCurrency, formatDateOnly } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import { index as transactionsIndex, show as transactionsShow } from '@/routes/transactions';
+import {
+    index as transactionsIndex,
+    show as transactionsShow,
+} from '@/routes/transactions';
 import type { Paginated } from '@/types/models';
 
 type TransactionRow = {
@@ -55,8 +58,12 @@ function StatusBadge({ status }: { status: TransactionRow['status'] }) {
 }
 
 function TransactionsIndex({ transactions }: Props) {
-    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    const [statusFilter, setStatusFilter] = useState(urlParams.get('status') ?? '');
+    const urlParams = new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : '',
+    );
+    const [statusFilter, setStatusFilter] = useState(
+        urlParams.get('status') ?? '',
+    );
     const [fromFilter, setFromFilter] = useState(urlParams.get('from') ?? '');
     const [toFilter, setToFilter] = useState(urlParams.get('to') ?? '');
 
@@ -77,7 +84,11 @@ function TransactionsIndex({ transactions }: Props) {
         setStatusFilter('');
         setFromFilter('');
         setToFilter('');
-        router.get(transactionsIndex.url(), {}, { preserveState: true, preserveScroll: true });
+        router.get(
+            transactionsIndex.url(),
+            {},
+            { preserveState: true, preserveScroll: true },
+        );
     }
 
     return (
@@ -90,9 +101,15 @@ function TransactionsIndex({ transactions }: Props) {
 
             {/* Filter Bar */}
             <Card className="mb-6 p-4">
-                <form onSubmit={applyFilter} className="flex flex-wrap items-end gap-3">
+                <form
+                    onSubmit={applyFilter}
+                    className="flex flex-wrap items-end gap-3"
+                >
                     <div className="w-full sm:w-auto">
-                        <label htmlFor="status" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="status"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Status
                         </label>
                         <select
@@ -109,7 +126,10 @@ function TransactionsIndex({ transactions }: Props) {
                     </div>
 
                     <div className="w-full sm:w-auto">
-                        <label htmlFor="from" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="from"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Dari Tanggal
                         </label>
                         <input
@@ -122,7 +142,10 @@ function TransactionsIndex({ transactions }: Props) {
                     </div>
 
                     <div className="w-full sm:w-auto">
-                        <label htmlFor="to" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="to"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Sampai Tanggal
                         </label>
                         <input
@@ -135,7 +158,10 @@ function TransactionsIndex({ transactions }: Props) {
                     </div>
 
                     <div className="flex gap-2">
-                        <button type="submit" className={buttonClass('primary', 'h-9 px-3')}>
+                        <button
+                            type="submit"
+                            className={buttonClass('primary', 'h-9 px-3')}
+                        >
                             <Filter className="h-4 w-4" />
                             <span>Filter</span>
                         </button>
@@ -161,45 +187,73 @@ function TransactionsIndex({ transactions }: Props) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[44rem] text-sm">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                                 <tr>
-                                    <th scope="col" className="px-5 py-3">No. Invoice</th>
-                                    <th scope="col" className="px-5 py-3">Toko</th>
-                                    <th scope="col" className="px-5 py-3">Kasir</th>
-                                    <th scope="col" className="px-5 py-3 text-right">Total</th>
-                                    <th scope="col" className="px-5 py-3">Status</th>
-                                    <th scope="col" className="px-5 py-3">Tanggal</th>
-                                    <th scope="col" className="px-5 py-3 text-right">Aksi</th>
+                                    <th scope="col" className="px-5 py-3">
+                                        No. Invoice
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Toko
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Kasir
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Total
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Status
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Aksi
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {transactions.data.map((tx) => (
-                                    <tr key={tx.id} className="transition hover:bg-slate-50/50">
-                                        <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                    <tr
+                                        key={tx.id}
+                                        className="transition hover:bg-slate-50/50"
+                                    >
+                                        <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                             <div className="flex items-center gap-2">
                                                 <Receipt className="h-4 w-4 text-slate-400" />
                                                 <span>{tx.invoice_number}</span>
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {tx.store?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {tx.cashier?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-right font-semibold text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 text-right font-semibold whitespace-nowrap text-slate-900">
                                             {formatCurrency(tx.total_amount)}
                                         </td>
                                         <td className="px-5 py-3.5 whitespace-nowrap">
                                             <StatusBadge status={tx.status} />
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-600 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-600">
                                             {formatDateOnly(tx.created_at)}
                                         </td>
                                         <td className="px-5 py-3.5 text-right whitespace-nowrap">
                                             <Link
-                                                href={transactionsShow.url(tx.id)}
-                                                className={buttonClass('secondary', 'h-8 px-2.5 text-xs')}
+                                                href={transactionsShow.url(
+                                                    tx.id,
+                                                )}
+                                                className={buttonClass(
+                                                    'secondary',
+                                                    'h-8 px-2.5 text-xs',
+                                                )}
                                             >
                                                 <Eye className="h-3.5 w-3.5" />
                                                 <span>Detail</span>

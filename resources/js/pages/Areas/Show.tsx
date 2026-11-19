@@ -21,10 +21,16 @@ function AreasShow({ area }: { area: Area }) {
                 title={area.name}
                 actions={
                     <>
-                        <Link href={AreaController.index.url()} className={buttonClass('secondary')}>
+                        <Link
+                            href={AreaController.index.url()}
+                            className={buttonClass('secondary')}
+                        >
                             Kembali
                         </Link>
-                        <Link href={AreaController.edit.url(area.id)} className={buttonClass('primary')}>
+                        <Link
+                            href={AreaController.edit.url(area.id)}
+                            className={buttonClass('primary')}
+                        >
                             Ubah
                         </Link>
                         <DeleteAction
@@ -39,12 +45,27 @@ function AreasShow({ area }: { area: Area }) {
                 <DescriptionList
                     items={[
                         { label: 'Kode', value: area.code },
-                        { label: 'Status', value: <StatusBadge active={area.is_active} /> },
-                        { label: 'Cabang', value: formatNumber(area.stores_count ?? 0) },
-                        { label: 'Gudang', value: formatNumber(area.warehouses_count ?? 0) },
+                        {
+                            label: 'Status',
+                            value: <StatusBadge active={area.is_active} />,
+                        },
+                        {
+                            label: 'Cabang',
+                            value: formatNumber(area.stores_count ?? 0),
+                        },
+                        {
+                            label: 'Gudang',
+                            value: formatNumber(area.warehouses_count ?? 0),
+                        },
                         { label: 'Deskripsi', value: area.description },
-                        { label: 'Dibuat', value: formatDateTime(area.created_at) },
-                        { label: 'Diperbarui', value: formatDateTime(area.updated_at) },
+                        {
+                            label: 'Dibuat',
+                            value: formatDateTime(area.created_at),
+                        },
+                        {
+                            label: 'Diperbarui',
+                            value: formatDateTime(area.updated_at),
+                        },
                     ]}
                 />
             </Card>

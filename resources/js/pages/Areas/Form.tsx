@@ -1,7 +1,7 @@
 ﻿import { Head, Link, useForm } from '@inertiajs/react';
 import type { FormEvent, ReactNode } from 'react';
 import AreaController from '@/actions/App/Http/Controllers/AreaController';
-import { CheckboxField, TextField, TextAreaField } from '@/components/fields';
+import { CheckboxField, TextField, TextareaField } from '@/components/fields';
 import { buttonClass, Card, PageHeader } from '@/components/ui';
 import AppLayout from '@/layouts/app-layout';
 import type { Area } from '@/types/models';
@@ -34,7 +34,7 @@ function AreasForm({ area }: { area?: Area }) {
             <Head title={editing ? 'Ubah area' : 'Tambah area'} />
             <PageHeader
                 title={editing ? 'Ubah area' : 'Tambah area'}
-                description="Area mewakili wilayah kerja operasional."
+                description="Kelola area wilayah untuk mengelompokkan cabang toko."
             />
             <form onSubmit={submit} noValidate>
                 <Card className="space-y-5 p-6">
@@ -52,30 +52,49 @@ function AreasForm({ area }: { area?: Area }) {
                         label="Kode area"
                         required
                         maxLength={50}
+                        placeholder="Contoh: JKT, BDG, SBY"
                         value={form.data.code}
-                        onChange={(e) => form.setData('code', e.target.value)}
+                        onChange={(e) =>
+                            form.setData(
+                                'code',
+                                e.target.value.toUpperCase(),
+                            )
+                        }
                         error={form.errors.code}
                     />
-                    <TextAreaField
+                    <TextareaField
                         id="description"
                         label="Deskripsi"
+                        rows={3}
+                        maxLength={5000}
                         value={form.data.description}
-                        onChange={(e) => form.setData('description', e.target.value)}
+                        onChange={(e) =>
+                            form.setData('description', e.target.value)
+                        }
                         error={form.errors.description}
                     />
                     <CheckboxField
                         id="is_active"
                         label="Area aktif"
                         checked={form.data.is_active}
-                        onChange={(e) => form.setData('is_active', e.target.checked)}
+                        onChange={(e) =>
+                            form.setData('is_active', e.target.checked)
+                        }
                         error={form.errors.is_active}
                     />
                 </Card>
                 <div className="mt-4 flex justify-end gap-2">
-                    <Link href={AreaController.index.url()} className={buttonClass('secondary')}>
+                    <Link
+                        href={AreaController.index.url()}
+                        className={buttonClass('secondary')}
+                    >
                         Batal
                     </Link>
-                    <button type="submit" disabled={form.processing} className={buttonClass('primary')}>
+                    <button
+                        type="submit"
+                        disabled={form.processing}
+                        className={buttonClass('primary')}
+                    >
                         {form.processing ? 'Menyimpan...' : 'Simpan'}
                     </button>
                 </div>

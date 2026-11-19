@@ -1,14 +1,22 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { AlertTriangle, CheckCircle2, SlidersHorizontal, Warehouse, XCircle } from 'lucide-react';
+import {
+    AlertTriangle,
+    CheckCircle2,
+    SlidersHorizontal,
+    Warehouse,
+    XCircle,
+} from 'lucide-react';
 import { Card, EmptyState, PageHeader, buttonClass } from '@/components/ui';
 import { Pagination } from '@/components/pagination';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { formatNumber } from '@/lib/format';
-import { cn } from '@/lib/utils';
-import { adjust as inventoriesAdjust, index as inventoriesIndex } from '@/routes/inventories';
+import {
+    adjust as inventoriesAdjust,
+    index as inventoriesIndex,
+} from '@/routes/inventories';
 import type { Paginated } from '@/types/models';
 
 type InventoryRow = {
@@ -25,7 +33,13 @@ type Props = {
     inventories: Paginated<InventoryRow>;
 };
 
-function StockStatusBadge({ quantity, minStock }: { quantity: number; minStock: number }) {
+function StockStatusBadge({
+    quantity,
+    minStock,
+}: {
+    quantity: number;
+    minStock: number;
+}) {
     if (quantity <= 0) {
         return (
             <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-100 px-2.5 py-0.5 text-xs font-medium text-rose-800">
@@ -52,8 +66,12 @@ function StockStatusBadge({ quantity, minStock }: { quantity: number; minStock: 
 
 function InventoriesIndex({ inventories }: Props) {
     const { can } = useAuth();
-    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    const [lowStockFilter, setLowStockFilter] = useState(urlParams.get('low_stock') === '1');
+    const urlParams = new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : '',
+    );
+    const [lowStockFilter, setLowStockFilter] = useState(
+        urlParams.get('low_stock') === '1',
+    );
 
     // State modal adjust
     const [selectedItem, setSelectedItem] = useState<InventoryRow | null>(null);
@@ -66,11 +84,10 @@ function InventoriesIndex({ inventories }: Props) {
 
     function toggleLowStock(checked: boolean) {
         setLowStockFilter(checked);
-        router.get(
-            inventoriesIndex.url(),
-            checked ? { low_stock: 1 } : {},
-            { preserveState: true, preserveScroll: true },
-        );
+        router.get(inventoriesIndex.url(), checked ? { low_stock: 1 } : {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     }
 
     function openAdjustModal(item: InventoryRow) {
@@ -122,28 +139,38 @@ function InventoriesIndex({ inventories }: Props) {
                     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
                 >
                     <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-                        <h2 id="adjust-title" className="text-lg font-semibold text-slate-900">
+                        <h2
+                            id="adjust-title"
+                            className="text-lg font-semibold text-slate-900"
+                        >
                             Sesuaikan Stok
                         </h2>
                         <div className="mt-2 rounded-md bg-slate-50 p-3 text-sm">
                             <p className="font-medium text-slate-900">
-                                {selectedItem.product?.name} ({selectedItem.product?.sku})
+                                {selectedItem.product?.name} (
+                                {selectedItem.product?.sku})
                             </p>
                             <p className="text-slate-600">
-                                Toko: {selectedItem.store?.name} &bull; Stok saat ini:{' '}
+                                Toko: {selectedItem.store?.name} &bull; Stok
+                                saat ini:{' '}
                                 <strong className="text-slate-900">
-                                    {selectedItem.quantity} {selectedItem.product?.unit}
+                                    {selectedItem.quantity}{' '}
+                                    {selectedItem.product?.unit}
                                 </strong>
                             </p>
                         </div>
 
-                        <form onSubmit={submitAdjust} className="mt-4 space-y-4">
+                        <form
+                            onSubmit={submitAdjust}
+                            className="mt-4 space-y-4"
+                        >
                             <div>
                                 <label
                                     htmlFor="quantity_change"
                                     className="mb-1 block text-sm font-medium text-slate-700"
                                 >
-                                    Perubahan Jumlah (+ / -) <span className="text-rose-600">*</span>
+                                    Perubahan Jumlah (+ / -){' '}
+                                    <span className="text-rose-600">*</span>
                                 </label>
                                 <input
                                     type="number"
@@ -151,13 +178,17 @@ function InventoriesIndex({ inventories }: Props) {
                                     required
                                     value={adjustForm.data.quantity_change}
                                     onChange={(e) =>
-                                        adjustForm.setData('quantity_change', Number(e.target.value))
+                                        adjustForm.setData(
+                                            'quantity_change',
+                                            Number(e.target.value),
+                                        )
                                     }
                                     placeholder="Contoh: 10 untuk menambah, -5 untuk mengurangi"
                                     className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 />
                                 <p className="mt-1 text-xs text-slate-500">
-                                    Gunakan angka positif untuk menambah stok, angka negatif untuk mengurangi.
+                                    Gunakan angka positif untuk menambah stok,
+                                    angka negatif untuk mengurangi.
                                 </p>
                                 {adjustForm.errors.quantity_change && (
                                     <p className="mt-1 text-xs text-rose-600">
@@ -171,14 +202,20 @@ function InventoriesIndex({ inventories }: Props) {
                                     htmlFor="adjust_reason"
                                     className="mb-1 block text-sm font-medium text-slate-700"
                                 >
-                                    Alasan Penyesuaian <span className="text-rose-600">*</span>
+                                    Alasan Penyesuaian{' '}
+                                    <span className="text-rose-600">*</span>
                                 </label>
                                 <textarea
                                     id="adjust_reason"
                                     required
                                     rows={3}
                                     value={adjustForm.data.reason}
-                                    onChange={(e) => adjustForm.setData('reason', e.target.value)}
+                                    onChange={(e) =>
+                                        adjustForm.setData(
+                                            'reason',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Contoh: Stock opname bulanan / barang rusak saat pengiriman"
                                     className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 />
@@ -203,7 +240,9 @@ function InventoriesIndex({ inventories }: Props) {
                                     disabled={adjustForm.processing}
                                     className={buttonClass('primary')}
                                 >
-                                    {adjustForm.processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                    {adjustForm.processing
+                                        ? 'Menyimpan...'
+                                        : 'Simpan Perubahan'}
                                 </button>
                             </div>
                         </form>
@@ -224,41 +263,72 @@ function InventoriesIndex({ inventories }: Props) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[48rem] text-sm">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                                 <tr>
-                                    <th scope="col" className="px-5 py-3">Produk</th>
-                                    <th scope="col" className="px-5 py-3">SKU</th>
-                                    <th scope="col" className="px-5 py-3">Toko</th>
-                                    <th scope="col" className="px-5 py-3 text-right">Stok</th>
-                                    <th scope="col" className="px-5 py-3 text-right">Min. Stok</th>
-                                    <th scope="col" className="px-5 py-3 text-center">Status</th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Produk
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        SKU
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Toko
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Stok
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Min. Stok
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-center"
+                                    >
+                                        Status
+                                    </th>
                                     {can('inventory.adjust') && (
-                                        <th scope="col" className="px-5 py-3 text-right">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-5 py-3 text-right"
+                                        >
+                                            Aksi
+                                        </th>
                                     )}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {inventories.data.map((item) => (
-                                    <tr key={item.id} className="transition hover:bg-slate-50/50">
-                                        <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                    <tr
+                                        key={item.id}
+                                        className="transition hover:bg-slate-50/50"
+                                    >
+                                        <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                             <div className="flex items-center gap-2">
                                                 <Warehouse className="h-4 w-4 text-slate-400" />
-                                                <span>{item.product?.name ?? '-'}</span>
+                                                <span>
+                                                    {item.product?.name ?? '-'}
+                                                </span>
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3.5 font-mono text-xs text-slate-600 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 font-mono text-xs whitespace-nowrap text-slate-600">
                                             {item.product?.sku ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {item.store?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-right font-semibold text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 text-right font-semibold whitespace-nowrap text-slate-900">
                                             {formatNumber(item.quantity)}{' '}
                                             <span className="text-xs font-normal text-slate-500">
                                                 {item.product?.unit ?? 'pcs'}
                                             </span>
                                         </td>
-                                        <td className="px-5 py-3.5 text-right text-slate-600 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 text-right whitespace-nowrap text-slate-600">
                                             {formatNumber(item.min_stock)}{' '}
                                             <span className="text-xs text-slate-400">
                                                 {item.product?.unit ?? 'pcs'}
@@ -274,8 +344,13 @@ function InventoriesIndex({ inventories }: Props) {
                                             <td className="px-5 py-3.5 text-right whitespace-nowrap">
                                                 <button
                                                     type="button"
-                                                    onClick={() => openAdjustModal(item)}
-                                                    className={buttonClass('secondary', 'h-8 px-2.5 text-xs')}
+                                                    onClick={() =>
+                                                        openAdjustModal(item)
+                                                    }
+                                                    className={buttonClass(
+                                                        'secondary',
+                                                        'h-8 px-2.5 text-xs',
+                                                    )}
                                                 >
                                                     <SlidersHorizontal className="h-3.5 w-3.5" />
                                                     <span>Sesuaikan</span>

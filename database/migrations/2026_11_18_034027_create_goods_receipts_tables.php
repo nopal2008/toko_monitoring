@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('warehouse_id')->constrained()->cascadeOnDelete();
             $table->string('reference')->unique();
             $table->enum('status', ['pending', 'completed', 'rejected'])->default('pending');
-            $table->foreignId('received_by')->constrained()->cascadeOnDelete();
+            $table->foreignId('received_by')->constrained('users')->cascadeOnDelete();
             $table->timestamp('received_at')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

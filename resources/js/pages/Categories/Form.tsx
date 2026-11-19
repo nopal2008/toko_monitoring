@@ -49,15 +49,24 @@ function CategoriesForm({ category }: { category?: Category }) {
                         id="is_active"
                         label="Kategori aktif"
                         checked={form.data.is_active}
-                        onChange={(e) => form.setData('is_active', e.target.checked)}
+                        onChange={(e) =>
+                            form.setData('is_active', e.target.checked)
+                        }
                         error={form.errors.is_active}
                     />
                 </Card>
                 <div className="mt-4 flex justify-end gap-2">
-                    <Link href={CategoryController.index.url()} className={buttonClass('secondary')}>
+                    <Link
+                        href={CategoryController.index.url()}
+                        className={buttonClass('secondary')}
+                    >
                         Batal
                     </Link>
-                    <button type="submit" disabled={form.processing} className={buttonClass('primary')}>
+                    <button
+                        type="submit"
+                        disabled={form.processing}
+                        className={buttonClass('primary')}
+                    >
                         {form.processing ? 'Menyimpan...' : 'Simpan'}
                     </button>
                 </div>

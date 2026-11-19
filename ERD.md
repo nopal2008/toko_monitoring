@@ -1,4 +1,5 @@
 ﻿# Entity-Relationship Diagram (ERD)
+
 ## Store Monitoring System — Backend Laravel 13 + Inertia + React
 
 > **Cara melihat diagram:** tempel blok Mermaid di bawah ke [mermaid.live](https://mermaid.live)
@@ -116,23 +117,23 @@ erDiagram
 
 ### A. Autentikasi & Multi-Tenant
 
-| Tabel | Sumber | Fungsi |
-|---|---|---|
-| `tenants` | kustom | Entitas root multi-tenant |
-| `users` | kustom (perluas default L13) | Semua login; `tenant_id` nullable untuk super-admin |
-| `password_reset_tokens` | default Laravel | Alur reset password |
-| `sessions` | default Laravel | Autentikasi sesi untuk web |
-| `personal_access_tokens` | Laravel Sanctum | Token untuk endpoint API |
+| Tabel                    | Sumber                       | Fungsi                                              |
+| ------------------------ | ---------------------------- | --------------------------------------------------- |
+| `tenants`                | kustom                       | Entitas root multi-tenant                           |
+| `users`                  | kustom (perluas default L13) | Semua login; `tenant_id` nullable untuk super-admin |
+| `password_reset_tokens`  | default Laravel              | Alur reset password                                 |
+| `sessions`               | default Laravel              | Autentikasi sesi untuk web                          |
+| `personal_access_tokens` | Laravel Sanctum              | Token untuk endpoint API                            |
 
 ### B. Otorisasi — `spatie/laravel-permission ^8.5`
 
-| Tabel | Sumber | Fungsi |
-|---|---|---|
-| `permissions` | default paket | Katalog permission |
-| `roles` | default paket + **migrasi ekstensi** | Tambah `tenant_id` agar role per-tenant |
-| `model_has_roles` | default paket | User ↔ Role |
-| `model_has_permissions` | default paket | User ↔ Permission langsung |
-| `role_has_permissions` | default paket | Role ↔ Permission |
+| Tabel                   | Sumber                               | Fungsi                                  |
+| ----------------------- | ------------------------------------ | --------------------------------------- |
+| `permissions`           | default paket                        | Katalog permission                      |
+| `roles`                 | default paket + **migrasi ekstensi** | Tambah `tenant_id` agar role per-tenant |
+| `model_has_roles`       | default paket                        | User ↔ Role                             |
+| `model_has_permissions` | default paket                        | User ↔ Permission langsung              |
+| `role_has_permissions`  | default paket                        | Role ↔ Permission                       |
 
 > Skema role tenant dikelola melalui migrasi aplikasi. Jangan mengubah file migration vendor.
 
@@ -168,8 +169,8 @@ erDiagram
 
 ## 4. Yang Sengaja Tidak Disertakan (dan Alasannya)
 
-| Tabel | Alasan |
-|---|---|
-| `activity_log` (paket) | `spatie/laravel-activitylog` tidak terpasang; audit bisa dibuat manual (lihat PRD §10) |
-| `media` / `attachments` | Tidak ada `spatie/laravel-medialibrary`; path file disimpan sebagai `string` |
-| `push_subscriptions` | Notifikasi saat ini memakai polling, bukan push notification |
+| Tabel                   | Alasan                                                                                 |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| `activity_log` (paket)  | `spatie/laravel-activitylog` tidak terpasang; audit bisa dibuat manual (lihat PRD §10) |
+| `media` / `attachments` | Tidak ada `spatie/laravel-medialibrary`; path file disimpan sebagai `string`           |
+| `push_subscriptions`    | Notifikasi saat ini memakai polling, bukan push notification                           |

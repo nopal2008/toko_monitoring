@@ -10,6 +10,8 @@ use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\Promotion;
+use App\Models\StockOpname;
 use App\Models\StockTransfer;
 use App\Models\Store;
 use App\Models\Supplier;
@@ -100,6 +102,8 @@ class AppServiceProvider extends ServiceProvider
             Expense::class,
             Inventory::class,
             Product::class,
+            Promotion::class,
+            StockOpname::class,
             StockTransfer::class,
             Store::class,
             Supplier::class,

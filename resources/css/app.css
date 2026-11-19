@@ -77,8 +77,7 @@
     --info-fg: 199 89% 72%;
     --destructive: 0 70% 48%;
 
-    --elevation-soft:
-        0 1px 2px rgb(0 0 0 / 0.3), 0 4px 12px rgb(0 0 0 / 0.25);
+    --elevation-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 12px rgb(0 0 0 / 0.25);
     --elevation-hover:
         0 2px 4px rgb(0 0 0 / 0.35), 0 12px 24px rgb(0 0 0 / 0.4);
 }
@@ -126,8 +125,7 @@
     --font-sans:
         'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
         'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-heading:
-        'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-mono:
         'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
         monospace;
@@ -235,8 +233,16 @@
 
 @utility bg-grid {
     background-image:
-        linear-gradient(to right, hsl(var(--foreground) / 0.06) 1px, transparent 1px),
-        linear-gradient(to bottom, hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+        linear-gradient(
+            to right,
+            hsl(var(--foreground) / 0.06) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            to bottom,
+            hsl(var(--foreground) / 0.06) 1px,
+            transparent 1px
+        );
     background-size: 48px 48px;
 }
 

@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('reference')->unique();
             $table->string('reason');
             $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
-            $table->foreignId('created_by')->constrained()->cascadeOnDelete();
-            $table->foreignId('approved_by')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
 

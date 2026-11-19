@@ -57,11 +57,19 @@ class CashierShiftService
                 ]);
             }
 
-            $cashSales = Transaction::query()
+            $cashPayments = DB::table('transaction_payments')
+                ->join('transactions', 'transactions.id', '=', 'transaction_payments.transaction_id')
+                ->where('transactions.cashier_shift_id', $lockedShift->id)
+                ->where('transactions.status', 'completed')
+                ->where('transaction_payments.method', 'cash')
+                ->sum('transaction_payments.amount');
+            $legacyCashSales = Transaction::query()
                 ->where('cashier_shift_id', $lockedShift->id)
                 ->where('status', 'completed')
                 ->where('payment_method', 'cash')
+                ->whereDoesntHave('payments')
                 ->sum('total_amount');
+            $cashSales = (string) ((float) $cashPayments + (float) $legacyCashSales);
             $expectedCash = MoneyAmount::toMinorUnits((string) $lockedShift->opening_cash)
                 + MoneyAmount::toMinorUnits((string) $cashSales);
             $closingCash = MoneyAmount::toMinorUnits($data['closing_cash']);

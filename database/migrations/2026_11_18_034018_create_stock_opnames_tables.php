@@ -14,8 +14,8 @@ return new class extends Migration
             $table->foreignId('warehouse_id')->constrained()->cascadeOnDelete();
             $table->string('reference')->unique();
             $table->enum('status', ['draft', 'counting', 'submitted', 'approved', 'rejected', 'completed'])->default('draft');
-            $table->foreignId('counted_by')->constrained()->cascadeOnDelete();
-            $table->foreignId('approved_by')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('counted_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

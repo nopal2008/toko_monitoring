@@ -24,16 +24,26 @@ function CategoriesShow({ category }: { category: Category }) {
                 title={category.name}
                 actions={
                     <>
-                        <Link href={CategoryController.index.url()} className={buttonClass('secondary')}>
+                        <Link
+                            href={CategoryController.index.url()}
+                            className={buttonClass('secondary')}
+                        >
                             Kembali
                         </Link>
                         {can('product.manage') && (
                             <>
-                                <Link href={CategoryController.edit.url(category.id)} className={buttonClass('primary')}>
+                                <Link
+                                    href={CategoryController.edit.url(
+                                        category.id,
+                                    )}
+                                    className={buttonClass('primary')}
+                                >
                                     Ubah
                                 </Link>
                                 <DeleteAction
-                                    url={CategoryController.destroy.url(category.id)}
+                                    url={CategoryController.destroy.url(
+                                        category.id,
+                                    )}
                                     itemName={category.name}
                                     redirectOnSuccess
                                 />
@@ -45,10 +55,22 @@ function CategoriesShow({ category }: { category: Category }) {
             <Card className="p-6">
                 <DescriptionList
                     items={[
-                        { label: 'Status', value: <StatusBadge active={category.is_active} /> },
-                        { label: 'Jumlah produk', value: formatNumber(category.products_count ?? 0) },
-                        { label: 'Dibuat', value: formatDateTime(category.created_at) },
-                        { label: 'Diperbarui', value: formatDateTime(category.updated_at) },
+                        {
+                            label: 'Status',
+                            value: <StatusBadge active={category.is_active} />,
+                        },
+                        {
+                            label: 'Jumlah produk',
+                            value: formatNumber(category.products_count ?? 0),
+                        },
+                        {
+                            label: 'Dibuat',
+                            value: formatDateTime(category.created_at),
+                        },
+                        {
+                            label: 'Diperbarui',
+                            value: formatDateTime(category.updated_at),
+                        },
                     ]}
                 />
             </Card>

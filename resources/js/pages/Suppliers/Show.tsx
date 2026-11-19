@@ -21,10 +21,16 @@ function SuppliersShow({ supplier }: { supplier: Supplier }) {
                 title={supplier.name}
                 actions={
                     <>
-                        <Link href={SupplierController.index.url()} className={buttonClass('secondary')}>
+                        <Link
+                            href={SupplierController.index.url()}
+                            className={buttonClass('secondary')}
+                        >
                             Kembali
                         </Link>
-                        <Link href={SupplierController.edit.url(supplier.id)} className={buttonClass('primary')}>
+                        <Link
+                            href={SupplierController.edit.url(supplier.id)}
+                            className={buttonClass('primary')}
+                        >
                             Ubah
                         </Link>
                         <DeleteAction
@@ -38,12 +44,21 @@ function SuppliersShow({ supplier }: { supplier: Supplier }) {
             <Card className="p-6">
                 <DescriptionList
                     items={[
-                        { label: 'Status', value: <StatusBadge active={supplier.is_active} /> },
+                        {
+                            label: 'Status',
+                            value: <StatusBadge active={supplier.is_active} />,
+                        },
                         { label: 'Telepon', value: supplier.phone },
                         { label: 'Email', value: supplier.email },
                         { label: 'Alamat', value: supplier.address },
-                        { label: 'Dibuat', value: formatDateTime(supplier.created_at) },
-                        { label: 'Diperbarui', value: formatDateTime(supplier.updated_at) },
+                        {
+                            label: 'Dibuat',
+                            value: formatDateTime(supplier.created_at),
+                        },
+                        {
+                            label: 'Diperbarui',
+                            value: formatDateTime(supplier.updated_at),
+                        },
                     ]}
                 />
             </Card>

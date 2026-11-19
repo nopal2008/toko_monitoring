@@ -21,10 +21,16 @@ function UnitsShow({ unit }: { unit: Unit }) {
                 title={unit.name}
                 actions={
                     <>
-                        <Link href={UnitController.index.url()} className={buttonClass('secondary')}>
+                        <Link
+                            href={UnitController.index.url()}
+                            className={buttonClass('secondary')}
+                        >
                             Kembali
                         </Link>
-                        <Link href={UnitController.edit.url(unit.id)} className={buttonClass('primary')}>
+                        <Link
+                            href={UnitController.edit.url(unit.id)}
+                            className={buttonClass('primary')}
+                        >
                             Ubah
                         </Link>
                         <DeleteAction
@@ -39,10 +45,22 @@ function UnitsShow({ unit }: { unit: Unit }) {
                 <DescriptionList
                     items={[
                         { label: 'Simbol', value: unit.symbol },
-                        { label: 'Status', value: <StatusBadge active={unit.is_active} /> },
-                        { label: 'Produk', value: formatNumber(unit.products_count ?? 0) },
-                        { label: 'Dibuat', value: formatDateTime(unit.created_at) },
-                        { label: 'Diperbarui', value: formatDateTime(unit.updated_at) },
+                        {
+                            label: 'Status',
+                            value: <StatusBadge active={unit.is_active} />,
+                        },
+                        {
+                            label: 'Produk',
+                            value: formatNumber(unit.products_count ?? 0),
+                        },
+                        {
+                            label: 'Dibuat',
+                            value: formatDateTime(unit.created_at),
+                        },
+                        {
+                            label: 'Diperbarui',
+                            value: formatDateTime(unit.updated_at),
+                        },
                     ]}
                 />
             </Card>

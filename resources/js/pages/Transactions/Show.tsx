@@ -1,13 +1,22 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { ArrowLeft, Ban, CheckCircle, Clock, Receipt, Store, User } from 'lucide-react';
-import { Card, DescriptionList, PageHeader, buttonClass } from '@/components/ui';
+import { ArrowLeft, Ban, CheckCircle, Clock, Printer, Store, User } from 'lucide-react';
+import {
+    Card,
+    DescriptionList,
+    PageHeader,
+    buttonClass,
+} from '@/components/ui';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { formatCurrency, formatDateOnly } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import { cancel as transactionCancel, index as transactionsIndex } from '@/routes/transactions';
+import {
+    cancel as transactionCancel,
+    index as transactionsIndex,
+    receipt as transactionReceipt,
+} from '@/routes/transactions';
 
 type TransactionItemData = {
     id: number;
@@ -19,6 +28,13 @@ type TransactionItemData = {
     discount_amount: string;
     subtotal: string;
     product: { id: number; name: string; sku: string } | null;
+};
+
+type PaymentData = {
+    id: number;
+    method: string;
+    amount: string;
+    reference_number: string | null;
 };
 
 type TransactionDetail = {
@@ -42,6 +58,7 @@ type TransactionDetail = {
     store: { id: number; name: string } | null;
     cashier: { id: number; name: string } | null;
     items: TransactionItemData[];
+    payments: PaymentData[];
 };
 
 type Props = {
@@ -118,17 +135,28 @@ function TransactionsShow({ transaction }: Props) {
                 description={`Dicatat pada ${formatDateOnly(transaction.created_at)}`}
                 actions={
                     <div className="flex items-center gap-3">
+                        <Link
+                            href={transactionReceipt.url(transaction.id)}
+                            className={buttonClass('secondary', 'h-9 px-3 text-xs')}
+                        >
+                            <Printer className="h-3.5 w-3.5" />
+                            <span>Struk</span>
+                        </Link>
                         <StatusBadge status={transaction.status} />
-                        {transaction.status !== 'cancelled' && can('transaction.cancel') && (
-                            <button
-                                type="button"
-                                onClick={() => setCancelModalOpen(true)}
-                                className={buttonClass('danger', 'h-9 px-3 text-xs')}
-                            >
-                                <Ban className="h-3.5 w-3.5" />
-                                <span>Batalkan Transaksi</span>
-                            </button>
-                        )}
+                        {transaction.status !== 'cancelled' &&
+                            can('transaction.cancel') && (
+                                <button
+                                    type="button"
+                                    onClick={() => setCancelModalOpen(true)}
+                                    className={buttonClass(
+                                        'danger',
+                                        'h-9 px-3 text-xs',
+                                    )}
+                                >
+                                    <Ban className="h-3.5 w-3.5" />
+                                    <span>Batalkan Transaksi</span>
+                                </button>
+                            )}
                     </div>
                 }
             />
@@ -142,28 +170,46 @@ function TransactionsShow({ transaction }: Props) {
                     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
                 >
                     <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-                        <h2 id="cancel-title" className="text-lg font-semibold text-slate-900">
+                        <h2
+                            id="cancel-title"
+                            className="text-lg font-semibold text-slate-900"
+                        >
                             Batalkan Transaksi?
                         </h2>
                         <p className="mt-1 text-sm text-slate-600">
-                            Tindakan ini akan mengembalikan stok produk terkait. Masukkan alasan pembatalan:
+                            Tindakan ini akan mengembalikan stok produk terkait.
+                            Masukkan alasan pembatalan:
                         </p>
-                        <form onSubmit={handleCancel} className="mt-4 space-y-4">
+                        <form
+                            onSubmit={handleCancel}
+                            className="mt-4 space-y-4"
+                        >
                             <div>
-                                <label htmlFor="cancel-reason" className="mb-1 block text-sm font-medium text-slate-700">
-                                    Alasan Pembatalan <span className="text-rose-600">*</span>
+                                <label
+                                    htmlFor="cancel-reason"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
+                                    Alasan Pembatalan{' '}
+                                    <span className="text-rose-600">*</span>
                                 </label>
                                 <textarea
                                     id="cancel-reason"
                                     required
                                     rows={3}
                                     value={cancelForm.data.reason}
-                                    onChange={(e) => cancelForm.setData('reason', e.target.value)}
+                                    onChange={(e) =>
+                                        cancelForm.setData(
+                                            'reason',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Contoh: Pelanggan salah memilih metode pembayaran / barang rusak"
                                     className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 />
                                 {cancelForm.errors.reason && (
-                                    <p className="mt-1 text-xs text-rose-600">{cancelForm.errors.reason}</p>
+                                    <p className="mt-1 text-xs text-rose-600">
+                                        {cancelForm.errors.reason}
+                                    </p>
                                 )}
                             </div>
                             <div className="flex justify-end gap-2">
@@ -180,7 +226,9 @@ function TransactionsShow({ transaction }: Props) {
                                     disabled={cancelForm.processing}
                                     className={buttonClass('danger')}
                                 >
-                                    {cancelForm.processing ? 'Memproses...' : 'Ya, Batalkan'}
+                                    {cancelForm.processing
+                                        ? 'Memproses...'
+                                        : 'Ya, Batalkan'}
                                 </button>
                             </div>
                         </form>
@@ -193,7 +241,9 @@ function TransactionsShow({ transaction }: Props) {
                 <div className="mb-6 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
                     <p className="font-semibold">Transaksi telah dibatalkan</p>
                     {transaction.cancel_reason && (
-                        <p className="mt-1 text-rose-700">Alasan: {transaction.cancel_reason}</p>
+                        <p className="mt-1 text-rose-700">
+                            Alasan: {transaction.cancel_reason}
+                        </p>
                     )}
                 </div>
             )}
@@ -261,7 +311,10 @@ function TransactionsShow({ transaction }: Props) {
                             <div className="flex justify-between text-emerald-700">
                                 <dt>Diskon</dt>
                                 <dd className="font-medium">
-                                    -{formatCurrency(transaction.discount_amount)}
+                                    -
+                                    {formatCurrency(
+                                        transaction.discount_amount,
+                                    )}
                                 </dd>
                             </div>
                         )}
@@ -297,6 +350,29 @@ function TransactionsShow({ transaction }: Props) {
                                 </dd>
                             </div>
                         )}
+                        {transaction.payments.length > 0 && (
+                            <div className="space-y-2 border-t border-slate-200 pt-3">
+                                <dt className="text-slate-600">
+                                    Rincian Metode
+                                </dt>
+                                {transaction.payments.map((payment) => (
+                                    <div
+                                        key={payment.id}
+                                        className="flex justify-between"
+                                    >
+                                        <dd className="uppercase">
+                                            {payment.method}
+                                            {payment.reference_number
+                                                ? ` (${payment.reference_number})`
+                                                : ''}
+                                        </dd>
+                                        <dd className="font-medium text-slate-900">
+                                            {formatCurrency(payment.amount)}
+                                        </dd>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </dl>
                 </Card>
             </div>
@@ -310,24 +386,51 @@ function TransactionsShow({ transaction }: Props) {
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[36rem] text-sm">
-                        <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                        <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                             <tr>
-                                <th scope="col" className="px-5 py-3">Produk</th>
-                                <th scope="col" className="px-5 py-3">SKU</th>
-                                <th scope="col" className="px-5 py-3 text-right">Harga Satuan</th>
-                                <th scope="col" className="px-5 py-3 text-center">Jumlah</th>
-                                <th scope="col" className="px-5 py-3 text-right">Diskon</th>
-                                <th scope="col" className="px-5 py-3 text-right">Subtotal</th>
+                                <th scope="col" className="px-5 py-3">
+                                    Produk
+                                </th>
+                                <th scope="col" className="px-5 py-3">
+                                    SKU
+                                </th>
+                                <th
+                                    scope="col"
+                                    className="px-5 py-3 text-right"
+                                >
+                                    Harga Satuan
+                                </th>
+                                <th
+                                    scope="col"
+                                    className="px-5 py-3 text-center"
+                                >
+                                    Jumlah
+                                </th>
+                                <th
+                                    scope="col"
+                                    className="px-5 py-3 text-right"
+                                >
+                                    Diskon
+                                </th>
+                                <th
+                                    scope="col"
+                                    className="px-5 py-3 text-right"
+                                >
+                                    Subtotal
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {transaction.items.map((item) => (
                                 <tr key={item.id}>
                                     <td className="px-5 py-3 font-medium text-slate-900">
-                                        {item.product?.name ?? item.product_name}
+                                        {item.product?.name ??
+                                            item.product_name}
                                     </td>
                                     <td className="px-5 py-3 font-mono text-xs text-slate-600">
-                                        {item.product?.sku ?? item.product_sku ?? '-'}
+                                        {item.product?.sku ??
+                                            item.product_sku ??
+                                            '-'}
                                     </td>
                                     <td className="px-5 py-3 text-right text-slate-700">
                                         {formatCurrency(item.price)}

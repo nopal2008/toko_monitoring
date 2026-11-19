@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,7 @@ class ProductController extends Controller
 
         return Inertia::render('Products/Form', [
             'categories' => Category::query()->where('is_active', true)->orderBy('name')->limit(100)->get(['id', 'name']),
+            'stores' => Store::query()->where('is_active', true)->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -77,6 +79,7 @@ class ProductController extends Controller
         return Inertia::render('Products/Form', [
             'product' => $product->load('stores:id,name'),
             'categories' => Category::query()->where('is_active', true)->orderBy('name')->limit(100)->get(['id', 'name']),
+            'stores' => Store::query()->where('is_active', true)->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -127,6 +130,8 @@ class ProductController extends Controller
             $pivot[$storeLink['store_id']] = [
                 'tenant_id' => $tenantId,
                 'price' => $storeLink['price'] ?? null,
+                'wholesale_price' => $storeLink['wholesale_price'] ?? null,
+                'wholesale_min_qty' => $storeLink['wholesale_min_qty'] ?? null,
                 'min_stock' => $storeLink['min_stock'] ?? null,
                 'is_available' => $storeLink['is_available'] ?? true,
             ];

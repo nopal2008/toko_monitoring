@@ -28,10 +28,20 @@ function BrandsForm({ brand }: { brand?: Brand }) {
         }
     }
 
+    const generateSlug = (name: string) => {
+        return name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+    };
+
     return (
         <>
             <Head title={editing ? 'Ubah merek' : 'Tambah merek'} />
-            <PageHeader title={editing ? 'Ubah merek' : 'Tambah merek'} description="Nama dan slug merek." />
+            <PageHeader
+                title={editing ? 'Ubah merek' : 'Tambah merek'}
+                description="Kelola merek produk untuk memudahkan identifikasi."
+            />
             <form onSubmit={submit} noValidate>
                 <Card className="space-y-5 p-6">
                     <TextField
@@ -40,7 +50,14 @@ function BrandsForm({ brand }: { brand?: Brand }) {
                         required
                         maxLength={255}
                         value={form.data.name}
-                        onChange={(e) => form.setData('name', e.target.value)}
+                        onChange={(e) => {
+                            const name = e.target.value;
+                            form.setData({
+                                name,
+                                slug: generateSlug(name),
+                                is_active: form.data.is_active,
+                            });
+                        }}
                         error={form.errors.name}
                     />
                     <TextField
@@ -48,23 +65,34 @@ function BrandsForm({ brand }: { brand?: Brand }) {
                         label="Slug"
                         required
                         maxLength={255}
+                        placeholder="nama-merek"
                         value={form.data.slug}
                         onChange={(e) => form.setData('slug', e.target.value)}
                         error={form.errors.slug}
+                        helpText="URL-friendly identifier (otomatis dari nama)"
                     />
                     <CheckboxField
                         id="is_active"
                         label="Merek aktif"
                         checked={form.data.is_active}
-                        onChange={(e) => form.setData('is_active', e.target.checked)}
+                        onChange={(e) =>
+                            form.setData('is_active', e.target.checked)
+                        }
                         error={form.errors.is_active}
                     />
                 </Card>
                 <div className="mt-4 flex justify-end gap-2">
-                    <Link href={BrandController.index.url()} className={buttonClass('secondary')}>
+                    <Link
+                        href={BrandController.index.url()}
+                        className={buttonClass('secondary')}
+                    >
                         Batal
                     </Link>
-                    <button type="submit" disabled={form.processing} className={buttonClass('primary')}>
+                    <button
+                        type="submit"
+                        disabled={form.processing}
+                        className={buttonClass('primary')}
+                    >
                         {form.processing ? 'Menyimpan...' : 'Simpan'}
                     </button>
                 </div>

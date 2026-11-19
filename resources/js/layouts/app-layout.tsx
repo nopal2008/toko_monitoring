@@ -1,10 +1,12 @@
-﻿import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { MotionConfig, motion } from 'framer-motion';
 import {
+    BadgePercent,
     Box,
     Building2,
     ChevronRight,
     ChevronsUpDown,
+    ClipboardList,
     LayoutDashboard,
     LogOut,
     MapPin,
@@ -28,6 +30,9 @@ import AreaController from '@/actions/App/Http/Controllers/AreaController';
 import BrandController from '@/actions/App/Http/Controllers/BrandController';
 import CategoryController from '@/actions/App/Http/Controllers/CategoryController';
 import ProductController from '@/actions/App/Http/Controllers/ProductController';
+import PurchaseController from '@/actions/App/Http/Controllers/PurchaseController';
+import PromotionController from '@/actions/App/Http/Controllers/PromotionController';
+import StockOpnameController from '@/actions/App/Http/Controllers/StockOpnameController';
 import StoreController from '@/actions/App/Http/Controllers/StoreController';
 import SupplierController from '@/actions/App/Http/Controllers/SupplierController';
 import UnitController from '@/actions/App/Http/Controllers/UnitController';
@@ -36,7 +41,12 @@ import { BrandLogo } from '@/components/brand-logo';
 import { FlashToaster } from '@/components/flash-toaster';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogDescription, DialogTitle, SheetContent } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogDescription,
+    DialogTitle,
+    SheetContent,
+} from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -84,6 +94,8 @@ const SEGMENT_LABELS: Record<string, string> = {
     edit: 'Ubah',
     units: 'Satuan',
     warehouses: 'Gudang',
+    promotions: 'Promosi',
+    'stock-opnames': 'Stock Opname',
 };
 
 function breadcrumbsFor(pathname: string) {
@@ -215,7 +227,9 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start">
                 <DropdownMenuLabel>
-                    <span className="block truncate font-medium">{user?.name}</span>
+                    <span className="block truncate font-medium">
+                        {user?.name}
+                    </span>
                     <span className="block truncate text-xs font-normal text-muted-foreground">
                         {user?.email}
                     </span>
@@ -259,7 +273,10 @@ function SidebarContent({
             >
                 <BrandLogo name={appName} showName={!collapsed} />
             </div>
-            <nav aria-label="Menu utama" className="flex-1 space-y-5 overflow-y-auto p-3">
+            <nav
+                aria-label="Menu utama"
+                className="flex-1 space-y-5 overflow-y-auto p-3"
+            >
                 {groups.map((group) => (
                     <div key={group.label}>
                         {!collapsed && (
@@ -319,7 +336,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     href: dashboard.url(),
                     match: '/dashboard',
                     icon: LayoutDashboard,
-                    visible: hasAnyRole('owner', 'admin', 'area_manager', 'store_manager'),
+                    visible: hasAnyRole(
+                        'owner',
+                        'admin',
+                        'area_manager',
+                        'store_manager',
+                    ),
                 },
             ],
         },
@@ -367,11 +389,27 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     visible: can('product.view'),
                 },
                 {
+                    label: 'Promosi',
+                    href: PromotionController.index.url(),
+                    match: '/promotions',
+                    icon: BadgePercent,
+                    visible:
+                        hasAnyRole('owner', 'admin', 'area_manager') &&
+                        can('product.manage'),
+                },
+                {
                     label: 'Supplier',
                     href: SupplierController.index.url(),
                     match: '/suppliers',
                     icon: Truck,
                     visible: isOwnerOrAdmin && can('product.manage'),
+                },
+                {
+                    label: 'Pembelian',
+                    href: PurchaseController.index.url(),
+                    match: '/purchases',
+                    icon: Truck,
+                    visible: can('purchase.view') || can('purchase.manage'),
                 },
                 {
                     label: 'Area',
@@ -410,6 +448,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 },
             ],
         },
+        {
+            label: 'Inventaris',
+            items: [
+                {
+                    label: 'Stock Opname',
+                    href: StockOpnameController.index.url(),
+                    match: '/stock-opnames',
+                    icon: ClipboardList,
+                    visible: can('inventory.adjust'),
+                },
+            ],
+        },
     ]
         .map((group) => ({
             ...group,
@@ -424,8 +474,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
         try {
             localStorage.setItem('sidebar-collapsed', next ? '1' : '0');
-        } catch {
-        }
+        } catch {}
     }
 
     const crumbs = breadcrumbsFor(pathname);
@@ -457,7 +506,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
                 <Dialog open={sheetOpen} onOpenChange={setSheetOpen}>
                     <SheetContent>
-                        <DialogTitle className="sr-only">Menu navigasi</DialogTitle>
+                        <DialogTitle className="sr-only">
+                            Menu navigasi
+                        </DialogTitle>
                         <DialogDescription className="sr-only">
                             Daftar halaman aplikasi
                         </DialogDescription>
@@ -493,7 +544,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                             size="icon"
                             className="hidden lg:inline-flex"
                             onClick={toggleCollapsed}
-                            aria-label={collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
+                            aria-label={
+                                collapsed
+                                    ? 'Perluas sidebar'
+                                    : 'Ciutkan sidebar'
+                            }
                         >
                             {collapsed ? (
                                 <PanelLeftOpen aria-hidden="true" />
@@ -537,16 +592,20 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                             className="sticky top-16 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-warning/40 bg-warning/10 px-4 py-3 text-sm text-foreground md:px-6"
                         >
                             <span>
-                                Anda masuk sebagai <strong>{auth.user?.name}</strong>
+                                Anda masuk sebagai{' '}
+                                <strong>{auth.user?.name}</strong>
                                 {impersonation.actor
                                     ? ` atas nama ${impersonation.actor.name}`
-                                    : ' melalui sesi impersonasi'}.
+                                    : ' melalui sesi impersonasi'}
+                                .
                             </span>
                             <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                onClick={() => router.post(stopImpersonation.url())}
+                                onClick={() =>
+                                    router.post(stopImpersonation.url())
+                                }
                             >
                                 Kembali ke akun owner
                             </Button>
@@ -570,3 +629,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </MotionConfig>
     );
 }
+
+
+

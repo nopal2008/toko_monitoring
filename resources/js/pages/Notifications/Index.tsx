@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import type { ReactNode } from 'react';
-import { AlertCircle, Bell, Check, Info, Package, Receipt } from 'lucide-react';
+import { AlertCircle, Check, Info, Package, Receipt } from 'lucide-react';
 import { Card, EmptyState, PageHeader, buttonClass } from '@/components/ui';
 import { Pagination } from '@/components/pagination';
 import { usePolling } from '@/hooks/use-polling';
@@ -28,13 +28,22 @@ type Props = {
 };
 
 function getNotificationIcon(type: string) {
-    if (type.toLowerCase().includes('stock') || type.toLowerCase().includes('inventory')) {
+    if (
+        type.toLowerCase().includes('stock') ||
+        type.toLowerCase().includes('inventory')
+    ) {
         return <Package className="h-5 w-5 text-amber-600" />;
     }
-    if (type.toLowerCase().includes('transaction') || type.toLowerCase().includes('sale')) {
+    if (
+        type.toLowerCase().includes('transaction') ||
+        type.toLowerCase().includes('sale')
+    ) {
         return <Receipt className="h-5 w-5 text-emerald-600" />;
     }
-    if (type.toLowerCase().includes('alert') || type.toLowerCase().includes('danger')) {
+    if (
+        type.toLowerCase().includes('alert') ||
+        type.toLowerCase().includes('danger')
+    ) {
         return <AlertCircle className="h-5 w-5 text-rose-600" />;
     }
     return <Info className="h-5 w-5 text-sky-600" />;
@@ -86,7 +95,9 @@ function NotificationsIndex({ notifications }: Props) {
                                     key={item.id}
                                     className={cn(
                                         'flex flex-col gap-3 p-4 transition sm:flex-row sm:items-center sm:justify-between',
-                                        isUnread ? 'bg-emerald-50/40' : 'bg-white',
+                                        isUnread
+                                            ? 'bg-emerald-50/40'
+                                            : 'bg-white',
                                     )}
                                 >
                                     <div className="flex items-start gap-3.5">
@@ -103,7 +114,9 @@ function NotificationsIndex({ notifications }: Props) {
                                                 {message}
                                             </p>
                                             <p className="mt-0.5 text-xs text-slate-400">
-                                                {formatDateOnly(item.created_at)}
+                                                {formatDateOnly(
+                                                    item.created_at,
+                                                )}
                                             </p>
                                         </div>
                                     </div>

@@ -21,10 +21,16 @@ function BrandsShow({ brand }: { brand: Brand }) {
                 title={brand.name}
                 actions={
                     <>
-                        <Link href={BrandController.index.url()} className={buttonClass('secondary')}>
+                        <Link
+                            href={BrandController.index.url()}
+                            className={buttonClass('secondary')}
+                        >
                             Kembali
                         </Link>
-                        <Link href={BrandController.edit.url(brand.id)} className={buttonClass('primary')}>
+                        <Link
+                            href={BrandController.edit.url(brand.id)}
+                            className={buttonClass('primary')}
+                        >
                             Ubah
                         </Link>
                         <DeleteAction
@@ -39,10 +45,22 @@ function BrandsShow({ brand }: { brand: Brand }) {
                 <DescriptionList
                     items={[
                         { label: 'Slug', value: brand.slug },
-                        { label: 'Status', value: <StatusBadge active={brand.is_active} /> },
-                        { label: 'Produk', value: formatNumber(brand.products_count ?? 0) },
-                        { label: 'Dibuat', value: formatDateTime(brand.created_at) },
-                        { label: 'Diperbarui', value: formatDateTime(brand.updated_at) },
+                        {
+                            label: 'Status',
+                            value: <StatusBadge active={brand.is_active} />,
+                        },
+                        {
+                            label: 'Produk',
+                            value: formatNumber(brand.products_count ?? 0),
+                        },
+                        {
+                            label: 'Dibuat',
+                            value: formatDateTime(brand.created_at),
+                        },
+                        {
+                            label: 'Diperbarui',
+                            value: formatDateTime(brand.updated_at),
+                        },
                     ]}
                 />
             </Card>

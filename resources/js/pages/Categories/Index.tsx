@@ -53,42 +53,80 @@ function CategoriesIndex({ categories }: { categories: Paginated<Category> }) {
                             <table className="w-full min-w-[32rem] text-sm">
                                 <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
-                                        <th scope="col" className="px-4 py-3 font-medium">Nama</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Produk</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Status</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Nama
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Produk
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Status
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Aksi
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {categories.data.map((category) => (
-                                        <tr key={category.id} className="transition-colors hover:bg-muted/40">
+                                        <tr
+                                            key={category.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3">
                                                 <Link
-                                                    href={CategoryController.show.url(category.id)}
+                                                    href={CategoryController.show.url(
+                                                        category.id,
+                                                    )}
                                                     className="font-medium text-brand-700 hover:underline dark:text-brand-300"
                                                 >
                                                     {category.name}
                                                 </Link>
                                             </td>
                                             <td className="px-4 py-3 text-right">
-                                                {formatNumber(category.products_count ?? 0)}
+                                                {formatNumber(
+                                                    category.products_count ??
+                                                        0,
+                                                )}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <StatusBadge active={category.is_active} />
+                                                <StatusBadge
+                                                    active={category.is_active}
+                                                />
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
                                                     {canManage && (
                                                         <>
                                                             <Link
-                                                                href={CategoryController.edit.url(category.id)}
-                                                                className={buttonClass('secondary')}
+                                                                href={CategoryController.edit.url(
+                                                                    category.id,
+                                                                )}
+                                                                className={buttonClass(
+                                                                    'secondary',
+                                                                )}
                                                             >
                                                                 Ubah
                                                             </Link>
                                                             <DeleteAction
-                                                                url={CategoryController.destroy.url(category.id)}
-                                                                itemName={category.name}
+                                                                url={CategoryController.destroy.url(
+                                                                    category.id,
+                                                                )}
+                                                                itemName={
+                                                                    category.name
+                                                                }
                                                             />
                                                         </>
                                                     )}

@@ -44,6 +44,7 @@ export default defineConfig({
             'vendor/**',
             'node_modules/**',
             'public/**',
+            'frontend/dist/**',
             'bootstrap/ssr/**',
             'tailwind.config.js',
             'resources/js/actions/**',

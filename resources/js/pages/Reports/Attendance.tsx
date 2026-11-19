@@ -35,14 +35,25 @@ type Props = {
 
 function StatusBadge({ status }: { status: AttendanceReportRow['status'] }) {
     const config = {
-        present: { label: 'Hadir', className: 'bg-emerald-100 text-emerald-800' },
+        present: {
+            label: 'Hadir',
+            className: 'bg-emerald-100 text-emerald-800',
+        },
         late: { label: 'Terlambat', className: 'bg-amber-100 text-amber-800' },
-        absent: { label: 'Tidak Hadir', className: 'bg-rose-100 text-rose-800' },
+        absent: {
+            label: 'Tidak Hadir',
+            className: 'bg-rose-100 text-rose-800',
+        },
         leave: { label: 'Izin / Cuti', className: 'bg-sky-100 text-sky-800' },
     }[status] ?? { label: status, className: 'bg-slate-100 text-slate-800' };
 
     return (
-        <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', config.className)}>
+        <span
+            className={cn(
+                'rounded-full px-2.5 py-0.5 text-xs font-medium',
+                config.className,
+            )}
+        >
             {config.label}
         </span>
     );
@@ -78,9 +89,15 @@ function ReportsAttendance({ report, filters }: Props) {
 
             {/* Filter */}
             <Card className="mb-6 p-4">
-                <form onSubmit={applyFilter} className="flex flex-wrap items-end gap-3">
+                <form
+                    onSubmit={applyFilter}
+                    className="flex flex-wrap items-end gap-3"
+                >
                     <div>
-                        <label htmlFor="from" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="from"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Dari Tanggal
                         </label>
                         <input
@@ -93,7 +110,10 @@ function ReportsAttendance({ report, filters }: Props) {
                     </div>
 
                     <div>
-                        <label htmlFor="to" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="to"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Sampai Tanggal
                         </label>
                         <input
@@ -106,7 +126,10 @@ function ReportsAttendance({ report, filters }: Props) {
                     </div>
 
                     <div>
-                        <label htmlFor="status" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="status"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Status
                         </label>
                         <select
@@ -123,7 +146,10 @@ function ReportsAttendance({ report, filters }: Props) {
                         </select>
                     </div>
 
-                    <button type="submit" className={buttonClass('primary', 'h-9 px-3')}>
+                    <button
+                        type="submit"
+                        className={buttonClass('primary', 'h-9 px-3')}
+                    >
                         <Filter className="h-4 w-4" />
                         <span>Terapkan</span>
                     </button>
@@ -139,46 +165,67 @@ function ReportsAttendance({ report, filters }: Props) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[44rem] text-sm">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                                 <tr>
-                                    <th scope="col" className="px-5 py-3">Karyawan</th>
-                                    <th scope="col" className="px-5 py-3">Toko</th>
-                                    <th scope="col" className="px-5 py-3">Tanggal</th>
-                                    <th scope="col" className="px-5 py-3">Jam Masuk</th>
-                                    <th scope="col" className="px-5 py-3">Jam Keluar</th>
-                                    <th scope="col" className="px-5 py-3">Status</th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Karyawan
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Toko
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Jam Masuk
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Jam Keluar
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Status
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {report.data.map((row) => (
-                                    <tr key={row.id} className="transition hover:bg-slate-50/50">
-                                        <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                    <tr
+                                        key={row.id}
+                                        className="transition hover:bg-slate-50/50"
+                                    >
+                                        <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                             {row.employee?.name ?? '-'}
                                             <span className="ml-2 font-mono text-xs text-slate-400">
                                                 {row.employee?.employee_code}
                                             </span>
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {row.store?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {formatDateOnly(row.date)}
                                         </td>
-                                        <td className="px-5 py-3.5 font-mono text-xs text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 font-mono text-xs whitespace-nowrap text-slate-900">
                                             {row.check_in_at ? (
                                                 <span className="inline-flex items-center gap-1">
                                                     <Clock className="h-3 w-3 text-emerald-600" />
-                                                    {row.check_in_at.slice(11, 16) || row.check_in_at}
+                                                    {row.check_in_at.slice(
+                                                        11,
+                                                        16,
+                                                    ) || row.check_in_at}
                                                 </span>
                                             ) : (
                                                 '-'
                                             )}
                                         </td>
-                                        <td className="px-5 py-3.5 font-mono text-xs text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 font-mono text-xs whitespace-nowrap text-slate-900">
                                             {row.check_out_at ? (
                                                 <span className="inline-flex items-center gap-1">
                                                     <Clock className="h-3 w-3 text-slate-400" />
-                                                    {row.check_out_at.slice(11, 16) || row.check_out_at}
+                                                    {row.check_out_at.slice(
+                                                        11,
+                                                        16,
+                                                    ) || row.check_out_at}
                                                 </span>
                                             ) : (
                                                 '-'

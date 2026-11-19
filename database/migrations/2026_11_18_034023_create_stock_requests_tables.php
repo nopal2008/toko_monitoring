@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::create('stock_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('source_warehouse_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('destination_warehouse_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('source_warehouse_id')->constrained('warehouses')->cascadeOnDelete();
+            $table->foreignId('destination_warehouse_id')->constrained('warehouses')->cascadeOnDelete();
             $table->string('reference')->unique();
             $table->enum('status', ['pending', 'approved', 'rejected', 'fulfilled', 'cancelled'])->default('pending');
-            $table->foreignId('requested_by')->constrained()->cascadeOnDelete();
-            $table->foreignId('approved_by')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('requested_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('requested_at')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->text('notes')->nullable();

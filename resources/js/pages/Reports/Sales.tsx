@@ -53,20 +53,34 @@ function ReportsSales({ report, filters }: Props) {
                 description="Analisis pendapatan dan volume transaksi berdasarkan periode, cabang, atau produk."
             />
 
-            <ReportTabs current="sales" filters={{ from, to, group_by: groupBy }} />
+            <ReportTabs
+                current="sales"
+                filters={{ from, to, group_by: groupBy }}
+            />
 
             {/* Filter Bar */}
             <Card className="mb-6 p-4">
-                <form onSubmit={applyFilter} className="flex flex-wrap items-end gap-3">
+                <form
+                    onSubmit={applyFilter}
+                    className="flex flex-wrap items-end gap-3"
+                >
                     <div>
-                        <label htmlFor="group_by" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="group_by"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Kelompokkan Berdasarkan
                         </label>
                         <select
                             id="group_by"
                             value={groupBy}
                             onChange={(e) =>
-                                setGroupBy(e.target.value as 'day' | 'store' | 'product')
+                                setGroupBy(
+                                    e.target.value as
+                                        | 'day'
+                                        | 'store'
+                                        | 'product',
+                                )
                             }
                             className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                         >
@@ -77,7 +91,10 @@ function ReportsSales({ report, filters }: Props) {
                     </div>
 
                     <div>
-                        <label htmlFor="from" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="from"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Dari Tanggal
                         </label>
                         <input
@@ -90,7 +107,10 @@ function ReportsSales({ report, filters }: Props) {
                     </div>
 
                     <div>
-                        <label htmlFor="to" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="to"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Sampai Tanggal
                         </label>
                         <input
@@ -102,7 +122,10 @@ function ReportsSales({ report, filters }: Props) {
                         />
                     </div>
 
-                    <button type="submit" className={buttonClass('primary', 'h-9 px-3')}>
+                    <button
+                        type="submit"
+                        className={buttonClass('primary', 'h-9 px-3')}
+                    >
                         <Filter className="h-4 w-4" />
                         <span>Terapkan</span>
                     </button>
@@ -118,49 +141,85 @@ function ReportsSales({ report, filters }: Props) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[36rem] text-sm">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                                 <tr>
-                                    {groupBy === 'day' && <th scope="col" className="px-5 py-3">Tanggal</th>}
-                                    {groupBy === 'store' && <th scope="col" className="px-5 py-3">Cabang Toko</th>}
-                                    {groupBy === 'product' && <th scope="col" className="px-5 py-3">Nama Produk</th>}
+                                    {groupBy === 'day' && (
+                                        <th scope="col" className="px-5 py-3">
+                                            Tanggal
+                                        </th>
+                                    )}
+                                    {groupBy === 'store' && (
+                                        <th scope="col" className="px-5 py-3">
+                                            Cabang Toko
+                                        </th>
+                                    )}
                                     {groupBy === 'product' && (
-                                        <th scope="col" className="px-5 py-3 text-right">Kuantitas Terjual</th>
+                                        <th scope="col" className="px-5 py-3">
+                                            Nama Produk
+                                        </th>
+                                    )}
+                                    {groupBy === 'product' && (
+                                        <th
+                                            scope="col"
+                                            className="px-5 py-3 text-right"
+                                        >
+                                            Kuantitas Terjual
+                                        </th>
                                     )}
                                     {groupBy !== 'product' && (
-                                        <th scope="col" className="px-5 py-3 text-right">Jumlah Transaksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-5 py-3 text-right"
+                                        >
+                                            Jumlah Transaksi
+                                        </th>
                                     )}
-                                    <th scope="col" className="px-5 py-3 text-right">Total Pendapatan</th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Total Pendapatan
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {report.data.map((row, idx) => (
-                                    <tr key={idx} className="transition hover:bg-slate-50/50">
+                                    <tr
+                                        key={idx}
+                                        className="transition hover:bg-slate-50/50"
+                                    >
                                         {groupBy === 'day' && (
-                                            <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
-                                                {row.date ? formatDateOnly(row.date) : '-'}
+                                            <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
+                                                {row.date
+                                                    ? formatDateOnly(row.date)
+                                                    : '-'}
                                             </td>
                                         )}
                                         {groupBy === 'store' && (
-                                            <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                            <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                                 {row.store_name ?? '-'}
                                             </td>
                                         )}
                                         {groupBy === 'product' && (
-                                            <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                            <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                                 {row.product_name ?? '-'}
                                             </td>
                                         )}
                                         {groupBy === 'product' && (
-                                            <td className="px-5 py-3.5 text-right font-medium text-slate-700 whitespace-nowrap">
-                                                {formatNumber(row.quantity ?? 0)}
+                                            <td className="px-5 py-3.5 text-right font-medium whitespace-nowrap text-slate-700">
+                                                {formatNumber(
+                                                    row.quantity ?? 0,
+                                                )}
                                             </td>
                                         )}
                                         {groupBy !== 'product' && (
-                                            <td className="px-5 py-3.5 text-right text-slate-600 whitespace-nowrap">
-                                                {formatNumber(row.transactions ?? 0)}
+                                            <td className="px-5 py-3.5 text-right whitespace-nowrap text-slate-600">
+                                                {formatNumber(
+                                                    row.transactions ?? 0,
+                                                )}
                                             </td>
                                         )}
-                                        <td className="px-5 py-3.5 text-right font-semibold text-emerald-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 text-right font-semibold whitespace-nowrap text-emerald-700">
                                             {formatCurrency(row.total_sales)}
                                         </td>
                                     </tr>

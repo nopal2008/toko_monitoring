@@ -13,8 +13,16 @@ import {
 import { formatCurrency, formatDateOnly, formatNumber } from '@/lib/format';
 
 export type ChartRow = { date: string; sales: number; transactions: number };
-export type AttendanceChartRow = { date: string; present: number; late: number };
-export type StoreChartRow = { name: string; sales: number; transactions: number };
+export type AttendanceChartRow = {
+    date: string;
+    present: number;
+    late: number;
+};
+export type StoreChartRow = {
+    name: string;
+    sales: number;
+    transactions: number;
+};
 export type DistributionChartRow = { label: string; transactions: number };
 
 const compact = new Intl.NumberFormat('id-ID', { notation: 'compact' });
@@ -56,14 +64,35 @@ export function SalesTrendChart({ data }: { data: ChartRow[] }) {
     return (
         <div className="h-72 w-full lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <AreaChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                >
                     <defs>
-                        <linearGradient id="sales-fill" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="hsl(var(--brand-500))" stopOpacity={0.3} />
-                            <stop offset="100%" stopColor="hsl(var(--brand-500))" stopOpacity={0} />
+                        <linearGradient
+                            id="sales-fill"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                        >
+                            <stop
+                                offset="0%"
+                                stopColor="hsl(var(--brand-500))"
+                                stopOpacity={0.3}
+                            />
+                            <stop
+                                offset="100%"
+                                stopColor="hsl(var(--brand-500))"
+                                stopOpacity={0}
+                            />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid
+                        stroke="hsl(var(--border))"
+                        strokeDasharray="3 3"
+                        vertical={false}
+                    />
                     <XAxis
                         dataKey="date"
                         tickFormatter={formatDateOnly}
@@ -103,8 +132,15 @@ export function TransactionsChart({ data }: { data: ChartRow[] }) {
     return (
         <div className="h-72 w-full lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                <BarChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                >
+                    <CartesianGrid
+                        stroke="hsl(var(--border))"
+                        strokeDasharray="3 3"
+                        vertical={false}
+                    />
                     <XAxis
                         dataKey="date"
                         tickFormatter={formatDateOnly}
@@ -141,8 +177,15 @@ export function AttendanceTrendChart({ data }: { data: AttendanceChartRow[] }) {
     return (
         <div className="h-72 w-full lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
+                <AreaChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                >
+                    <CartesianGrid
+                        stroke="hsl(var(--border))"
+                        strokeDasharray="3 3"
+                        vertical={false}
+                    />
                     <XAxis
                         dataKey="date"
                         tickFormatter={formatDateOnly}
@@ -151,7 +194,13 @@ export function AttendanceTrendChart({ data }: { data: AttendanceChartRow[] }) {
                         tickLine={false}
                         minTickGap={24}
                     />
-                    <YAxis width={36} allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} />
+                    <YAxis
+                        width={36}
+                        allowDecimals={false}
+                        tick={axisTick}
+                        axisLine={false}
+                        tickLine={false}
+                    />
                     <Tooltip content={<ChartTooltip kind="number" />} />
                     <Legend />
                     <Area
@@ -182,9 +231,21 @@ export function StoreSalesChart({ data }: { data: StoreChartRow[] }) {
     return (
         <div className="h-72 w-full lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="name" tick={axisTick} axisLine={false} tickLine={false} />
+                <BarChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                >
+                    <CartesianGrid
+                        stroke="hsl(var(--border))"
+                        strokeDasharray="3 3"
+                        vertical={false}
+                    />
+                    <XAxis
+                        dataKey="name"
+                        tick={axisTick}
+                        axisLine={false}
+                        tickLine={false}
+                    />
                     <YAxis
                         width={56}
                         tickFormatter={(value: number) => compact.format(value)}
@@ -192,7 +253,9 @@ export function StoreSalesChart({ data }: { data: StoreChartRow[] }) {
                         axisLine={false}
                         tickLine={false}
                     />
-                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip
+                        formatter={(value: number) => formatCurrency(value)}
+                    />
                     <Bar
                         dataKey="sales"
                         name="Penjualan"
@@ -210,11 +273,31 @@ export function DistributionChart({ data }: { data: DistributionChartRow[] }) {
     return (
         <div className="h-72 w-full lg:h-80">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="label" tick={axisTick} axisLine={false} tickLine={false} />
-                    <YAxis width={40} allowDecimals={false} tick={axisTick} axisLine={false} tickLine={false} />
-                    <Tooltip formatter={(value: number) => formatNumber(value)} />
+                <BarChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                >
+                    <CartesianGrid
+                        stroke="hsl(var(--border))"
+                        strokeDasharray="3 3"
+                        vertical={false}
+                    />
+                    <XAxis
+                        dataKey="label"
+                        tick={axisTick}
+                        axisLine={false}
+                        tickLine={false}
+                    />
+                    <YAxis
+                        width={40}
+                        allowDecimals={false}
+                        tick={axisTick}
+                        axisLine={false}
+                        tickLine={false}
+                    />
+                    <Tooltip
+                        formatter={(value: number) => formatNumber(value)}
+                    />
                     <Bar
                         dataKey="transactions"
                         name="Transaksi"

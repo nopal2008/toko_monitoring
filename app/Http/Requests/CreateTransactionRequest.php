@@ -5,9 +5,12 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\InvokableRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateTransactionRequest extends FormRequest
 {
+    public const PAYMENT_METHODS = ['cash', 'debit', 'credit', 'card', 'qris', 'ewallet', 'transfer', 'other'];
+
     public function authorize(): bool
     {
         return $this->user() !== null;
@@ -23,10 +26,14 @@ class CreateTransactionRequest extends FormRequest
             'items.*.product_id' => ['required', 'integer', 'min:1', 'distinct'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:100000'],
             'items.*.discount_amount' => ['nullable', 'decimal:0,2', 'max:9999999999999.99'],
+            'payments' => ['sometimes', 'array', 'min:1', 'max:5'],
+            'payments.*.method' => ['required', Rule::in(self::PAYMENT_METHODS)],
+            'payments.*.amount' => ['required', 'decimal:0,2', 'max:9999999999999.99'],
+            'payments.*.reference_number' => ['nullable', 'string', 'max:100'],
             'discount_amount' => ['nullable', 'decimal:0,2', 'max:9999999999999.99'],
             'tax_amount' => ['nullable', 'decimal:0,2', 'max:9999999999999.99'],
-            'paid_amount' => ['required', 'decimal:0,2', 'max:9999999999999.99'],
-            'payment_method' => ['required', 'in:cash,card,transfer,other'],
+            'paid_amount' => ['required_without:payments', 'nullable', 'decimal:0,2', 'max:9999999999999.99'],
+            'payment_method' => ['required_without:payments', 'nullable', Rule::in(self::PAYMENT_METHODS)],
             'notes' => ['nullable', 'string', 'max:2000'],
         ];
     }
@@ -35,10 +42,11 @@ class CreateTransactionRequest extends FormRequest
      * @return array{
      *     store_id: int,
      *     items: array<int, array{product_id: int, quantity: int, discount_amount?: string|int|null}>,
+     *     payments: array<int, array{method: string, amount: string|int, reference_number?: string|null}>,
      *     discount_amount?: string|int|null,
      *     tax_amount?: string|int|null,
-     *     paid_amount: string,
-     *     payment_method: string,
+     *     paid_amount?: string|null,
+     *     payment_method?: string|null,
      *     cashier_shift_id?: int|null,
      *     notes?: string|null
      * }
@@ -83,6 +91,29 @@ class CreateTransactionRequest extends FormRequest
             $normalizedItems[] = $normalizedItem;
         }
 
+        $payments = [];
+        $rawPayments = $validated['payments'] ?? [];
+
+        foreach ($rawPayments as $payment) {
+            if (! is_array($payment) || ! is_string($payment['method'] ?? null)) {
+                throw new \LogicException('Validated payment is invalid.');
+            }
+
+            $amount = $payment['amount'] ?? null;
+
+            if (! is_string($amount) && ! is_int($amount)) {
+                throw new \LogicException('Validated payment amount must be numeric.');
+            }
+
+            $payments[] = [
+                'method' => $payment['method'],
+                'amount' => $amount,
+                'reference_number' => isset($payment['reference_number']) && is_string($payment['reference_number'])
+                    ? $payment['reference_number']
+                    : null,
+            ];
+        }
+
         $discount = $validated['discount_amount'] ?? null;
         $tax = $validated['tax_amount'] ?? null;
         $cashierShiftId = $validated['cashier_shift_id'] ?? null;
@@ -99,10 +130,11 @@ class CreateTransactionRequest extends FormRequest
         return [
             'store_id' => $this->integer('store_id'),
             'items' => $normalizedItems,
+            'payments' => $payments,
             'discount_amount' => $discount,
             'tax_amount' => $tax,
-            'paid_amount' => $this->string('paid_amount')->toString(),
-            'payment_method' => $this->string('payment_method')->toString(),
+            'paid_amount' => $validated['paid_amount'] ?? null,
+            'payment_method' => $validated['payment_method'] ?? null,
             'cashier_shift_id' => $cashierShiftId === null ? null : (int) $cashierShiftId,
             'notes' => $notes,
         ];

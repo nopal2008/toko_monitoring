@@ -23,8 +23,7 @@ export function PermissionGate({
     const { can, hasRole } = usePermission();
 
     const allowed =
-        (permission ? can(permission) : true) &&
-        (role ? hasRole(role) : true);
+        (permission ? can(permission) : true) && (role ? hasRole(role) : true);
 
     return allowed ? <>{children}</> : <>{fallback}</>;
 }

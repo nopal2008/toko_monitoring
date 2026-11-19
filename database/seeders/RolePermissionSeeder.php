@@ -14,6 +14,7 @@ class RolePermissionSeeder extends Seeder
             'store.view', 'store.manage', 'product.view', 'product.manage',
             'inventory.view', 'inventory.adjust', 'inventory.transfer',
             'transaction.view', 'transaction.create', 'transaction.cancel',
+            'purchase.view', 'purchase.manage',
             'expense.create', 'expense.approve', 'attendance.view', 'attendance.manage',
             'report.view', 'report.export', 'setting.manage', 'user.manage',
             'area.view', 'area.manage', 'warehouse.view', 'warehouse.manage', 'brand.view', 'brand.manage', 'unit.view', 'unit.manage',
@@ -34,7 +35,8 @@ class RolePermissionSeeder extends Seeder
             ],
             'store_manager' => [
                 'store.view', 'product.view', 'inventory.view', 'inventory.adjust', 'inventory.transfer',
-                'transaction.view', 'transaction.create', 'transaction.cancel', 'expense.create', 'attendance.view',
+                'transaction.view', 'transaction.create', 'transaction.cancel', 'purchase.view', 'purchase.manage',
+                'expense.create', 'attendance.view',
                 'report.view', 'warehouse.view', 'warehouse.manage', 'brand.view', 'brand.manage', 'unit.view', 'unit.manage',
             ],
             'cashier' => ['transaction.view', 'transaction.create'],

@@ -31,7 +31,10 @@ function UnitsForm({ unit }: { unit?: Unit }) {
     return (
         <>
             <Head title={editing ? 'Ubah satuan' : 'Tambah satuan'} />
-            <PageHeader title={editing ? 'Ubah satuan' : 'Tambah satuan'} description="Nama dan simbol satuan." />
+            <PageHeader
+                title={editing ? 'Ubah satuan' : 'Tambah satuan'}
+                description="Kelola satuan produk seperti pcs, kg, liter."
+            />
             <form onSubmit={submit} noValidate>
                 <Card className="space-y-5 p-6">
                     <TextField
@@ -39,6 +42,7 @@ function UnitsForm({ unit }: { unit?: Unit }) {
                         label="Nama satuan"
                         required
                         maxLength={255}
+                        placeholder="Contoh: Kilogram, Liter, Pieces"
                         value={form.data.name}
                         onChange={(e) => form.setData('name', e.target.value)}
                         error={form.errors.name}
@@ -48,23 +52,36 @@ function UnitsForm({ unit }: { unit?: Unit }) {
                         label="Simbol"
                         required
                         maxLength={10}
+                        placeholder="Contoh: kg, L, pcs"
                         value={form.data.symbol}
-                        onChange={(e) => form.setData('symbol', e.target.value)}
+                        onChange={(e) =>
+                            form.setData('symbol', e.target.value)
+                        }
                         error={form.errors.symbol}
+                        helpText="Singkatan atau simbol satuan (maksimal 10 karakter)"
                     />
                     <CheckboxField
                         id="is_active"
                         label="Satuan aktif"
                         checked={form.data.is_active}
-                        onChange={(e) => form.setData('is_active', e.target.checked)}
+                        onChange={(e) =>
+                            form.setData('is_active', e.target.checked)
+                        }
                         error={form.errors.is_active}
                     />
                 </Card>
                 <div className="mt-4 flex justify-end gap-2">
-                    <Link href={UnitController.index.url()} className={buttonClass('secondary')}>
+                    <Link
+                        href={UnitController.index.url()}
+                        className={buttonClass('secondary')}
+                    >
                         Batal
                     </Link>
-                    <button type="submit" disabled={form.processing} className={buttonClass('primary')}>
+                    <button
+                        type="submit"
+                        disabled={form.processing}
+                        className={buttonClass('primary')}
+                    >
                         {form.processing ? 'Menyimpan...' : 'Simpan'}
                     </button>
                 </div>

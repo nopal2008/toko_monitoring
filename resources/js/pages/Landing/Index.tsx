@@ -258,7 +258,7 @@ export default function LandingIndex() {
                 {/* ===== Hero ===== */}
                 <section className="bg-gradient-to-b from-emerald-50 to-white px-4 py-20 text-center sm:px-6 lg:px-8 lg:py-28">
                     <div className="mx-auto max-w-3xl">
-                        <span className="mb-4 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 uppercase tracking-wide">
+                        <span className="mb-4 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-700 uppercase">
                             Sistem Monitoring Toko
                         </span>
                         <h1 className="mb-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
@@ -269,8 +269,8 @@ export default function LandingIndex() {
                         </h1>
                         <p className="mx-auto mb-8 max-w-xl text-lg text-slate-600">
                             Kelola stok, transaksi, karyawan, dan laporan
-                            keuangan seluruh cabang toko Anda secara real-time
-                            — dari mana saja, kapan saja.
+                            keuangan seluruh cabang toko Anda secara real-time —
+                            dari mana saja, kapan saja.
                         </p>
                         <div className="flex flex-wrap justify-center gap-3">
                             <Link
@@ -300,7 +300,10 @@ export default function LandingIndex() {
                         </div>
                         <div className="grid grid-cols-4 gap-3 p-4 sm:p-6">
                             {[
-                                { label: 'Penjualan Hari Ini', value: 'Rp 4.250.000' },
+                                {
+                                    label: 'Penjualan Hari Ini',
+                                    value: 'Rp 4.250.000',
+                                },
                                 { label: 'Transaksi', value: '38' },
                                 { label: 'Stok Menipis', value: '5 produk' },
                                 { label: 'Karyawan Aktif', value: '12' },
@@ -365,7 +368,8 @@ export default function LandingIndex() {
                                 Semua yang Anda Butuhkan
                             </h2>
                             <p className="mt-2 text-slate-600">
-                                Fitur lengkap untuk operasional toko multi-cabang
+                                Fitur lengkap untuk operasional toko
+                                multi-cabang
                             </p>
                         </div>
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

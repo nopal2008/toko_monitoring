@@ -1,11 +1,20 @@
 import { Head, Link } from '@inertiajs/react';
 import type { ReactNode } from 'react';
-import { ArrowLeft, Edit, Mail, Phone, Store, User, UserCheck } from 'lucide-react';
-import { Card, DescriptionList, PageHeader, StatusBadge, buttonClass } from '@/components/ui';
+import { ArrowLeft, Edit, Mail, Phone, Store, User } from 'lucide-react';
+import {
+    Card,
+    DescriptionList,
+    PageHeader,
+    StatusBadge,
+    buttonClass,
+} from '@/components/ui';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { formatDateOnly } from '@/lib/format';
-import { edit as employeesEdit, index as employeesIndex } from '@/routes/employees';
+import {
+    edit as employeesEdit,
+    index as employeesIndex,
+} from '@/routes/employees';
 
 type EmployeeDetail = {
     id: number;
@@ -54,7 +63,10 @@ function EmployeesShow({ employee }: Props) {
                         {can('attendance.manage') && (
                             <Link
                                 href={employeesEdit.url(employee.id)}
-                                className={buttonClass('secondary', 'h-9 px-3 text-xs')}
+                                className={buttonClass(
+                                    'secondary',
+                                    'h-9 px-3 text-xs',
+                                )}
                             >
                                 <Edit className="h-3.5 w-3.5" />
                                 <span>Ubah Data</span>
@@ -71,9 +83,15 @@ function EmployeesShow({ employee }: Props) {
                     </h2>
                     <DescriptionList
                         items={[
-                            { label: 'Kode Karyawan', value: employee.employee_code },
+                            {
+                                label: 'Kode Karyawan',
+                                value: employee.employee_code,
+                            },
                             { label: 'Nama Lengkap', value: employee.name },
-                            { label: 'Jabatan / Posisi', value: employee.position ?? '-' },
+                            {
+                                label: 'Jabatan / Posisi',
+                                value: employee.position ?? '-',
+                            },
                             {
                                 label: 'Toko Penempatan',
                                 value: (
@@ -88,7 +106,8 @@ function EmployeesShow({ employee }: Props) {
                                 value: employee.user ? (
                                     <span className="inline-flex items-center gap-1.5">
                                         <User className="h-4 w-4 text-slate-500" />
-                                        {employee.user.name} ({employee.user.email})
+                                        {employee.user.name} (
+                                        {employee.user.email})
                                     </span>
                                 ) : (
                                     'Tidak terhubung akun login'

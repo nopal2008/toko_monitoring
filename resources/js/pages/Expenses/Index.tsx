@@ -1,7 +1,16 @@
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { Check, CheckCircle2, Clock, CreditCard, Filter, Plus, X, XCircle } from 'lucide-react';
+import {
+    Check,
+    CheckCircle2,
+    Clock,
+    CreditCard,
+    Filter,
+    Plus,
+    X,
+    XCircle,
+} from 'lucide-react';
 import { Card, EmptyState, PageHeader, buttonClass } from '@/components/ui';
 import { Pagination } from '@/components/pagination';
 import { useAuth } from '@/hooks/use-auth';
@@ -74,7 +83,9 @@ function ExpensesIndex({ expenses }: Props) {
     const { auth } = usePage().props;
     const stores = auth?.stores ?? [];
 
-    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const urlParams = new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : '',
+    );
     const [fromFilter, setFromFilter] = useState(urlParams.get('from') ?? '');
     const [toFilter, setToFilter] = useState(urlParams.get('to') ?? '');
 
@@ -155,7 +166,11 @@ function ExpensesIndex({ expenses }: Props) {
     function resetFilter() {
         setFromFilter('');
         setToFilter('');
-        router.get(expensesIndex.url(), {}, { preserveState: true, preserveScroll: true });
+        router.get(
+            expensesIndex.url(),
+            {},
+            { preserveState: true, preserveScroll: true },
+        );
     }
 
     return (
@@ -187,20 +202,33 @@ function ExpensesIndex({ expenses }: Props) {
                     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
                 >
                     <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
-                        <h2 id="create-expense-title" className="text-lg font-semibold text-slate-900">
+                        <h2
+                            id="create-expense-title"
+                            className="text-lg font-semibold text-slate-900"
+                        >
                             Catat Pengeluaran Baru
                         </h2>
-                        <form onSubmit={handleCreate} className="mt-4 space-y-4">
+                        <form
+                            onSubmit={handleCreate}
+                            className="mt-4 space-y-4"
+                        >
                             <div>
-                                <label htmlFor="exp-store" className="mb-1 block text-sm font-medium text-slate-700">
-                                    Toko / Cabang <span className="text-rose-600">*</span>
+                                <label
+                                    htmlFor="exp-store"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
+                                    Toko / Cabang{' '}
+                                    <span className="text-rose-600">*</span>
                                 </label>
                                 <select
                                     id="exp-store"
                                     required
                                     value={createForm.data.store_id}
                                     onChange={(e) =>
-                                        createForm.setData('store_id', Number(e.target.value) || '')
+                                        createForm.setData(
+                                            'store_id',
+                                            Number(e.target.value) || '',
+                                        )
                                     }
                                     className="w-full rounded-md border border-slate-300 bg-white p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 >
@@ -214,8 +242,12 @@ function ExpensesIndex({ expenses }: Props) {
                             </div>
 
                             <div>
-                                <label htmlFor="exp-title" className="mb-1 block text-sm font-medium text-slate-700">
-                                    Judul Pengeluaran <span className="text-rose-600">*</span>
+                                <label
+                                    htmlFor="exp-title"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
+                                    Judul Pengeluaran{' '}
+                                    <span className="text-rose-600">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -223,18 +255,29 @@ function ExpensesIndex({ expenses }: Props) {
                                     required
                                     placeholder="Contoh: Pembelian token listrik toko"
                                     value={createForm.data.title}
-                                    onChange={(e) => createForm.setData('title', e.target.value)}
+                                    onChange={(e) =>
+                                        createForm.setData(
+                                            'title',
+                                            e.target.value,
+                                        )
+                                    }
                                     className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 />
                                 {createForm.errors.title && (
-                                    <p className="mt-1 text-xs text-rose-600">{createForm.errors.title}</p>
+                                    <p className="mt-1 text-xs text-rose-600">
+                                        {createForm.errors.title}
+                                    </p>
                                 )}
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <label htmlFor="exp-amount" className="mb-1 block text-sm font-medium text-slate-700">
-                                        Nominal (Rp) <span className="text-rose-600">*</span>
+                                    <label
+                                        htmlFor="exp-amount"
+                                        className="mb-1 block text-sm font-medium text-slate-700"
+                                    >
+                                        Nominal (Rp){' '}
+                                        <span className="text-rose-600">*</span>
                                     </label>
                                     <input
                                         type="number"
@@ -244,32 +287,52 @@ function ExpensesIndex({ expenses }: Props) {
                                         step="1"
                                         placeholder="150000"
                                         value={createForm.data.amount}
-                                        onChange={(e) => createForm.setData('amount', e.target.value)}
+                                        onChange={(e) =>
+                                            createForm.setData(
+                                                'amount',
+                                                e.target.value,
+                                            )
+                                        }
                                         className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                     />
                                     {createForm.errors.amount && (
-                                        <p className="mt-1 text-xs text-rose-600">{createForm.errors.amount}</p>
+                                        <p className="mt-1 text-xs text-rose-600">
+                                            {createForm.errors.amount}
+                                        </p>
                                     )}
                                 </div>
 
                                 <div>
-                                    <label htmlFor="exp-date" className="mb-1 block text-sm font-medium text-slate-700">
-                                        Tanggal <span className="text-rose-600">*</span>
+                                    <label
+                                        htmlFor="exp-date"
+                                        className="mb-1 block text-sm font-medium text-slate-700"
+                                    >
+                                        Tanggal{' '}
+                                        <span className="text-rose-600">*</span>
                                     </label>
                                     <input
                                         type="date"
                                         id="exp-date"
                                         required
                                         value={createForm.data.expense_date}
-                                        onChange={(e) => createForm.setData('expense_date', e.target.value)}
+                                        onChange={(e) =>
+                                            createForm.setData(
+                                                'expense_date',
+                                                e.target.value,
+                                            )
+                                        }
                                         className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="exp-payment" className="mb-1 block text-sm font-medium text-slate-700">
-                                    Metode Pembayaran <span className="text-rose-600">*</span>
+                                <label
+                                    htmlFor="exp-payment"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
+                                    Metode Pembayaran{' '}
+                                    <span className="text-rose-600">*</span>
                                 </label>
                                 <select
                                     id="exp-payment"
@@ -277,34 +340,53 @@ function ExpensesIndex({ expenses }: Props) {
                                     onChange={(e) =>
                                         createForm.setData(
                                             'payment_method',
-                                            e.target.value as 'cash' | 'card' | 'transfer' | 'other',
+                                            e.target.value as
+                                                | 'cash'
+                                                | 'card'
+                                                | 'transfer'
+                                                | 'other',
                                         )
                                     }
                                     className="w-full rounded-md border border-slate-300 bg-white p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 >
-                                    <option value="cash">Tunai (Kas Toko)</option>
-                                    <option value="transfer">Transfer Bank</option>
+                                    <option value="cash">
+                                        Tunai (Kas Toko)
+                                    </option>
+                                    <option value="transfer">
+                                        Transfer Bank
+                                    </option>
                                     <option value="card">Kartu / Debit</option>
                                     <option value="other">Lainnya</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label htmlFor="exp-notes" className="mb-1 block text-sm font-medium text-slate-700">
+                                <label
+                                    htmlFor="exp-notes"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
                                     Catatan Tambahan
                                 </label>
                                 <textarea
                                     id="exp-notes"
                                     rows={2}
                                     value={createForm.data.notes}
-                                    onChange={(e) => createForm.setData('notes', e.target.value)}
+                                    onChange={(e) =>
+                                        createForm.setData(
+                                            'notes',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Rincian pembelian atau keperluan..."
                                     className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="exp-attachment" className="mb-1 block text-sm font-medium text-slate-700">
+                                <label
+                                    htmlFor="exp-attachment"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
                                     Bukti Struk / Nota (Opsional)
                                 </label>
                                 <input
@@ -312,7 +394,10 @@ function ExpensesIndex({ expenses }: Props) {
                                     id="exp-attachment"
                                     accept="image/*,.pdf"
                                     onChange={(e) =>
-                                        createForm.setData('attachment', e.target.files?.[0] ?? null)
+                                        createForm.setData(
+                                            'attachment',
+                                            e.target.files?.[0] ?? null,
+                                        )
                                     }
                                     className="block w-full text-xs text-slate-500 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
                                 />
@@ -332,7 +417,9 @@ function ExpensesIndex({ expenses }: Props) {
                                     disabled={createForm.processing}
                                     className={buttonClass('primary')}
                                 >
-                                    {createForm.processing ? 'Menyimpan...' : 'Ajukan Pengeluaran'}
+                                    {createForm.processing
+                                        ? 'Menyimpan...'
+                                        : 'Ajukan Pengeluaran'}
                                 </button>
                             </div>
                         </form>
@@ -349,25 +436,41 @@ function ExpensesIndex({ expenses }: Props) {
                     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
                 >
                     <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-                        <h2 id="decision-title" className="text-lg font-semibold text-slate-900">
+                        <h2
+                            id="decision-title"
+                            className="text-lg font-semibold text-slate-900"
+                        >
                             {decisionItem.decision === 'approved'
                                 ? 'Setujui Pengeluaran?'
                                 : 'Tolak Pengeluaran?'}
                         </h2>
                         <p className="mt-1 text-sm text-slate-600">
                             Konfirmasi keputusan untuk pengeluaran:{' '}
-                            <strong className="text-slate-900">{decisionItem.title}</strong>
+                            <strong className="text-slate-900">
+                                {decisionItem.title}
+                            </strong>
                         </p>
-                        <form onSubmit={handleDecision} className="mt-4 space-y-4">
+                        <form
+                            onSubmit={handleDecision}
+                            className="mt-4 space-y-4"
+                        >
                             <div>
-                                <label htmlFor="decision-notes" className="mb-1 block text-sm font-medium text-slate-700">
+                                <label
+                                    htmlFor="decision-notes"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
                                     Catatan Keputusan (Opsional)
                                 </label>
                                 <textarea
                                     id="decision-notes"
                                     rows={2}
                                     value={decisionForm.data.notes}
-                                    onChange={(e) => decisionForm.setData('notes', e.target.value)}
+                                    onChange={(e) =>
+                                        decisionForm.setData(
+                                            'notes',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Contoh: Disetujui sesuai kuitansi fisik / Ditolak karena di luar anggaran"
                                     className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 />
@@ -385,14 +488,16 @@ function ExpensesIndex({ expenses }: Props) {
                                     type="submit"
                                     disabled={decisionForm.processing}
                                     className={buttonClass(
-                                        decisionItem.decision === 'approved' ? 'primary' : 'danger',
+                                        decisionItem.decision === 'approved'
+                                            ? 'primary'
+                                            : 'danger',
                                     )}
                                 >
                                     {decisionForm.processing
                                         ? 'Memproses...'
                                         : decisionItem.decision === 'approved'
-                                        ? 'Ya, Setujui'
-                                        : 'Ya, Tolak'}
+                                          ? 'Ya, Setujui'
+                                          : 'Ya, Tolak'}
                                 </button>
                             </div>
                         </form>
@@ -402,9 +507,15 @@ function ExpensesIndex({ expenses }: Props) {
 
             {/* Filter Bar */}
             <Card className="mb-6 p-4">
-                <form onSubmit={applyFilter} className="flex flex-wrap items-end gap-3">
+                <form
+                    onSubmit={applyFilter}
+                    className="flex flex-wrap items-end gap-3"
+                >
                     <div className="w-full sm:w-auto">
-                        <label htmlFor="filter-from" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="filter-from"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Dari Tanggal
                         </label>
                         <input
@@ -417,7 +528,10 @@ function ExpensesIndex({ expenses }: Props) {
                     </div>
 
                     <div className="w-full sm:w-auto">
-                        <label htmlFor="filter-to" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="filter-to"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Sampai Tanggal
                         </label>
                         <input
@@ -430,7 +544,10 @@ function ExpensesIndex({ expenses }: Props) {
                     </div>
 
                     <div className="flex gap-2">
-                        <button type="submit" className={buttonClass('primary', 'h-9 px-3')}>
+                        <button
+                            type="submit"
+                            className={buttonClass('primary', 'h-9 px-3')}
+                        >
                             <Filter className="h-4 w-4" />
                             <span>Filter</span>
                         </button>
@@ -468,48 +585,75 @@ function ExpensesIndex({ expenses }: Props) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[50rem] text-sm">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                                 <tr>
-                                    <th scope="col" className="px-5 py-3">Judul Pengeluaran</th>
-                                    <th scope="col" className="px-5 py-3">Toko</th>
-                                    <th scope="col" className="px-5 py-3 text-right">Nominal</th>
-                                    <th scope="col" className="px-5 py-3">Tanggal</th>
-                                    <th scope="col" className="px-5 py-3">Metode</th>
-                                    <th scope="col" className="px-5 py-3">Status</th>
-                                    <th scope="col" className="px-5 py-3">Diajukan Oleh</th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Judul Pengeluaran
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Toko
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Nominal
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Metode
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Status
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Diajukan Oleh
+                                    </th>
                                     {can('expense.approve') && (
-                                        <th scope="col" className="px-5 py-3 text-right">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-5 py-3 text-right"
+                                        >
+                                            Aksi
+                                        </th>
                                     )}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {expenses.data.map((exp) => (
-                                    <tr key={exp.id} className="transition hover:bg-slate-50/50">
-                                        <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                    <tr
+                                        key={exp.id}
+                                        className="transition hover:bg-slate-50/50"
+                                    >
+                                        <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                             <div className="flex items-center gap-2">
                                                 <CreditCard className="h-4 w-4 text-slate-400" />
                                                 <span>{exp.title}</span>
                                             </div>
                                             {exp.notes && (
-                                                <p className="mt-0.5 text-xs text-slate-500">{exp.notes}</p>
+                                                <p className="mt-0.5 text-xs text-slate-500">
+                                                    {exp.notes}
+                                                </p>
                                             )}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {exp.store?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-right font-semibold text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 text-right font-semibold whitespace-nowrap text-slate-900">
                                             {formatCurrency(exp.amount)}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-600 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-600">
                                             {formatDateOnly(exp.expense_date)}
                                         </td>
-                                        <td className="px-5 py-3.5 font-mono text-xs text-slate-600 uppercase whitespace-nowrap">
+                                        <td className="px-5 py-3.5 font-mono text-xs whitespace-nowrap text-slate-600 uppercase">
                                             {exp.payment_method}
                                         </td>
                                         <td className="px-5 py-3.5 whitespace-nowrap">
                                             <StatusBadge status={exp.status} />
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-600 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-600">
                                             {exp.creator?.name ?? '-'}
                                         </td>
                                         {can('expense.approve') && (
@@ -519,11 +663,14 @@ function ExpensesIndex({ expenses }: Props) {
                                                         <button
                                                             type="button"
                                                             onClick={() =>
-                                                                setDecisionItem({
-                                                                    id: exp.id,
-                                                                    title: exp.title,
-                                                                    decision: 'approved',
-                                                                })
+                                                                setDecisionItem(
+                                                                    {
+                                                                        id: exp.id,
+                                                                        title: exp.title,
+                                                                        decision:
+                                                                            'approved',
+                                                                    },
+                                                                )
                                                             }
                                                             className={buttonClass(
                                                                 'primary',
@@ -536,11 +683,14 @@ function ExpensesIndex({ expenses }: Props) {
                                                         <button
                                                             type="button"
                                                             onClick={() =>
-                                                                setDecisionItem({
-                                                                    id: exp.id,
-                                                                    title: exp.title,
-                                                                    decision: 'rejected',
-                                                                })
+                                                                setDecisionItem(
+                                                                    {
+                                                                        id: exp.id,
+                                                                        title: exp.title,
+                                                                        decision:
+                                                                            'rejected',
+                                                                    },
+                                                                )
                                                             }
                                                             className={buttonClass(
                                                                 'danger',

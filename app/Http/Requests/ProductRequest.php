@@ -43,6 +43,8 @@ class ProductRequest extends FormRequest
                 Rule::exists('stores', 'id')->where('tenant_id', $tenantId),
             ],
             'stores.*.price' => ['nullable', 'decimal:0,2', 'max:9999999999999.99'],
+            'stores.*.wholesale_price' => ['nullable', 'decimal:0,2', 'max:9999999999999.99'],
+            'stores.*.wholesale_min_qty' => ['nullable', 'integer', 'min:1', 'max:1000000'],
             'stores.*.min_stock' => ['nullable', 'integer', 'min:0'],
             'stores.*.is_available' => ['sometimes', 'boolean'],
         ];

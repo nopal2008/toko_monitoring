@@ -8,8 +8,7 @@ export function usePermission() {
     const { auth } = usePage().props;
 
     /** Cek satu permission. */
-    const can = (permission: string) =>
-        auth.permissions.includes(permission);
+    const can = (permission: string) => auth.permissions.includes(permission);
 
     /** Cek apakah user memiliki salah satu dari beberapa permission. */
     const canAny = (permissions: string[]) =>

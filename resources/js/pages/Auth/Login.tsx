@@ -39,7 +39,10 @@ export default function Login() {
             <Head title="Masuk" />
             <div className="grid min-h-screen lg:grid-cols-2">
                 <div className="relative hidden overflow-hidden bg-linear-to-br from-brand-600 to-brand-900 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-                    <div className="bg-grid absolute inset-0 opacity-30" aria-hidden="true" />
+                    <div
+                        className="absolute inset-0 bg-grid opacity-30"
+                        aria-hidden="true"
+                    />
                     <div
                         className="absolute -right-24 -bottom-24 size-96 rounded-full bg-white/10 blur-3xl"
                         aria-hidden="true"
@@ -51,16 +54,24 @@ export default function Login() {
                         </h2>
                         <ul className="mt-8 space-y-4">
                             {highlights.map((item) => (
-                                <li key={item.text} className="flex items-center gap-3 text-white/90">
+                                <li
+                                    key={item.text}
+                                    className="flex items-center gap-3 text-white/90"
+                                >
                                     <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/15">
-                                        <item.icon className="size-[18px]" aria-hidden="true" />
+                                        <item.icon
+                                            className="size-[18px]"
+                                            aria-hidden="true"
+                                        />
                                     </span>
                                     <span className="text-sm">{item.text}</span>
                                 </li>
                             ))}
                         </ul>
                     </div>
-                    <p className="relative text-sm text-white/70">Store Monitoring System</p>
+                    <p className="relative text-sm text-white/70">
+                        Store Monitoring System
+                    </p>
                 </div>
 
                 <div className="relative flex items-center justify-center px-4 py-10">
@@ -81,7 +92,11 @@ export default function Login() {
                             Masuk untuk memantau operasional toko Anda.
                         </p>
 
-                        <form onSubmit={submit} noValidate className="mt-8 space-y-5">
+                        <form
+                            onSubmit={submit}
+                            noValidate
+                            className="mt-8 space-y-5"
+                        >
                             <TextField
                                 id="email"
                                 label="Email"
@@ -90,7 +105,9 @@ export default function Login() {
                                 autoFocus
                                 required
                                 value={form.data.email}
-                                onChange={(e) => form.setData('email', e.target.value)}
+                                onChange={(e) =>
+                                    form.setData('email', e.target.value)
+                                }
                                 error={form.errors.email}
                             />
                             <div>
@@ -98,33 +115,64 @@ export default function Login() {
                                 <div className="relative">
                                     <Input
                                         id="password"
-                                        type={showPassword ? 'text' : 'password'}
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
                                         autoComplete="current-password"
                                         required
                                         value={form.data.password}
-                                        onChange={(e) => form.setData('password', e.target.value)}
-                                        aria-invalid={form.errors.password ? true : undefined}
-                                        aria-describedby={form.errors.password ? 'password-error' : undefined}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'password',
+                                                e.target.value,
+                                            )
+                                        }
+                                        aria-invalid={
+                                            form.errors.password
+                                                ? true
+                                                : undefined
+                                        }
+                                        aria-describedby={
+                                            form.errors.password
+                                                ? 'password-error'
+                                                : undefined
+                                        }
                                         className="pr-11"
                                     />
                                     <button
                                         type="button"
-                                        onClick={() => setShowPassword((value) => !value)}
-                                        aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+                                        onClick={() =>
+                                            setShowPassword((value) => !value)
+                                        }
+                                        aria-label={
+                                            showPassword
+                                                ? 'Sembunyikan kata sandi'
+                                                : 'Tampilkan kata sandi'
+                                        }
                                         aria-pressed={showPassword}
                                         className={cn(
                                             'absolute top-1/2 right-1.5 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-4 focus-visible:ring-ring/20 focus-visible:outline-none',
                                         )}
                                     >
                                         {showPassword ? (
-                                            <EyeOff className="size-4" aria-hidden="true" />
+                                            <EyeOff
+                                                className="size-4"
+                                                aria-hidden="true"
+                                            />
                                         ) : (
-                                            <Eye className="size-4" aria-hidden="true" />
+                                            <Eye
+                                                className="size-4"
+                                                aria-hidden="true"
+                                            />
                                         )}
                                     </button>
                                 </div>
                                 {form.errors.password && (
-                                    <p id="password-error" role="alert" className="mt-1.5 text-xs text-danger-fg">
+                                    <p
+                                        id="password-error"
+                                        role="alert"
+                                        className="mt-1.5 text-xs text-danger-fg"
+                                    >
                                         {form.errors.password}
                                     </p>
                                 )}
@@ -133,9 +181,16 @@ export default function Login() {
                                 id="remember"
                                 label="Ingat saya di perangkat ini"
                                 checked={form.data.remember}
-                                onChange={(e) => form.setData('remember', e.target.checked)}
+                                onChange={(e) =>
+                                    form.setData('remember', e.target.checked)
+                                }
                             />
-                            <Button type="submit" size="lg" className="w-full" loading={form.processing}>
+                            <Button
+                                type="submit"
+                                size="lg"
+                                className="w-full"
+                                loading={form.processing}
+                            >
                                 {form.processing ? 'Memproses...' : 'Masuk'}
                             </Button>
                         </form>

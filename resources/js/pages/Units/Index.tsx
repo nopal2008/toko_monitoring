@@ -14,61 +14,61 @@ import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { formatNumber } from '@/lib/format';
 import type { Paginated, Unit } from '@/types/models';
-import { Archive, ArchiveRestore } from 'lucide-react';
 
 function UnitsIndex({
     units,
-    showingArchived = false,
+    showingArchived,
 }: {
     units: Paginated<Unit>;
-    showingArchived?: boolean;
+    showingArchived: boolean;
 }) {
     const { can } = useAuth();
     const canManage = can('unit.manage');
 
-    const handleRestore = (unitId: number) => {
-        if (confirm('Pulihkan satuan ini dari arsip?')) {
-            router.post(UnitController.restore.url(unitId), {}, {
-                preserveScroll: true,
-            });
-        }
-    };
+    const createLink = canManage ? (
+        <Link
+            href={UnitController.create.url()}
+            className={buttonClass('primary')}
+        >
+            Tambah satuan
+        </Link>
+    ) : undefined;
 
     const toggleArchiveView = () => {
         router.get(
             UnitController.index.url(),
-            showingArchived ? {} : { archived: '1' },
-            { preserveState: true, preserveScroll: true }
+            { archived: showingArchived ? '0' : '1' },
+            { preserveState: true, preserveScroll: true },
         );
     };
 
-    const createLink = canManage ? (
-        <Link href={UnitController.create.url()} className={buttonClass('primary')}>
-            Tambah satuan
-        </Link>
-    ) : undefined;
+    const restoreUnit = (id: number, name: string) => {
+        if (
+            confirm(
+                `Apakah Anda yakin ingin memulihkan satuan "${name}" dari arsip?`,
+            )
+        ) {
+            router.post(UnitController.restore.url(id));
+        }
+    };
 
     return (
         <>
             <Head title="Satuan" />
             <PageHeader
                 title="Satuan"
-                description="Satuan ukuran produk."
+                description="Kelola satuan produk seperti pcs, kg, liter."
                 actions={
                     <div className="flex gap-2">
                         {canManage && (
-                            <button onClick={toggleArchiveView} className={buttonClass('secondary')}>
-                                {showingArchived ? (
-                                    <>
-                                        <ArchiveRestore className="h-4 w-4" />
-                                        <span>Lihat Aktif</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Archive className="h-4 w-4" />
-                                        <span>Lihat Arsip</span>
-                                    </>
-                                )}
+                            <button
+                                type="button"
+                                onClick={toggleArchiveView}
+                                className={buttonClass('secondary')}
+                            >
+                                {showingArchived
+                                    ? 'Lihat Aktif'
+                                    : 'Lihat Arsip'}
                             </button>
                         )}
                         {createLink}
@@ -76,23 +76,21 @@ function UnitsIndex({
                 }
             />
             <Card>
-                {showingArchived && (
-                    <div className="border-b border-border bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                        <Archive className="inline-block h-4 w-4 mr-2" />
-                        Menampilkan satuan yang diarsipkan
-                    </div>
-                )}
                 {units.data.length === 0 ? (
                     <EmptyState
-                        title={showingArchived ? 'Belum ada satuan diarsipkan' : 'Belum ada satuan'}
+                        title={
+                            showingArchived
+                                ? 'Belum ada satuan diarsipkan'
+                                : 'Belum ada satuan'
+                        }
                         description={
                             showingArchived
-                                ? 'Satuan yang diarsipkan akan muncul di sini.'
+                                ? 'Satuan yang diarsipkan akan tampil di sini.'
                                 : canManage
-                                  ? 'Tambahkan satuan ukuran produk.'
+                                  ? 'Tambahkan satuan untuk mengukur produk seperti pcs, kg, liter.'
                                   : 'Satuan akan tampil di sini setelah dibuat oleh pengelola.'
                         }
-                        action={!showingArchived ? createLink : undefined}
+                        action={showingArchived ? undefined : createLink}
                     />
                 ) : (
                     <>
@@ -100,47 +98,119 @@ function UnitsIndex({
                             <table className="w-full min-w-[32rem] text-sm">
                                 <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
-                                        <th scope="col" className="px-4 py-3 font-medium">Satuan</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Simbol</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Produk</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Status</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Nama
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Simbol
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Produk
+                                        </th>
+                                        {!showingArchived && (
+                                            <th
+                                                scope="col"
+                                                className="px-4 py-3 font-medium"
+                                            >
+                                                Status
+                                            </th>
+                                        )}
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Aksi
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {units.data.map((unit) => (
-                                        <tr key={unit.id} className="transition-colors hover:bg-muted/40">
-                                            <td className="px-4 py-3">
-                                                <Link href={UnitController.show.url(unit.id)} className="font-medium text-brand-700 hover:underline dark:text-brand-300">
-                                                    {unit.name}
-                                                </Link>
-                                            </td>
-                                            <td className="px-4 py-3">{unit.symbol}</td>
-                                            <td className="px-4 py-3 text-right">{formatNumber(unit.products_count ?? 0)}</td>
+                                        <tr
+                                            key={unit.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3">
                                                 {showingArchived ? (
-                                                    <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                                                        Diarsipkan
+                                                    <span className="font-medium text-muted-foreground">
+                                                        {unit.name}
                                                     </span>
                                                 ) : (
-                                                    <StatusBadge active={unit.is_active} />
+                                                    <Link
+                                                        href={UnitController.show.url(
+                                                            unit.id,
+                                                        )}
+                                                        className="font-medium text-brand-700 hover:underline dark:text-brand-300"
+                                                    >
+                                                        {unit.name}
+                                                    </Link>
                                                 )}
                                             </td>
                                             <td className="px-4 py-3">
+                                                <code className="rounded bg-muted px-2 py-0.5 text-xs font-semibold">
+                                                    {unit.symbol}
+                                                </code>
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                {formatNumber(
+                                                    unit.products_count ?? 0,
+                                                )}
+                                            </td>
+                                            {!showingArchived && (
+                                                <td className="px-4 py-3">
+                                                    <StatusBadge
+                                                        active={unit.is_active}
+                                                    />
+                                                </td>
+                                            )}
+                                            <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    {canManage && showingArchived ? (
-                                                        <button onClick={() => handleRestore(unit.id)} className={buttonClass('secondary')}>
-                                                            <ArchiveRestore className="h-4 w-4" />
-                                                            Pulihkan
-                                                        </button>
-                                                    ) : canManage ? (
-                                                        <>
-                                                            <Link href={UnitController.edit.url(unit.id)} className={buttonClass('secondary')}>
-                                                                Ubah
-                                                            </Link>
-                                                            <DeleteAction url={UnitController.destroy.url(unit.id)} itemName={unit.name} />
-                                                        </>
-                                                    ) : null}
+                                                    {canManage &&
+                                                        (showingArchived ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    restoreUnit(
+                                                                        unit.id,
+                                                                        unit.name,
+                                                                    )
+                                                                }
+                                                                className={buttonClass(
+                                                                    'primary',
+                                                                )}
+                                                            >
+                                                                Pulihkan
+                                                            </button>
+                                                        ) : (
+                                                            <>
+                                                                <Link
+                                                                    href={UnitController.edit.url(
+                                                                        unit.id,
+                                                                    )}
+                                                                    className={buttonClass(
+                                                                        'secondary',
+                                                                    )}
+                                                                >
+                                                                    Ubah
+                                                                </Link>
+                                                                <DeleteAction
+                                                                    url={UnitController.destroy.url(
+                                                                        unit.id,
+                                                                    )}
+                                                                    itemName={
+                                                                        unit.name
+                                                                    }
+                                                                />
+                                                            </>
+                                                        ))}
                                                 </div>
                                             </td>
                                         </tr>

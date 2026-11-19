@@ -1,7 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { Calendar, CheckCircle2, Clock, Filter, LogIn, LogOut, User } from 'lucide-react';
+import { Clock, Filter, LogIn, LogOut, User } from 'lucide-react';
 import { Card, EmptyState, PageHeader, buttonClass } from '@/components/ui';
 import { Pagination } from '@/components/pagination';
 import AppLayout from '@/layouts/app-layout';
@@ -68,12 +68,18 @@ function StatusBadge({ status }: { status: AttendanceRow['status'] }) {
 }
 
 function AttendancesIndex({ attendances }: Props) {
-    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const urlParams = new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : '',
+    );
     const [dateFilter, setDateFilter] = useState(urlParams.get('date') ?? '');
-    const [statusFilter, setStatusFilter] = useState(urlParams.get('status') ?? '');
+    const [statusFilter, setStatusFilter] = useState(
+        urlParams.get('status') ?? '',
+    );
 
     // Modal Check-in / Check-out
-    const [modalMode, setModalMode] = useState<'check-in' | 'check-out' | null>(null);
+    const [modalMode, setModalMode] = useState<'check-in' | 'check-out' | null>(
+        null,
+    );
 
     const checkInForm = useForm<{
         notes: string;
@@ -159,7 +165,11 @@ function AttendancesIndex({ attendances }: Props) {
     function resetFilter() {
         setDateFilter('');
         setStatusFilter('');
-        router.get(attendancesIndex.url(), {}, { preserveState: true, preserveScroll: true });
+        router.get(
+            attendancesIndex.url(),
+            {},
+            { preserveState: true, preserveScroll: true },
+        );
     }
 
     return (
@@ -199,29 +209,47 @@ function AttendancesIndex({ attendances }: Props) {
                     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
                 >
                     <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-                        <h2 id="checkin-title" className="text-lg font-semibold text-slate-900">
+                        <h2
+                            id="checkin-title"
+                            className="text-lg font-semibold text-slate-900"
+                        >
                             Check-in Kehadiran
                         </h2>
                         <p className="mt-1 text-sm text-slate-600">
-                            Catat jam masuk Anda hari ini ({formatDateOnly(new Date().toISOString())}).
+                            Catat jam masuk Anda hari ini (
+                            {formatDateOnly(new Date().toISOString())}).
                         </p>
-                        <form onSubmit={submitCheckIn} className="mt-4 space-y-4">
+                        <form
+                            onSubmit={submitCheckIn}
+                            className="mt-4 space-y-4"
+                        >
                             <div>
-                                <label htmlFor="checkin-notes" className="mb-1 block text-sm font-medium text-slate-700">
+                                <label
+                                    htmlFor="checkin-notes"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
                                     Catatan (Opsional)
                                 </label>
                                 <textarea
                                     id="checkin-notes"
                                     rows={2}
                                     value={checkInForm.data.notes}
-                                    onChange={(e) => checkInForm.setData('notes', e.target.value)}
+                                    onChange={(e) =>
+                                        checkInForm.setData(
+                                            'notes',
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Contoh: Masuk shift pagi"
                                     className="w-full rounded-md border border-slate-300 p-2.5 text-sm focus-visible:outline-2 focus-visible:outline-emerald-600"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="checkin-photo" className="mb-1 block text-sm font-medium text-slate-700">
+                                <label
+                                    htmlFor="checkin-photo"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
                                     Foto Bukti (Opsional)
                                 </label>
                                 <input
@@ -229,7 +257,10 @@ function AttendancesIndex({ attendances }: Props) {
                                     id="checkin-photo"
                                     accept="image/*"
                                     onChange={(e) =>
-                                        checkInForm.setData('photo', e.target.files?.[0] ?? null)
+                                        checkInForm.setData(
+                                            'photo',
+                                            e.target.files?.[0] ?? null,
+                                        )
                                     }
                                     className="block w-full text-xs text-slate-500 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
                                 />
@@ -237,7 +268,8 @@ function AttendancesIndex({ attendances }: Props) {
 
                             {checkInForm.data.latitude && (
                                 <p className="text-xs text-emerald-700">
-                                    &bull; Lokasi GPS berhasil dideteksi: {checkInForm.data.latitude.toFixed(4)},{' '}
+                                    &bull; Lokasi GPS berhasil dideteksi:{' '}
+                                    {checkInForm.data.latitude.toFixed(4)},{' '}
                                     {checkInForm.data.longitude?.toFixed(4)}
                                 </p>
                             )}
@@ -256,7 +288,9 @@ function AttendancesIndex({ attendances }: Props) {
                                     disabled={checkInForm.processing}
                                     className={buttonClass('primary')}
                                 >
-                                    {checkInForm.processing ? 'Memproses...' : 'Kirim Check-in'}
+                                    {checkInForm.processing
+                                        ? 'Memproses...'
+                                        : 'Kirim Check-in'}
                                 </button>
                             </div>
                         </form>
@@ -273,15 +307,24 @@ function AttendancesIndex({ attendances }: Props) {
                     className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
                 >
                     <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-                        <h2 id="checkout-title" className="text-lg font-semibold text-slate-900">
+                        <h2
+                            id="checkout-title"
+                            className="text-lg font-semibold text-slate-900"
+                        >
                             Check-out Selesai Kerja
                         </h2>
                         <p className="mt-1 text-sm text-slate-600">
                             Konfirmasi jam keluar kerja Anda hari ini.
                         </p>
-                        <form onSubmit={submitCheckOut} className="mt-4 space-y-4">
+                        <form
+                            onSubmit={submitCheckOut}
+                            className="mt-4 space-y-4"
+                        >
                             <div>
-                                <label htmlFor="checkout-photo" className="mb-1 block text-sm font-medium text-slate-700">
+                                <label
+                                    htmlFor="checkout-photo"
+                                    className="mb-1 block text-sm font-medium text-slate-700"
+                                >
                                     Foto Bukti (Opsional)
                                 </label>
                                 <input
@@ -289,7 +332,10 @@ function AttendancesIndex({ attendances }: Props) {
                                     id="checkout-photo"
                                     accept="image/*"
                                     onChange={(e) =>
-                                        checkOutForm.setData('photo', e.target.files?.[0] ?? null)
+                                        checkOutForm.setData(
+                                            'photo',
+                                            e.target.files?.[0] ?? null,
+                                        )
                                     }
                                     className="block w-full text-xs text-slate-500 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-200"
                                 />
@@ -309,7 +355,9 @@ function AttendancesIndex({ attendances }: Props) {
                                     disabled={checkOutForm.processing}
                                     className={buttonClass('primary')}
                                 >
-                                    {checkOutForm.processing ? 'Memproses...' : 'Kirim Check-out'}
+                                    {checkOutForm.processing
+                                        ? 'Memproses...'
+                                        : 'Kirim Check-out'}
                                 </button>
                             </div>
                         </form>
@@ -319,9 +367,15 @@ function AttendancesIndex({ attendances }: Props) {
 
             {/* Filter */}
             <Card className="mb-6 p-4">
-                <form onSubmit={applyFilter} className="flex flex-wrap items-end gap-3">
+                <form
+                    onSubmit={applyFilter}
+                    className="flex flex-wrap items-end gap-3"
+                >
                     <div className="w-full sm:w-auto">
-                        <label htmlFor="filter-date" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="filter-date"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Tanggal
                         </label>
                         <input
@@ -334,7 +388,10 @@ function AttendancesIndex({ attendances }: Props) {
                     </div>
 
                     <div className="w-full sm:w-auto">
-                        <label htmlFor="filter-status" className="mb-1 block text-xs font-medium text-slate-700">
+                        <label
+                            htmlFor="filter-status"
+                            className="mb-1 block text-xs font-medium text-slate-700"
+                        >
                             Status
                         </label>
                         <select
@@ -352,7 +409,10 @@ function AttendancesIndex({ attendances }: Props) {
                     </div>
 
                     <div className="flex gap-2">
-                        <button type="submit" className={buttonClass('primary', 'h-9 px-3')}>
+                        <button
+                            type="submit"
+                            className={buttonClass('primary', 'h-9 px-3')}
+                        >
                             <Filter className="h-4 w-4" />
                             <span>Filter</span>
                         </button>
@@ -378,50 +438,76 @@ function AttendancesIndex({ attendances }: Props) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[48rem] text-sm">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                                 <tr>
-                                    <th scope="col" className="px-5 py-3">Karyawan</th>
-                                    <th scope="col" className="px-5 py-3">Toko</th>
-                                    <th scope="col" className="px-5 py-3">Tanggal</th>
-                                    <th scope="col" className="px-5 py-3">Jam Masuk</th>
-                                    <th scope="col" className="px-5 py-3">Jam Keluar</th>
-                                    <th scope="col" className="px-5 py-3">Status</th>
-                                    <th scope="col" className="px-5 py-3">Catatan</th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Karyawan
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Toko
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Tanggal
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Jam Masuk
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Jam Keluar
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Status
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Catatan
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {attendances.data.map((att) => (
-                                    <tr key={att.id} className="transition hover:bg-slate-50/50">
-                                        <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                    <tr
+                                        key={att.id}
+                                        className="transition hover:bg-slate-50/50"
+                                    >
+                                        <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                             <div className="flex items-center gap-2">
                                                 <User className="h-4 w-4 text-slate-400" />
-                                                <span>{att.employee?.name ?? '-'}</span>
+                                                <span>
+                                                    {att.employee?.name ?? '-'}
+                                                </span>
                                             </div>
                                             <span className="font-mono text-xs text-slate-400">
-                                                {att.employee?.employee_code ?? ''}
+                                                {att.employee?.employee_code ??
+                                                    ''}
                                             </span>
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {att.store?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-700">
                                             {formatDateOnly(att.date)}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-900">
                                             {att.check_in_at ? (
                                                 <span className="inline-flex items-center gap-1 font-mono text-xs">
                                                     <Clock className="h-3 w-3 text-emerald-600" />
-                                                    {att.check_in_at.slice(11, 16) || att.check_in_at}
+                                                    {att.check_in_at.slice(
+                                                        11,
+                                                        16,
+                                                    ) || att.check_in_at}
                                                 </span>
                                             ) : (
                                                 '-'
                                             )}
                                         </td>
-                                        <td className="px-5 py-3.5 text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 whitespace-nowrap text-slate-900">
                                             {att.check_out_at ? (
                                                 <span className="inline-flex items-center gap-1 font-mono text-xs">
                                                     <Clock className="h-3 w-3 text-slate-400" />
-                                                    {att.check_out_at.slice(11, 16) || att.check_out_at}
+                                                    {att.check_out_at.slice(
+                                                        11,
+                                                        16,
+                                                    ) || att.check_out_at}
                                                 </span>
                                             ) : (
                                                 '-'

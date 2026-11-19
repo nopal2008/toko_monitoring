@@ -1,7 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import type { FormEvent, ReactNode } from 'react';
 import { useState } from 'react';
-import { Bell, FileText, Save, Settings as SettingsIcon, Sliders } from 'lucide-react';
+import { Bell, FileText, Save, Sliders } from 'lucide-react';
 import { TextField } from '@/components/fields';
 import { Card, PageHeader, buttonClass } from '@/components/ui';
 import AppLayout from '@/layouts/app-layout';
@@ -39,9 +39,14 @@ function SettingsIndex({ settings }: Props) {
         initialMap[`${s.setting_group}.${s.setting_key}`] = s.value ?? '';
     });
 
-    const [formData, setFormData] = useState<Record<string, string>>(initialMap);
+    const [formData, setFormData] =
+        useState<Record<string, string>>(initialMap);
     const form = useForm<{
-        settings: { setting_group: string; setting_key: string; value: string | null }[];
+        settings: {
+            setting_group: string;
+            setting_key: string;
+            value: string | null;
+        }[];
     }>({
         settings: [],
     });
@@ -74,7 +79,11 @@ function SettingsIndex({ settings }: Props) {
 
     const tabs = [
         { id: 'general' as const, label: 'Umum & Bisnis', icon: Sliders },
-        { id: 'notifications' as const, label: 'Notifikasi & Peringatan', icon: Bell },
+        {
+            id: 'notifications' as const,
+            label: 'Notifikasi & Peringatan',
+            icon: Bell,
+        },
         { id: 'receipt' as const, label: 'Struk & Kasir', icon: FileText },
     ];
 
@@ -90,7 +99,10 @@ function SettingsIndex({ settings }: Props) {
                 {/* Tabs Sidebar */}
                 <div className="w-full shrink-0 lg:w-60">
                     <Card className="p-2">
-                        <nav className="flex flex-row gap-1 lg:flex-col" aria-label="Kategori Pengaturan">
+                        <nav
+                            className="flex flex-row gap-1 lg:flex-col"
+                            aria-label="Kategori Pengaturan"
+                        >
                             {tabs.map((tab) => {
                                 const active = tab.id === activeTab;
                                 const Icon = tab.icon;
@@ -128,25 +140,46 @@ function SettingsIndex({ settings }: Props) {
                                     <TextField
                                         id="gen-title"
                                         label="Nama Bisnis / Toko"
-                                        value={formData['general.app_title'] ?? ''}
+                                        value={
+                                            formData['general.app_title'] ?? ''
+                                        }
                                         onChange={(e) =>
-                                            handleChange('general', 'app_title', e.target.value)
+                                            handleChange(
+                                                'general',
+                                                'app_title',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                     <TextField
                                         id="gen-phone"
                                         label="Nomor Telepon Layanan Pelanggan"
-                                        value={formData['general.company_phone'] ?? ''}
+                                        value={
+                                            formData['general.company_phone'] ??
+                                            ''
+                                        }
                                         onChange={(e) =>
-                                            handleChange('general', 'company_phone', e.target.value)
+                                            handleChange(
+                                                'general',
+                                                'company_phone',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                     <TextField
                                         id="gen-address"
                                         label="Alamat Kantor Pusat"
-                                        value={formData['general.company_address'] ?? ''}
+                                        value={
+                                            formData[
+                                                'general.company_address'
+                                            ] ?? ''
+                                        }
                                         onChange={(e) =>
-                                            handleChange('general', 'company_address', e.target.value)
+                                            handleChange(
+                                                'general',
+                                                'company_address',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                 </div>
@@ -161,7 +194,11 @@ function SettingsIndex({ settings }: Props) {
                                         id="notif-threshold"
                                         label="Batas Peringatan Stok Minimum Default (Pcs)"
                                         type="number"
-                                        value={formData['notifications.low_stock_threshold'] ?? ''}
+                                        value={
+                                            formData[
+                                                'notifications.low_stock_threshold'
+                                            ] ?? ''
+                                        }
                                         onChange={(e) =>
                                             handleChange(
                                                 'notifications',
@@ -183,18 +220,33 @@ function SettingsIndex({ settings }: Props) {
                                         id="rec-tax"
                                         label="Tarif Pajak Penjualan (PPN %)"
                                         type="number"
-                                        value={formData['receipt.tax_percentage'] ?? ''}
+                                        value={
+                                            formData[
+                                                'receipt.tax_percentage'
+                                            ] ?? ''
+                                        }
                                         onChange={(e) =>
-                                            handleChange('receipt', 'tax_percentage', e.target.value)
+                                            handleChange(
+                                                'receipt',
+                                                'tax_percentage',
+                                                e.target.value,
+                                            )
                                         }
                                         hint="Persentase PPN yang diterapkan pada transaksi kasir."
                                     />
                                     <TextField
                                         id="rec-footer"
                                         label="Pesan Kaki Struk (Footer)"
-                                        value={formData['receipt.footer_note'] ?? ''}
+                                        value={
+                                            formData['receipt.footer_note'] ??
+                                            ''
+                                        }
                                         onChange={(e) =>
-                                            handleChange('receipt', 'footer_note', e.target.value)
+                                            handleChange(
+                                                'receipt',
+                                                'footer_note',
+                                                e.target.value,
+                                            )
                                         }
                                         placeholder="Terima kasih atas kunjungan Anda!"
                                     />
@@ -209,7 +261,9 @@ function SettingsIndex({ settings }: Props) {
                                 >
                                     <Save className="h-4 w-4" />
                                     <span>
-                                        {form.processing ? 'Menyimpan...' : 'Simpan Pengaturan'}
+                                        {form.processing
+                                            ? 'Menyimpan...'
+                                            : 'Simpan Pengaturan'}
                                     </span>
                                 </button>
                             </div>

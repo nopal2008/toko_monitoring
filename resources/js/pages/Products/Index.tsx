@@ -29,9 +29,13 @@ function ProductsIndex({
 
     const handleRestore = (productId: number) => {
         if (confirm('Pulihkan produk ini dari arsip?')) {
-            router.post(ProductController.restore.url(productId), {}, {
-                preserveScroll: true,
-            });
+            router.post(
+                ProductController.restore.url(productId),
+                {},
+                {
+                    preserveScroll: true,
+                },
+            );
         }
     };
 
@@ -39,7 +43,7 @@ function ProductsIndex({
         router.get(
             ProductController.index.url(),
             showingArchived ? {} : { archived: '1' },
-            { preserveState: true, preserveScroll: true }
+            { preserveState: true, preserveScroll: true },
         );
     };
 
@@ -85,19 +89,23 @@ function ProductsIndex({
             <Card>
                 {showingArchived && (
                     <div className="border-b border-border bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                        <Archive className="inline-block h-4 w-4 mr-2" />
+                        <Archive className="mr-2 inline-block h-4 w-4" />
                         Menampilkan produk yang diarsipkan
                     </div>
                 )}
                 {products.data.length === 0 ? (
                     <EmptyState
-                        title={showingArchived ? 'Belum ada produk diarsipkan' : 'Belum ada produk'}
+                        title={
+                            showingArchived
+                                ? 'Belum ada produk diarsipkan'
+                                : 'Belum ada produk'
+                        }
                         description={
                             showingArchived
                                 ? 'Produk yang diarsipkan akan muncul di sini.'
                                 : canManage
-                                ? 'Tambahkan produk pertama ke katalog.'
-                                : 'Produk akan tampil di sini setelah dibuat oleh pengelola.'
+                                  ? 'Tambahkan produk pertama ke katalog.'
+                                  : 'Produk akan tampil di sini setelah dibuat oleh pengelola.'
                         }
                         action={!showingArchived ? createLink : undefined}
                     />
@@ -107,43 +115,88 @@ function ProductsIndex({
                             <table className="w-full min-w-[52rem] text-sm">
                                 <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
-                                        <th scope="col" className="px-4 py-3 font-medium">Produk</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Kategori</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Harga jual</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Harga modal</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Status</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Produk
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Kategori
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Harga jual
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Harga modal
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Status
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Aksi
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {products.data.map((product) => (
-                                        <tr key={product.id} className="transition-colors hover:bg-muted/40">
+                                        <tr
+                                            key={product.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3">
                                                 {showingArchived ? (
                                                     <div>
                                                         <div className="font-medium text-muted-foreground">
                                                             {product.name}
                                                         </div>
-                                                        <p className="text-xs text-muted-foreground">SKU {product.sku}</p>
+                                                        <p className="text-xs text-muted-foreground">
+                                                            SKU {product.sku}
+                                                        </p>
                                                     </div>
                                                 ) : (
                                                     <>
                                                         <Link
-                                                            href={ProductController.show.url(product.id)}
+                                                            href={ProductController.show.url(
+                                                                product.id,
+                                                            )}
                                                             className="font-medium text-brand-700 hover:underline dark:text-brand-300"
                                                         >
                                                             {product.name}
                                                         </Link>
-                                                        <p className="text-xs text-muted-foreground">SKU {product.sku}</p>
+                                                        <p className="text-xs text-muted-foreground">
+                                                            SKU {product.sku}
+                                                        </p>
                                                     </>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3">{product.category?.name ?? '-'}</td>
-                                            <td className="px-4 py-3 text-right font-mono whitespace-nowrap tabular-nums">
-                                                {formatCurrency(product.base_price)}
+                                            <td className="px-4 py-3">
+                                                {product.category?.name ?? '-'}
                                             </td>
                                             <td className="px-4 py-3 text-right font-mono whitespace-nowrap tabular-nums">
-                                                {formatCurrency(product.cost_price)}
+                                                {formatCurrency(
+                                                    product.base_price,
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-3 text-right font-mono whitespace-nowrap tabular-nums">
+                                                {formatCurrency(
+                                                    product.cost_price,
+                                                )}
                                             </td>
                                             <td className="px-4 py-3">
                                                 {showingArchived ? (
@@ -151,15 +204,26 @@ function ProductsIndex({
                                                         Diarsipkan
                                                     </span>
                                                 ) : (
-                                                    <StatusBadge active={product.is_active} />
+                                                    <StatusBadge
+                                                        active={
+                                                            product.is_active
+                                                        }
+                                                    />
                                                 )}
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
-                                                    {canManage && showingArchived ? (
+                                                    {canManage &&
+                                                    showingArchived ? (
                                                         <button
-                                                            onClick={() => handleRestore(product.id)}
-                                                            className={buttonClass('secondary')}
+                                                            onClick={() =>
+                                                                handleRestore(
+                                                                    product.id,
+                                                                )
+                                                            }
+                                                            className={buttonClass(
+                                                                'secondary',
+                                                            )}
                                                         >
                                                             <ArchiveRestore className="h-4 w-4" />
                                                             Pulihkan
@@ -167,14 +231,22 @@ function ProductsIndex({
                                                     ) : canManage ? (
                                                         <>
                                                             <Link
-                                                                href={ProductController.edit.url(product.id)}
-                                                                className={buttonClass('secondary')}
+                                                                href={ProductController.edit.url(
+                                                                    product.id,
+                                                                )}
+                                                                className={buttonClass(
+                                                                    'secondary',
+                                                                )}
                                                             >
                                                                 Ubah
                                                             </Link>
                                                             <DeleteAction
-                                                                url={ProductController.destroy.url(product.id)}
-                                                                itemName={product.name}
+                                                                url={ProductController.destroy.url(
+                                                                    product.id,
+                                                                )}
+                                                                itemName={
+                                                                    product.name
+                                                                }
                                                             />
                                                         </>
                                                     ) : null}

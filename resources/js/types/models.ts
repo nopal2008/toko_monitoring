@@ -1,4 +1,4 @@
-﻿// Tipe di bawah mengikuti migration dan controller yang ada saat ini.
+// Tipe di bawah mengikuti migration dan controller yang ada saat ini.
 
 export type PageLink = {
     url: string | null;
@@ -105,6 +105,34 @@ export type Supplier = {
     updated_at: string;
 };
 
+export type PurchaseItem = {
+    id: number;
+    purchase_id: number;
+    product_id: number;
+    quantity: number;
+    unit_cost: string;
+    subtotal: string;
+    product?: { id: number; name: string; sku: string; unit: string } | null;
+};
+
+export type Purchase = {
+    id: number;
+    store_id: number;
+    supplier_id: number | null;
+    invoice_number: string;
+    purchase_date: string;
+    total_amount: string;
+    status: string;
+    notes: string | null;
+    created_by: number | null;
+    received_at: string | null;
+    created_at: string;
+    updated_at: string;
+    store?: { id: number; name: string } | null;
+    supplier?: { id: number; name: string } | null;
+    createdBy?: { id: number; name: string } | null;
+    items?: PurchaseItem[];
+};
 export type CategoryOption = { id: number; name: string };
 
 export type ProductStoreLink = {
@@ -113,9 +141,78 @@ export type ProductStoreLink = {
     pivot: {
         tenant_id: number;
         price: string | null;
+        wholesale_price: string | null;
+        wholesale_min_qty: number | null;
         min_stock: number | null;
         is_available: boolean | number;
     };
+};
+
+export type PosProduct = Product & {
+    unit_price: number;
+    price: string;
+    stock: number;
+    min_stock: number;
+    wholesale_price: string | null;
+    wholesale_min_qty: number | null;
+};
+
+export type PosHold = {
+    id: number;
+    label: string;
+    created_at: string;
+    items: Array<{ product: PosProduct; quantity: number }>;
+};
+
+export type Promotion = {
+    id: number;
+    store_id: number | null;
+    product_id: number | null;
+    name: string;
+    type: 'percent' | 'fixed' | 'bogo';
+    value: string;
+    buy_quantity: number | null;
+    free_quantity: number | null;
+    min_purchase: string;
+    starts_at: string | null;
+    ends_at: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    store?: { id: number; name: string } | null;
+    product?: { id: number; name: string; sku: string } | null;
+};
+
+export type TransactionPayment = {
+    id: number;
+    method: string;
+    amount: string;
+    reference_number: string | null;
+    paid_at: string | null;
+};
+
+export type StockOpname = {
+    id: number;
+    warehouse_id: number;
+    reference: string;
+    status: 'draft' | 'counting' | 'submitted' | 'approved' | 'rejected' | 'completed';
+    counted_by: number;
+    approved_by: number | null;
+    notes: string | null;
+    created_at: string;
+    updated_at: string;
+    warehouse?: { id: number; name: string; store_id: number | null } | null;
+    counter?: { id: number; name: string } | null;
+    approver?: { id: number; name: string } | null;
+    items?: Array<{
+        id: number;
+        product_id: number;
+        system_quantity: string;
+        physical_quantity: string;
+        difference: string;
+        notes: string | null;
+        product?: { id: number; name: string; sku: string; unit: string } | null;
+    }>;
 };
 
 export type Product = {
@@ -160,3 +257,4 @@ export type DashboardProps = {
     store_id: number | null;
     stores: { id: number; name: string }[];
 };
+

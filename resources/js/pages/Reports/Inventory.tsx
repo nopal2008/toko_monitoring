@@ -32,11 +32,10 @@ function ReportsInventory({ report, filters }: Props) {
 
     function toggleLowStock(checked: boolean) {
         setLowStock(checked);
-        router.get(
-            reportsInventory.url(),
-            checked ? { low_stock: 1 } : {},
-            { preserveState: true, preserveScroll: true },
-        );
+        router.get(reportsInventory.url(), checked ? { low_stock: 1 } : {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     }
 
     return (
@@ -58,7 +57,10 @@ function ReportsInventory({ report, filters }: Props) {
                 }
             />
 
-            <ReportTabs current="inventory" filters={{ low_stock: lowStock ? 1 : undefined }} />
+            <ReportTabs
+                current="inventory"
+                filters={{ low_stock: lowStock ? 1 : undefined }}
+            />
 
             <Card>
                 {report.data.length === 0 ? (
@@ -69,35 +71,59 @@ function ReportsInventory({ report, filters }: Props) {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[36rem] text-sm">
-                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wider text-slate-600">
+                            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium tracking-wider text-slate-600 uppercase">
                                 <tr>
-                                    <th scope="col" className="px-5 py-3">Cabang Toko</th>
-                                    <th scope="col" className="px-5 py-3">SKU</th>
-                                    <th scope="col" className="px-5 py-3">Nama Produk</th>
-                                    <th scope="col" className="px-5 py-3 text-right">Kuantitas</th>
-                                    <th scope="col" className="px-5 py-3 text-right">Batas Minimum</th>
-                                    <th scope="col" className="px-5 py-3 text-center">Status</th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Cabang Toko
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        SKU
+                                    </th>
+                                    <th scope="col" className="px-5 py-3">
+                                        Nama Produk
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Kuantitas
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-right"
+                                    >
+                                        Batas Minimum
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-5 py-3 text-center"
+                                    >
+                                        Status
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {report.data.map((row) => (
-                                    <tr key={row.id} className="transition hover:bg-slate-50/50">
-                                        <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                    <tr
+                                        key={row.id}
+                                        className="transition hover:bg-slate-50/50"
+                                    >
+                                        <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                             {row.store?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 font-mono text-xs text-slate-600 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 font-mono text-xs whitespace-nowrap text-slate-600">
                                             {row.product?.sku ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 font-medium text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 font-medium whitespace-nowrap text-slate-900">
                                             {row.product?.name ?? '-'}
                                         </td>
-                                        <td className="px-5 py-3.5 text-right font-semibold text-slate-900 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 text-right font-semibold whitespace-nowrap text-slate-900">
                                             {formatNumber(row.quantity)}{' '}
                                             <span className="text-xs font-normal text-slate-500">
                                                 {row.product?.unit ?? 'pcs'}
                                             </span>
                                         </td>
-                                        <td className="px-5 py-3.5 text-right text-slate-600 whitespace-nowrap">
+                                        <td className="px-5 py-3.5 text-right whitespace-nowrap text-slate-600">
                                             {formatNumber(row.min_stock)}{' '}
                                             <span className="text-xs text-slate-400">
                                                 {row.product?.unit ?? 'pcs'}

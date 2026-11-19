@@ -45,44 +45,95 @@ function StoresIndex({ stores }: { stores: Paginated<Store> }) {
                             <table className="w-full min-w-[44rem] text-sm">
                                 <thead className="bg-muted/50 text-left text-xs tracking-wider text-muted-foreground uppercase">
                                     <tr>
-                                        <th scope="col" className="px-4 py-3 font-medium">Cabang</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Kota</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Telepon</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Pengguna</th>
-                                        <th scope="col" className="px-4 py-3 font-medium">Status</th>
-                                        <th scope="col" className="px-4 py-3 text-right font-medium">Aksi</th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Cabang
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Kota
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Telepon
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Pengguna
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 font-medium"
+                                        >
+                                            Status
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="px-4 py-3 text-right font-medium"
+                                        >
+                                            Aksi
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
                                     {stores.data.map((store) => (
-                                        <tr key={store.id} className="transition-colors hover:bg-muted/40">
+                                        <tr
+                                            key={store.id}
+                                            className="transition-colors hover:bg-muted/40"
+                                        >
                                             <td className="px-4 py-3">
                                                 <Link
-                                                    href={StoreController.show.url(store.id)}
+                                                    href={StoreController.show.url(
+                                                        store.id,
+                                                    )}
                                                     className="font-medium text-brand-700 hover:underline dark:text-brand-300"
                                                 >
                                                     {store.name}
                                                 </Link>
-                                                <p className="text-xs text-muted-foreground">{store.code}</p>
-                                            </td>
-                                            <td className="px-4 py-3">{store.city ?? '-'}</td>
-                                            <td className="px-4 py-3">{store.phone ?? '-'}</td>
-                                            <td className="px-4 py-3 text-right">
-                                                {formatNumber(store.users_count ?? 0)}
+                                                <p className="text-xs text-muted-foreground">
+                                                    {store.code}
+                                                </p>
                                             </td>
                                             <td className="px-4 py-3">
-                                                <StatusBadge active={store.is_active} />
+                                                {store.city ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                {store.phone ?? '-'}
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                {formatNumber(
+                                                    store.users_count ?? 0,
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <StatusBadge
+                                                    active={store.is_active}
+                                                />
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div className="flex justify-end gap-2">
                                                     <Link
-                                                        href={StoreController.edit.url(store.id)}
-                                                        className={buttonClass('secondary')}
+                                                        href={StoreController.edit.url(
+                                                            store.id,
+                                                        )}
+                                                        className={buttonClass(
+                                                            'secondary',
+                                                        )}
                                                     >
                                                         Ubah
                                                     </Link>
                                                     <DeleteAction
-                                                        url={StoreController.destroy.url(store.id)}
+                                                        url={StoreController.destroy.url(
+                                                            store.id,
+                                                        )}
                                                         itemName={store.name}
                                                     />
                                                 </div>
