@@ -7,6 +7,7 @@ import {
     ChevronRight,
     ChevronsUpDown,
     ClipboardList,
+    Archive,
     LayoutDashboard,
     LogOut,
     MapPin,
@@ -97,6 +98,7 @@ const SEGMENT_LABELS: Record<string, string> = {
     warehouses: 'Gudang',
     promotions: 'Promosi',
     'stock-opnames': 'Stock Opname',
+    archive: 'Manajemen Arsip',
 };
 
 function breadcrumbsFor(pathname: string) {
@@ -350,6 +352,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     match: '/cashier',
                     icon: Users,
                     visible: hasAnyRole('cashier'),
+                },
+                {
+                    label: 'Manajemen Arsip',
+                    href: '/archive',
+                    match: '/archive',
+                    icon: Archive,
+                    visible: isOwnerOrAdmin,
                 },
             ],
         },

@@ -1,7 +1,7 @@
 ﻿import { Head, Link, useForm } from '@inertiajs/react';
 import type { FormEvent, ReactNode } from 'react';
 import AreaController from '@/actions/App/Http/Controllers/AreaController';
-import { CheckboxField, TextField, TextareaField } from '@/components/fields';
+import { CheckboxField, TextField, TextAreaField } from '@/components/fields';
 import { buttonClass, Card, PageHeader } from '@/components/ui';
 import AppLayout from '@/layouts/app-layout';
 import type { Area } from '@/types/models';
@@ -62,7 +62,7 @@ function AreasForm({ area }: { area?: Area }) {
                         }
                         error={form.errors.code}
                     />
-                    <TextareaField
+                    <TextAreaField
                         id="description"
                         label="Deskripsi"
                         rows={3}

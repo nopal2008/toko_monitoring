@@ -5,7 +5,7 @@ import {
     CheckboxField,
     SelectField,
     TextField,
-    TextareaField,
+    TextAreaField,
 } from '@/components/fields';
 import { buttonClass, Card, PageHeader } from '@/components/ui';
 import AppLayout from '@/layouts/app-layout';
@@ -106,7 +106,7 @@ function WarehousesForm({
                             ))}
                         </SelectField>
                     )}
-                    <TextareaField
+                    <TextAreaField
                         id="address"
                         label="Alamat"
                         rows={3}

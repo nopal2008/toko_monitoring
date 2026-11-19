@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -48,6 +49,13 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
         ->name('dashboard');
 
     Route::middleware('role:owner|admin')->group(function (): void {
+        Route::get('/archive', [ArchiveController::class, 'dashboard'])
+            ->middleware('permission:product.manage')
+            ->name('archive.dashboard');
+        Route::post('/archive/{type}/restore-all', [ArchiveController::class, 'restoreAll'])
+            ->middleware(['permission:product.manage', 'throttle:write'])
+            ->name('archive.restoreAll');
+
         Route::middleware('permission:user.manage')->prefix('accounts')->name('accounts.')->group(function (): void {
             Route::get('/', [AccountController::class, 'index'])->name('index');
             Route::get('/create', [AccountController::class, 'create'])->name('create');
