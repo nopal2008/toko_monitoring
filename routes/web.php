@@ -5,6 +5,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CashierShiftController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
@@ -272,6 +273,10 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
     Route::post('/cashier-shifts/{shift}/close', [CashierShiftController::class, 'close'])
         ->middleware(['permission:transaction.create', 'throttle:write'])
         ->name('cashier-shifts.close');
+
+    Route::get('/cashier', [CashierController::class, 'dashboard'])
+        ->middleware(['permission:transaction.create'])
+        ->name('cashier.dashboard');
 
     Route::get('/pos', [PosController::class, 'index'])
         ->middleware(['permission:transaction.create', 'store.access'])
