@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { Card, PageHeader, buttonClass } from '@/components/ui';
 import PurchaseController from '@/actions/App/Http/Controllers/PurchaseController';
