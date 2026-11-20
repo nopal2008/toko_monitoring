@@ -31,7 +31,7 @@ class TransactionController extends Controller
             $transactionsQuery->where('store_id', $storeId);
         } elseif ($user->hasAnyRole(['cashier', 'staff'])) {
             $transactionsQuery->where('user_id', $user->id);
-        } elseif (! $user->hasAnyRole(['owner', 'admin'])) {
+        } elseif (! $user->hasAnyRole(['owner'])) {
             $transactionsQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 

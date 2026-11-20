@@ -31,7 +31,7 @@ class DashboardController extends Controller
         $user = $request->user();
         $tenantId = (int) $user->tenant_id;
         $role = $user->getRoleNames()->first() ?? 'staff';
-        $isTenantWide = $user->hasAnyRole(['owner', 'admin']);
+        $isTenantWide = $user->hasAnyRole(['owner']);
         $availableStores = $isTenantWide
             ? Store::query()->where('tenant_id', $tenantId)->where('is_active', true)->orderBy('name')->get(['id', 'name'])
             : $user->stores()->where('stores.tenant_id', $tenantId)->where('stores.is_active', true)->orderBy('stores.name')->get(['stores.id', 'stores.name']);
@@ -70,8 +70,8 @@ class DashboardController extends Controller
             $end = $today->copy()->endOfDay();
             $isStaff = $role === 'staff';
             $isCashier = $role === 'cashier';
-            $canViewBranchSales = in_array($role, ['owner', 'admin', 'area_manager'], true);
-            $canViewOperations = in_array($role, ['owner', 'admin', 'area_manager', 'store_manager'], true);
+            $canViewBranchSales = in_array($role, ['owner', 'area_manager'], true);
+            $canViewOperations = in_array($role, ['owner', 'area_manager', 'store_manager'], true);
             $dateSales = $isStaff
                 ? collect()
                 : $this->salesByDate($tenantId, $storeIds, $start, $end, $isCashier ? (int) $user->id : null);

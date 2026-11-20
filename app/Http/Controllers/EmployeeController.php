@@ -22,7 +22,7 @@ class EmployeeController extends Controller
 
         if ($storeId > 0) {
             $employeeQuery->where('store_id', $storeId);
-        } elseif (! $user->hasAnyRole(['owner', 'admin'])) {
+        } elseif (! $user->hasAnyRole(['owner'])) {
             $employeeQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 

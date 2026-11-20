@@ -177,11 +177,11 @@ class AccountController extends Controller
 
     private function ensureAnotherOwnerRemains(User $account, ?string $nextRole, bool $isActive): void
     {
-        if (! $account->is_active || ! $account->hasAnyRole(['owner', 'admin'])) {
+        if (! $account->is_active || ! $account->hasAnyRole(['owner'])) {
             return;
         }
 
-        if ($isActive && in_array($nextRole, ['owner', 'admin'], true)) {
+        if ($isActive && in_array($nextRole, ['owner'], true)) {
             return;
         }
 
@@ -189,7 +189,7 @@ class AccountController extends Controller
             ->where('tenant_id', $account->tenant_id)
             ->where('is_active', true)
             ->where('id', '!=', $account->getKey())
-            ->whereHas('roles', fn (Builder $query) => $query->whereIn('name', ['owner', 'admin']))
+            ->whereHas('roles', fn (Builder $query) => $query->whereIn('name', ['owner']))
             ->exists();
 
         if (! $anotherOwnerExists) {

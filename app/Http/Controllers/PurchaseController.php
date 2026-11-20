@@ -35,7 +35,7 @@ class PurchaseController extends Controller
     {
         $this->authorize('create', Purchase::class);
 
-        $stores = $request->user()->hasAnyRole(['owner', 'admin'])
+        $stores = $request->user()->hasAnyRole(['owner'])
             ? Store::query()->where('is_active', true)->orderBy('name')->get(['id', 'name'])
             : $request->user()->stores()->where('stores.is_active', true)->orderBy('stores.name')->get(['stores.id', 'stores.name']);
 

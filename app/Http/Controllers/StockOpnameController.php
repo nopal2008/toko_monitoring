@@ -37,7 +37,7 @@ class StockOpnameController extends Controller
             ->whereNotNull('store_id')
             ->where('is_active', true);
 
-        if (! $user->hasAnyRole(['owner', 'admin'])) {
+        if (! $user->hasAnyRole(['owner'])) {
             $warehouseQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 
@@ -46,7 +46,7 @@ class StockOpnameController extends Controller
             ->orderBy('store_id')
             ->orderBy('product_id');
 
-        if (! $user->hasAnyRole(['owner', 'admin'])) {
+        if (! $user->hasAnyRole(['owner'])) {
             $inventoryQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 

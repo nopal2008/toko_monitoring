@@ -29,7 +29,7 @@ class PosController extends Controller
         $storeId = $request->integer('store_id');
 
         if ($storeId === 0) {
-            $storeId = $user->hasAnyRole(['owner', 'admin'])
+            $storeId = $user->hasAnyRole(['owner'])
                 ? (int) (Store::query()->value('id') ?? 0)
                 : (int) ($user->stores()->value('stores.id') ?? 0);
         }
@@ -63,7 +63,7 @@ class PosController extends Controller
             ->limit(100)
             ->get();
 
-        $stores = $user->hasAnyRole(['owner', 'admin'])
+        $stores = $user->hasAnyRole(['owner'])
             ? Store::query()->where('is_active', true)->select(['id', 'name'])->get()
             : $user->stores()->where('stores.is_active', true)->select(['stores.id', 'stores.name'])->get();
 

@@ -23,7 +23,7 @@ class InventoryController extends Controller
 
         if ($storeId > 0) {
             $inventoryQuery->where('store_id', $storeId);
-        } elseif (! $user->hasAnyRole(['owner', 'admin'])) {
+        } elseif (! $user->hasAnyRole(['owner'])) {
             $inventoryQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 

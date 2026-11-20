@@ -73,7 +73,7 @@ class User extends Authenticatable
             return false;
         }
 
-        if ($this->hasAnyRole(['owner', 'admin'])) {
+        if ($this->hasAnyRole(['owner'])) {
             return Store::query()->whereKey($storeId)->exists();
         }
 

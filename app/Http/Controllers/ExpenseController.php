@@ -26,7 +26,7 @@ class ExpenseController extends Controller
 
         if ($storeId > 0) {
             $expenseQuery->where('store_id', $storeId);
-        } elseif (! $user->hasAnyRole(['owner', 'admin'])) {
+        } elseif (! $user->hasAnyRole(['owner'])) {
             $expenseQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 

@@ -26,7 +26,6 @@ class RolePermissionSeeder extends Seeder
 
         $roles = [
             'owner' => $permissions,
-            'admin' => $permissions,
             'area_manager' => [
                 'store.view', 'product.view', 'product.manage', 'inventory.view', 'inventory.transfer',
                 'transaction.view', 'transaction.cancel', 'expense.create', 'expense.approve',

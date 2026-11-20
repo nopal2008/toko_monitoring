@@ -45,10 +45,10 @@ Route::post('/impersonation/stop', [ImpersonationController::class, 'stop'])
 
 Route::middleware(['auth', 'tenant'])->group(function (): void {
     Route::get('/dashboard', DashboardController::class)
-        ->middleware(['role:owner|admin|area_manager|store_manager|cashier|staff', 'store.access'])
+        ->middleware(['role:owner|area_manager|store_manager|cashier|staff', 'store.access'])
         ->name('dashboard');
 
-    Route::middleware('role:owner|admin')->group(function (): void {
+    Route::middleware('role:owner')->group(function (): void {
         Route::get('/archive', [ArchiveController::class, 'dashboard'])
             ->middleware('permission:product.manage')
             ->name('archive.dashboard');
@@ -100,7 +100,6 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
 
     Route::middleware('permission:product.view')->group(function (): void {
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-        Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
     });
     Route::middleware('permission:product.manage')->group(function (): void {
         Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
@@ -113,8 +112,11 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
         Route::post('/categories/{id}/restore', [CategoryController::class, 'restore'])
             ->middleware('throttle:write')->name('categories.restore');
     });
+    Route::middleware('permission:product.view')->group(function (): void {
+        Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+    });
 
-    Route::middleware(['role:owner|admin', 'permission:product.manage'])->group(function (): void {
+    Route::middleware(['role:owner', 'permission:product.manage'])->group(function (): void {
         Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
         Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('suppliers.create');
         Route::post('/suppliers', [SupplierController::class, 'store'])->middleware('throttle:write')->name('suppliers.store');
@@ -130,7 +132,6 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
 
     Route::middleware('permission:area.view')->group(function (): void {
         Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
-        Route::get('/areas/{area}', [AreaController::class, 'show'])->name('areas.show');
     });
 
     Route::middleware('permission:area.manage')->group(function (): void {
@@ -145,9 +146,12 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('areas.restore');
     });
 
+    Route::middleware('permission:area.view')->group(function (): void {
+        Route::get('/areas/{area}', [AreaController::class, 'show'])->name('areas.show');
+    });
+
     Route::middleware('permission:warehouse.view')->group(function (): void {
         Route::get('/warehouses', [WarehouseController::class, 'index'])->name('warehouses.index');
-        Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
     });
 
     Route::middleware('permission:warehouse.manage')->group(function (): void {
@@ -162,9 +166,12 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('warehouses.restore');
     });
 
+    Route::middleware('permission:warehouse.view')->group(function (): void {
+        Route::get('/warehouses/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
+    });
+
     Route::middleware('permission:brand.view')->group(function (): void {
         Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');
-        Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('brands.show');
     });
 
     Route::middleware('permission:brand.manage')->group(function (): void {
@@ -179,9 +186,12 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('brands.restore');
     });
 
+    Route::middleware('permission:brand.view')->group(function (): void {
+        Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('brands.show');
+    });
+
     Route::middleware('permission:unit.view')->group(function (): void {
         Route::get('/units', [UnitController::class, 'index'])->name('units.index');
-        Route::get('/units/{unit}', [UnitController::class, 'show'])->name('units.show');
     });
 
     Route::middleware('permission:unit.manage')->group(function (): void {
@@ -194,6 +204,10 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('units.destroy');
         Route::post('/units/{id}/restore', [UnitController::class, 'restore'])
             ->middleware('throttle:write')->name('units.restore');
+    });
+
+    Route::middleware('permission:unit.view')->group(function (): void {
+        Route::get('/units/{unit}', [UnitController::class, 'show'])->name('units.show');
     });
 
     Route::middleware('permission:attendance.view')->group(function (): void {
@@ -263,7 +277,7 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
         ->middleware(['permission:inventory.transfer', 'store.access', 'throttle:write'])
         ->name('inventories.transfer.store');
     Route::post('/inventories/transfer/{transfer}/approve', [StockTransferController::class, 'approve'])
-        ->middleware(['role:owner|admin|area_manager', 'permission:inventory.transfer', 'throttle:write'])
+        ->middleware(['role:owner|area_manager', 'permission:inventory.transfer', 'throttle:write'])
         ->name('inventories.transfer.approve');
     Route::post('/inventories/transfer/{transfer}/ship', [StockTransferController::class, 'ship'])
         ->middleware(['permission:inventory.transfer', 'throttle:write'])
@@ -355,7 +369,7 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
         ->name('reports.export');
 
     Route::get('/settings', [SettingsController::class, 'index'])
-        ->middleware(['role:owner|admin', 'permission:setting.manage'])
+        ->middleware(['role:owner', 'permission:setting.manage'])
         ->name('settings.index');
     Route::put('/settings', [SettingsController::class, 'update'])
         ->middleware(['role:owner|admin', 'permission:setting.manage', 'throttle:write'])

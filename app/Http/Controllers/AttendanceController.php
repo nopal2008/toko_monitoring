@@ -26,7 +26,7 @@ class AttendanceController extends Controller
 
         if ($storeId > 0) {
             $attendanceQuery->where('store_id', $storeId);
-        } elseif (! $user->hasAnyRole(['owner', 'admin'])) {
+        } elseif (! $user->hasAnyRole(['owner'])) {
             $attendanceQuery->whereIn('store_id', $user->stores()->select('stores.id'));
         }
 
