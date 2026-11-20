@@ -12,7 +12,7 @@ class UnitPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->can('unit.view');
     }
 
     /**
@@ -20,7 +20,7 @@ class UnitPolicy
      */
     public function view(User $user, Unit $unit): bool
     {
-        return false;
+        return $user->can('unit.view');
     }
 
     /**
@@ -28,7 +28,7 @@ class UnitPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->can('unit.manage');
     }
 
     /**
@@ -36,7 +36,7 @@ class UnitPolicy
      */
     public function update(User $user, Unit $unit): bool
     {
-        return false;
+        return $user->can('unit.manage');
     }
 
     /**
@@ -44,7 +44,7 @@ class UnitPolicy
      */
     public function delete(User $user, Unit $unit): bool
     {
-        return false;
+        return $user->can('unit.manage');
     }
 
     /**
@@ -52,7 +52,7 @@ class UnitPolicy
      */
     public function restore(User $user, Unit $unit): bool
     {
-        return false;
+        return $user->can('unit.manage');
     }
 
     /**
@@ -60,6 +60,6 @@ class UnitPolicy
      */
     public function forceDelete(User $user, Unit $unit): bool
     {
-        return false;
+        return $user->can('unit.manage');
     }
 }

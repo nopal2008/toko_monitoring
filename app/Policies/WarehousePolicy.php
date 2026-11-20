@@ -12,7 +12,7 @@ class WarehousePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->can('warehouse.view');
     }
 
     /**
@@ -20,7 +20,7 @@ class WarehousePolicy
      */
     public function view(User $user, Warehouse $warehouse): bool
     {
-        return false;
+        return $user->can('warehouse.view');
     }
 
     /**
@@ -28,7 +28,7 @@ class WarehousePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->can('warehouse.manage');
     }
 
     /**
@@ -36,7 +36,7 @@ class WarehousePolicy
      */
     public function update(User $user, Warehouse $warehouse): bool
     {
-        return false;
+        return $user->can('warehouse.manage');
     }
 
     /**
@@ -44,7 +44,7 @@ class WarehousePolicy
      */
     public function delete(User $user, Warehouse $warehouse): bool
     {
-        return false;
+        return $user->can('warehouse.manage');
     }
 
     /**
@@ -52,7 +52,7 @@ class WarehousePolicy
      */
     public function restore(User $user, Warehouse $warehouse): bool
     {
-        return false;
+        return $user->can('warehouse.manage');
     }
 
     /**
@@ -60,6 +60,6 @@ class WarehousePolicy
      */
     public function forceDelete(User $user, Warehouse $warehouse): bool
     {
-        return false;
+        return $user->can('warehouse.manage');
     }
 }

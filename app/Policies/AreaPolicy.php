@@ -12,7 +12,7 @@ class AreaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->can('area.view');
     }
 
     /**
@@ -20,7 +20,7 @@ class AreaPolicy
      */
     public function view(User $user, Area $area): bool
     {
-        return false;
+        return $user->can('area.view');
     }
 
     /**
@@ -28,7 +28,7 @@ class AreaPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->can('area.manage');
     }
 
     /**
@@ -36,7 +36,7 @@ class AreaPolicy
      */
     public function update(User $user, Area $area): bool
     {
-        return false;
+        return $user->can('area.manage');
     }
 
     /**
@@ -44,7 +44,7 @@ class AreaPolicy
      */
     public function delete(User $user, Area $area): bool
     {
-        return false;
+        return $user->can('area.manage');
     }
 
     /**
@@ -52,7 +52,7 @@ class AreaPolicy
      */
     public function restore(User $user, Area $area): bool
     {
-        return false;
+        return $user->can('area.manage');
     }
 
     /**
@@ -60,6 +60,6 @@ class AreaPolicy
      */
     public function forceDelete(User $user, Area $area): bool
     {
-        return false;
+        return $user->can('area.manage');
     }
 }
