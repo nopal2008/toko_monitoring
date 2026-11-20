@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->nullable()->after('id')->constrained()->nullOnDelete();
+            $table->foreignId('tenant_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('store_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('quantity')->default(0);
