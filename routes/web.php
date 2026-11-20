@@ -84,7 +84,6 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
 
     Route::middleware('permission:product.view')->group(function (): void {
         Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     });
     Route::middleware('permission:product.manage')->group(function (): void {
         Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
@@ -96,6 +95,9 @@ Route::middleware(['auth', 'tenant'])->group(function (): void {
             ->middleware('throttle:write')->name('products.destroy');
         Route::post('/products/{id}/restore', [ProductController::class, 'restore'])
             ->middleware('throttle:write')->name('products.restore');
+    });
+    Route::middleware('permission:product.view')->group(function (): void {
+        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     });
 
     Route::middleware('permission:product.view')->group(function (): void {
